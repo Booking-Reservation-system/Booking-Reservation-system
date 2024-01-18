@@ -5,7 +5,7 @@
 - Trước khi commit phải test xem code có hoạt động đúng ko
 - Trước khi commit phải pull code về (tránh conflix) (nên pull code ngay khi bắt đầu mở project để code tiếp)
 
-## Các lênh cơ bản:
+## Các lệnh cơ bản:
 - `git clone <link>`: clone project về máy
 - `git status`: kiểm tra trạng thái của project
 - `git add <file>`: thêm file vào stage
