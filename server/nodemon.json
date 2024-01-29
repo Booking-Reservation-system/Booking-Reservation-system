@@ -1,0 +1,6 @@
+{
+  "env": {
+    "MONGODB_URI": "mongodb+srv://root:root123@cluster0.blmhpfd.mongodb.net/airbnb",
+    "PORT": 8080
+  }
+}
