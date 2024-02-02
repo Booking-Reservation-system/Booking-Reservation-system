@@ -1,7 +1,38 @@
+import qs from 'query-string'
+import { useNavigate } from 'react-router-dom';
+import { useCallback} from 'react';
 const CategoryBox = (props) => {
-    const { label, select, icon: Icon } = props;
+    const { label, selected, icon: Icon } = props;
+    const navigate = useNavigate();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const handleClick = useCallback(() => {
+        let currentQuery = {};
+        
+        if (urlParams) {
+          currentQuery = qs.parse(urlParams.toString())
+        }
+    
+        const updatedQuery = {
+          ...currentQuery,
+          category: label
+        }
+    
+        if (urlParams?.get('category') === label) {
+          delete updatedQuery.category;
+        }
+    
+        const url = qs.stringifyUrl({
+          url: '/',
+          query: updatedQuery
+        }, { skipNull: true });
+    
+        navigate(url);
+      }, [label, navigate, urlParams]);
+
     return (
         <div 
+            onClick={handleClick}
             className={`
             flex 
             flex-col 
@@ -13,8 +44,8 @@ const CategoryBox = (props) => {
             hover:text-neutral-800 
             transition 
             cursor-pointer
-            ${select ? 'border-b-neutral-800' : 'border-transparent'}
-            ${select ? 'text-neutral-800' : 'text-neutral-500'}  
+            ${selected ? 'border-b-neutral-800' : 'border-transparent'}
+            ${selected ? 'text-neutral-800' : 'text-neutral-500'}  
         `}>
             <Icon size={30} />
             <p className="text-md font-medium">{label}</p>

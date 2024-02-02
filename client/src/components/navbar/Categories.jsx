@@ -5,6 +5,7 @@ import { FaSkiing } from 'react-icons/fa';
 import { BsSnow } from 'react-icons/bs';
 import { IoDiamond } from 'react-icons/io5';
 import { MdOutlineVilla } from 'react-icons/md';
+import { useLocation } from "react-router-dom";
 import CategoryBox from "../CategoryBox";
 export const categories = [
     {
@@ -86,13 +87,20 @@ export const categories = [
 
 const Categories = () => {
 
-    
+    const params = new URLSearchParams(window.location.search);
+    const categoryParams = params?.get('category');  
+    const location = useLocation();
+
+    const isMainPage = location.pathname === '/';
+    if (!isMainPage) {
+        return null;
+    }
 
     return (
        <Container>
             <div className="pt-4 flex flex-row items-center justify-between overflow-x-auto">
                 {categories.map((category) => (
-                    <CategoryBox key={category.label} icon={category.icon} label={category.label}/>
+                    <CategoryBox key={category.label} selected={categoryParams === category.label} icon={category.icon} label={category.label}/>
                 ))}
             </div>
        </Container>
