@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillGithub } from "react-icons/ai";
@@ -62,6 +62,11 @@ const registerModal = useRegisterModal();
     },
   };
 
+  const onToggle = useCallback(() => {
+    loginModal.onClose()
+    registerModal.onOpen()
+  }, [loginModal, registerModal])
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
         <Heading title="Welcome to our App" subtitle="Login an account"/>
@@ -77,7 +82,7 @@ const registerModal = useRegisterModal();
         <Button outline label="Continue with Github" icon={AiFillGithub} onClick={() => {}}/>
         <div className="text-neutral-500 text-center justify-center mt-4 font-light flex flex-row gap-2"> 
             <p>First time using this App?</p>
-            <span className="text-neutral-800 cursor-pointer hover:underline">
+            <span className="text-neutral-800 cursor-pointer hover:underline" onClick={onToggle}>
                     Create an account
             </span>
         </div>

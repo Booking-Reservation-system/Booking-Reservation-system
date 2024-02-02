@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import useRegisterModal from "../../hooks/useRegisterModal";
+import useLoginModal from "../../hooks/useLoginModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import Input from "../inputs/Input";
@@ -11,6 +12,7 @@ import toast from "react-hot-toast";
 import Button from "../Button";
 
 const RegisterModal = () => {
+  const loginModal = useLoginModal()
   const registerModal = useRegisterModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,6 +66,11 @@ const RegisterModal = () => {
     },
   };
 
+  const onToggle = useCallback(() => {
+    registerModal.onClose();
+    loginModal.onOpen()
+  }, [loginModal, registerModal])
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading title="Welcome to our App" subtitle="Create an account" />
@@ -116,7 +123,7 @@ const RegisterModal = () => {
         <div>Already have an account?</div>
         <div
           className="text-neutral-800 cursor-pointer hover:underline"
-          onClick={registerModal.onClose}
+          onClick={onToggle}
         >
           Log in
         </div>
