@@ -1,8 +1,9 @@
 // import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
+import toast from "react-hot-toast";
 import { BiDollar } from "react-icons/bi";
 
 const Input = (props) => {
-    const {id, label, type, register, disabled, formatPrice, required, errors} = props;  
+    const {id, label, type, register, disabled, formatPrice, required, errors, validate} = props;  
     return (
         <div className="relative w-full">
             {formatPrice && (
@@ -11,7 +12,7 @@ const Input = (props) => {
             <input 
                 id={id} 
                 disabled={disabled} 
-                {...register(id, {required})} // register the input and check if its not empty
+                {...register(id, {required, validate})} // register the input and check if its not empty
                 placeholder=" "
                 type={type}
                 className={`
@@ -51,6 +52,16 @@ const Input = (props) => {
             `}>
                 {label}
             </label>
+            {errors[id]?.type === 'checkEmailPattern' && (
+                <p className="text-rose-500 font-semibold">Invalid email</p>
+            )}
+            {errors[id]?.type === 'required' && (
+                <p className="text-rose-500 font-semibold">This field is required</p>
+            
+            )}
+            {errors[id]?.type === 'checkPasswordPattern' && (
+                <p className="text-rose-500 font-semibold">Password must contain at least 8 characters, one letter and one number</p>
+            )}
         </div>
     )
 }

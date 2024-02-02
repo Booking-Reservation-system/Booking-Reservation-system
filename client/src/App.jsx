@@ -1,18 +1,13 @@
 import "./App.css";
-import RegisterModal from "./components/modals/RegisterModal";
-import LoginModal from "./components/modals/LoginModal";
-import Navbar from "./components/navbar/Navbar";
-import ToasterProvider from "./providers/ToasterProvider";
+import { Route, Routes } from "react-router-dom";
+import IndexPage from "./IndexPage";
 
 function App() {
   return (
-    <>
-      <ToasterProvider/>
-      <LoginModal/>
-      <RegisterModal/>
-      <Navbar />
-    </>
-  );
+    <Routes>
+      <Route index element={<IndexPage/>} />
+    </Routes>
+  )
 }
 
 export default App;
