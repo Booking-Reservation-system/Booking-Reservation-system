@@ -33,12 +33,13 @@ const RegisterModal = () => {
     // sent a request to the server that will create a new user
     // then onClose() the modal
     axios
-      .post("", data)
-      .then(() => {
+      .post("http://localhost:8080/api/auth/signup", data)
+      .then((res) => {
         registerModal.onClose();
+        toast.success(res.data.message);
       })
       .catch((err) => {
-        toast.error("Something went wrong");
+        toast.error(err.response.data.data[0].msg);
       })
       .finally(() => {
         setIsLoading(false);
@@ -62,7 +63,7 @@ const RegisterModal = () => {
 
   const passwordValidation = {
     checkPasswordPattern: (value) => {
-      return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value); // "Password must contain at least 8 characters, one letter and one number"
+      return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value); // "Password must contain at least 8 characters, one letter and one number"
     },
   };
 

@@ -12,7 +12,7 @@ import Button from "../Button";
 import Modal from "./Modal";
 
 const LoginModal = () => {
-const registerModal = useRegisterModal();
+  const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,17 +29,19 @@ const registerModal = useRegisterModal();
 
   const submitHandler = (data) => {
     setIsLoading(true);
-    axios.post("", data)
-        .then(() => {
-            loginModal.onClose();
-        })
-        .catch((err) => {
-            toast.error("Something went wrong");
-        })
-        .finally(() => {
-            setIsLoading(false);
-        });
-  }
+    axios
+      .post("", data)
+      .then(() => {
+        loginModal.onClose();
+        toast.success("Logged in successfully");
+      })
+      .catch((err) => {
+        toast.error("Something went wrong");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const emailValidation = {
     checkEmailPattern: (value) => {
@@ -58,49 +60,80 @@ const registerModal = useRegisterModal();
 
   const passwordValidation = {
     checkPasswordPattern: (value) => {
-      return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value); // "Password must contain at least 8 characters, one letter and one number"
+      return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value); // "Password must contain at least 8 characters, one letter and one number"
     },
   };
 
   const onToggle = useCallback(() => {
-    loginModal.onClose()
-    registerModal.onOpen()
-  }, [loginModal, registerModal])
+    loginModal.onClose();
+    registerModal.onOpen();
+  }, [loginModal, registerModal]);
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
-        <Heading title="Welcome to our App" subtitle="Login an account"/>
-        <Input id="email" label="Email" type="type" disabled={isLoading} register={register} errors={errors} required validate={emailValidation}/>
-        <Input id="password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required validate={passwordValidation}/>
+      <Heading title="Welcome to our App" subtitle="Login an account" />
+      <Input
+        id="email"
+        label="Email"
+        type="type"
+        disabled={isLoading}
+        register={register}
+        errors={errors}
+        required
+        validate={emailValidation}
+      />
+      <Input
+        id="password"
+        label="Password"
+        type="password"
+        disabled={isLoading}
+        register={register}
+        errors={errors}
+        required
+        validate={passwordValidation}
+      />
     </div>
-  )
+  );
 
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
-        <hr/>
-        <Button outline label="Continue with Google" icon={FcGoogle} onClick={() => {}}/>
-        <Button outline label="Continue with Github" icon={AiFillGithub} onClick={() => {}}/>
-        <div className="text-neutral-500 text-center justify-center mt-4 font-light flex flex-row gap-2"> 
-            <p>First time using this App?</p>
-            <span className="text-neutral-800 cursor-pointer hover:underline" onClick={onToggle}>
-                    Create an account
-            </span>
-        </div>
+      <hr />
+      <Button
+        outline
+        label="Continue with Google"
+        icon={FcGoogle}
+        onClick={() => {}}
+      />
+      <Button
+        outline
+        label="Continue with Github"
+        icon={AiFillGithub}
+        onClick={() => {}}
+      />
+      <div className="text-neutral-500 text-center justify-center mt-4 font-light flex flex-row gap-2">
+        <p>First time using this App?</p>
+        <span
+          className="text-neutral-800 cursor-pointer hover:underline"
+          onClick={onToggle}
+        >
+          Create an account
+        </span>
+      </div>
     </div>
-  )
+  );
 
   return (
-    <Modal 
-        disabled={isLoading}
-        isOpen={loginModal.isOpen}
-        onClose={loginModal.onClose}
-        title="Login"
-        onSubmit={handleSubmit(submitHandler)}
-        actionLabel="Continue"
-        body={bodyContent}
-        footer={footerContent}
+    <Modal
+      disabled={isLoading}
+      isOpen={loginModal.isOpen}
+      onClose={loginModal.onClose}
+      title="Login"
+      onSubmit={handleSubmit(submitHandler)}
+      actionLabel="Continue"
+      body={bodyContent}
+      footer={footerContent}
     />
-  )
+  );
 };
 
 export default LoginModal;
