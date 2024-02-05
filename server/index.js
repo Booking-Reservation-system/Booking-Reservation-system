@@ -37,7 +37,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/controller/auth', authRoutes);
+app.use('/controllers/auth', authRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);

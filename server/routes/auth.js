@@ -1,12 +1,12 @@
 const express = require('express');
 const { body } = require('express-validator');
 
-const authController = require('../controller/auth');
+const authController = require('../controllers/auth');
 const User = require('../models/user');
 
 const router = express.Router();
 
-// /controller/auth/signup => POST
+// /controllers/auth/signup => POST
 router.post(
     '/signup',
     [
@@ -33,7 +33,7 @@ router.post(
     authController.signup
 );
 
-// /controller/auth/login => POST
+// /controllers/auth/login => POST
 router.post('/login', authController.login);
 
 module.exports = router;
