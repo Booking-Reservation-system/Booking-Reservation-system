@@ -1,6 +1,9 @@
 {
   "env": {
     "MONGODB_URI": "mongodb+srv://root:root123@cluster0.blmhpfd.mongodb.net/airbnb",
-    "PORT": 8080
+    "PORT": 8080,
+    "GITHUB_CLIENT_ID": "5b681b318b3bf9bbabaa",
+    "GITHUB_CLIENT_SECRET": "6e0994f8f427825112078a29e35a6b34a3fa78a0",
+    "JWT_SECRET_KEY": "10237307b508546d31ae75fe3ba75a6704567ffbddb825b068f8e9194c3f9dd0"
   }
 }
