@@ -16,6 +16,13 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use((error, req, res, next) => {
+    console.log(error);
+    const status = error.statusCode || 500;
+    const mess = error.message;
+    const data = error.data;
+    res.status(status).json({message: mess, data: data});
+});
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(result => {
