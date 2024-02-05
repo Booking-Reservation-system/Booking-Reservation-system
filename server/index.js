@@ -5,6 +5,15 @@ const app = express();
 
 app.get('/', (req, res) => {
     res.send('Hello World');
+// CORS error handling
+app.use((req, res, next) => {
+    // Allow access from any client
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Allow these headers
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    // Allow these methods
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+    next();
 });
 
 
