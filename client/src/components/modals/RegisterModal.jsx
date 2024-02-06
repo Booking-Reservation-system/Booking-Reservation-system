@@ -46,6 +46,7 @@ const RegisterModal = () => {
       });
   };
 
+
   const emailValidation = {
     checkEmailPattern: (value) => {
       return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
