@@ -26,19 +26,19 @@ exports.createPlace = async (req, res, next) => {
     const location = req.body.location;
     const price = req.body.price;
 
-    const place = new Place({
-        title: title,
-        description: description,
-        imageSrc: imageSrc,
-        category: category,
-        roomCount: roomCount,
-        bathroomCount: bathroomCount,
-        guestCapacity: guestCapacity,
-        locationValue: location.value,
-        price: parseInt(price, 10),
-        userId: req.userId
-    });
     try {
+        const place = new Place({
+            title: title,
+            description: description,
+            imageSrc: imageSrc,
+            category: category,
+            roomCount: roomCount,
+            bathroomCount: bathroomCount,
+            guestCapacity: guestCapacity,
+            locationValue: location.value,
+            price: parseInt(price, 10),
+            userId: req.userId
+        });
         await place.save()
         const user = await User.findById(req.userId)
         user.listings.push(place)
