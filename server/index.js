@@ -4,6 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const authRoutes = require('./routes/auth');
+const ownerRoutes = require('./routes/owner');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -38,6 +39,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/owner', ownerRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
