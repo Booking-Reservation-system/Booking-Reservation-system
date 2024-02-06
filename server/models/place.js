@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const listingSchema = new Schema({
+const placeSchema = new Schema({
     title: {
         type: String,
         required: true,
@@ -50,4 +50,4 @@ const listingSchema = new Schema({
     }]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Listing', listingSchema);
+module.exports = mongoose.model('Place', placeSchema);

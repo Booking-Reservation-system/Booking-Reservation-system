@@ -30,7 +30,7 @@ const userSchema = new Schema({
     }],
     listings: [{
         type: Schema.Types.ObjectId,
-        ref: 'Listing',
+        ref: 'Place',
         required: true,
     }],
     reservations: [{

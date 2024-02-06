@@ -9,7 +9,7 @@ const reservationSchema = new Schema({
     },
     listingId: {
         type: Schema.Types.ObjectId,
-        ref: 'Listing',
+        ref: 'Place',
         required: true,
     },
     startDate: {
