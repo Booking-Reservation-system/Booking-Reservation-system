@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillGithub } from "react-icons/ai";
@@ -12,6 +13,7 @@ import Button from "../Button";
 import Modal from "./Modal";
 
 const LoginModal = () => {
+  const navigate = useNavigate();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
@@ -30,13 +32,16 @@ const LoginModal = () => {
   const submitHandler = (data) => {
     setIsLoading(true);
     axios
-      .post("", data)
-      .then(() => {
+      .post("http://localhost:8080/api/auth/login", data)
+      .then((res) => {
         loginModal.onClose();
+        const token = res.data.token 
+        localStorage.setItem("token", token);
         toast.success("Logged in successfully");
+        navigate("/")
       })
       .catch((err) => {
-        toast.error("Something went wrong");
+        toast.error(err.response.data.message);
       })
       .finally(() => {
         setIsLoading(false);

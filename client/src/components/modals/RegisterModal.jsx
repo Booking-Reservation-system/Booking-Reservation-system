@@ -63,7 +63,7 @@ const RegisterModal = () => {
 
   const passwordValidation = {
     checkPasswordPattern: (value) => {
-      return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value); // "Password must contain at least 8 characters, one letter and one number"
+      return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value); // "Password must contain at least 8 characters, one letter and one number"
     },
   };
 
