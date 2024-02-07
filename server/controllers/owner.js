@@ -52,28 +52,29 @@ exports.getPlaces = async (req, res, next) => {
 
 exports.createPlace = async (req, res, next) => {
     const err = validationResult(req);
-    if(!err.isEmpty()){
-        const errs = new Error('Validation failed, entered data is incorrect!');
-        errs.statusCode = 422;
-        throw errs;
-    }
-    if(!req.file){
-        const error = new Error('No image provided.');
-        error.statusCode = 422;
-        throw error;
-    }
-    // Create place in db
-    const title = req.body.title;
-    const description = req.body.description;
-    const imageSrc = req.file.path.replace("\\" ,"/");
-    const category = req.body.category;
-    const roomCount = req.body.roomCount;
-    const bathroomCount = req.body.bathroomCount;
-    const guestCapacity = req.body.guestCapacity;
-    const location = req.body.location;
-    const price = req.body.price;
-
     try {
+        if(!err.isEmpty()){
+            const errs = new Error('Validation failed, entered data is incorrect!');
+            errs.statusCode = 422;
+            errs.data = err.array();
+            throw errs;
+        }
+        if(!req.file){
+            const error = new Error('No image provided.');
+            error.statusCode = 422;
+            throw error;
+        }
+        // Create place in db
+        const title = req.body.title;
+        const description = req.body.description;
+        const imageSrc = req.file.path.replace("\\" ,"/");
+        const category = req.body.category;
+        const roomCount = req.body.roomCount;
+        const bathroomCount = req.body.bathroomCount;
+        const guestCapacity = req.body.guestCapacity;
+        const location = req.body.location;
+        const price = req.body.price;
+
         const place = new Place({
             title: title,
             description: description,
@@ -110,7 +111,23 @@ exports.getPlace = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
-        res.status(200).json({ message: 'Place fetched.', place: place });
+        const placeFormatted = {
+            _id: place._id,
+            title: place.title,
+            description: place.description,
+            imageSrc: place.imageSrc,
+            category: place.category,
+            roomCount: place.roomCount,
+            bathroomCount: place.bathroomCount,
+            guestCapacity: place.guestCapacity,
+            location: place.locationValue,
+            price: place.price,
+            creator: {
+                _id: place.userId._id,
+                name: place.userId.name
+            }
+        }
+        res.status(200).json({ message: 'Place fetched.', place: placeFormatted });
     }
     catch(err){
         if(!err.statusCode) err.statusCode = 500;
@@ -121,21 +138,22 @@ exports.getPlace = async (req, res, next) => {
 exports.updatePlace = async (req, res, next) => {
     const placeId = req.params.placeId;
     const err = validationResult(req);
-    if(!err.isEmpty()){
-        const errs = new Error('Validation failed, entered data is incorrect!');
-        errs.statusCode = 422;
-        throw errs;
-    }
-    const title = req.body.title;
-    const description = req.body.description;
-    const imageSrc = req.body.imageSrc;
-    const category = req.body.category;
-    const roomCount = req.body.roomCount;
-    const bathroomCount = req.body.bathroomCount;
-    const guestCapacity = req.body.guestCapacity;
-    const location = req.body.location;
-    const price = req.body.price;
-    try {
+    try{
+        if(!err.isEmpty()){
+            const errs = new Error('Validation failed, entered data is incorrect!');
+            errs.statusCode = 422;
+            errs.data = err.array();
+            throw errs;
+        }
+        const title = req.body.title;
+        const description = req.body.description;
+        const imageSrc = req.body.imageSrc;
+        const category = req.body.category;
+        const roomCount = req.body.roomCount;
+        const bathroomCount = req.body.bathroomCount;
+        const guestCapacity = req.body.guestCapacity;
+        const location = req.body.location;
+        const price = req.body.price;
         const place = await Place.findById(placeId).populate('userId');
         if(!place){
             const error = new Error('Could not find place.');
@@ -230,11 +248,18 @@ exports.getReservation = async (req, res, next) => {
 }
 
 exports.createReservation = async (req, res, next) => {
-    const placeId = req.body.placeId;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
-    const totalPrice = req.body.totalPrice;
+    const err = validationResult(req);
     try {
+        if(!err.isEmpty()){
+            const errs = new Error('Validation failed, entered data is incorrect!');
+            errs.statusCode = 422;
+            errs.data = err.array();
+            throw errs;
+        }
+        const placeId = req.body.placeId;
+        const startDate = req.body.startDate;
+        const endDate = req.body.endDate;
+        const totalPrice = req.body.totalPrice;
         const place = await Place.findById(placeId);
         if (!place) {
             const error = new Error('Could not find place.');
@@ -294,8 +319,15 @@ exports.getFavorites = async (req, res, next) => {
 }
 
 exports.newFavoriteId = async (req, res, next) => {
-    const placeId = req.params.placeId;
+    const err = validationResult(req);
     try {
+        if(!err.isEmpty()){
+            const errs = new Error('Validation failed, entered data is incorrect!');
+            errs.statusCode = 422;
+            errs.data = err.array();
+            throw errs;
+        }
+        const placeId = req.params.placeId;
         const user = await User.findById(req.userId);
         if (!user) {
             const error = new Error('Could not find user.');
