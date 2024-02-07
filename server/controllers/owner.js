@@ -293,4 +293,22 @@ exports.getFavorites = async (req, res, next) => {
     }
 }
 
+exports.newFavoriteId = async (req, res, next) => {
+    const placeId = req.params.placeId;
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) {
+            const error = new Error('Could not find user.');
+            error.statusCode = 404;
+            throw error;
+        }
+        user.favoritePlaces.push(placeId);
+        await user.save();
+        res.status(200).json({message: 'Favorite added.'});
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 }
