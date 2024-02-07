@@ -229,4 +229,33 @@ exports.getReservation = async (req, res, next) => {
     }
 }
 
+exports.createReservation = async (req, res, next) => {
+    const placeId = req.body.placeId;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const totalPrice = req.body.totalPrice;
+    try {
+        const place = await Place.findById(placeId);
+        if (!place) {
+            const error = new Error('Could not find place.');
+            error.statusCode = 404;
+            throw error;
+        }
+        const reservation = new Reservation({
+            userId: req.userId,
+            placeId: placeId,
+            startDate: startDate,
+            endDate: endDate,
+            totalPrice: totalPrice
+        });
+        await reservation.save();
+        place.reservations.push(reservation);
+        await place.save();
+        res.status(201).json({message: 'Reservation created.', reservation: reservation});
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 }
