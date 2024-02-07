@@ -191,4 +191,23 @@ exports.deletePlace = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.getReservations = async (req, res, next) => {
+    const {userId, placeId, authorId} = req.params;
+    let query = {};
+    if (userId) query.userId = userId;
+    if (placeId) query.placeId = placeId;
+    if (authorId) query.placeId = {$in: authorId};
+    try {
+        const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate('placeId');
+        res.status(200).json({
+            message: 'Fetched reservations successfully.',
+            reservations: reservations
+        });
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 }
