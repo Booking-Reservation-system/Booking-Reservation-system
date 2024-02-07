@@ -20,7 +20,7 @@ const userSchema = new Schema({
     },
     favoriteIds: [{
             type: Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'Place',
             required: true,
     }],
     accounts: [{
@@ -28,7 +28,7 @@ const userSchema = new Schema({
             ref: 'Account',
             required: true,
     }],
-    listings: [{
+    places: [{
         type: Schema.Types.ObjectId,
         ref: 'Place',
         required: true,

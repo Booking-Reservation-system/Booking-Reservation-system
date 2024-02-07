@@ -6,7 +6,7 @@ const isAuth = require('../utils/isAuth');
 
 const router = express.Router();
 
-// /api/owner/listings => POST
+// /api/owner/place => POST
 router.post(
     '/place',
     isAuth,

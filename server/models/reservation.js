@@ -7,7 +7,7 @@ const reservationSchema = new Schema({
         ref: 'User',
         required: true,
     },
-    listingId: {
+    placeId: {
         type: Schema.Types.ObjectId,
         ref: 'Place',
         required: true,
