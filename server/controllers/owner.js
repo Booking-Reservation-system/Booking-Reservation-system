@@ -165,4 +165,30 @@ exports.updatePlace = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.deletePlace = async (req, res, next) => {
+    const placeId = req.params.placeId;
+    try {
+        const place = await Place.findById(placeId);
+        if (!place) {
+            const error = new Error('Could not find place.');
+            error.statusCode = 404;
+            throw error;
+        }
+        if (place.userId.toString() !== req.userId) {
+            const error = new Error('Not authorized!');
+            error.statusCode = 403;
+            throw error;
+        }
+        clearImage(place.imageSrc);
+        await Place.findByIdAndRemove(placeId);
+        const user = await User.findById(req.userId);
+        user.places.pull(placeId);
+        await user.save();
+        res.status(200).json({message: 'Deleted place.'});
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
 }
