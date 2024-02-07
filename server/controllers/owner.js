@@ -210,4 +210,23 @@ exports.getReservations = async (req, res, next) => {
     }
 }
 
+exports.getReservation = async (req, res, next) => {
+    const placeId = req.params.placeId;
+    const reservationId = req.params.reservationId;
+    try {
+        const place = await Place.findById(placeId).populate('reservations');
+        if(!place){
+            const error = new Error('Could not find place.');
+            error.statusCode = 404;
+            throw error;
+        }
+        const reservation = place.reservations.filter(reservation => reservation._id.toString() === reservationId);
+        res.status(200).json({ message: 'Place fetched.', reservation: reservation });
+    }
+    catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 }
