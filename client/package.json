@@ -20,7 +20,10 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.0.1",
     "react-router-dom": "^6.22.0",
+    "react-select": "^5.8.0",
     "tailwindcss": "^3.4.1",
+    "tailwindcss-animated": "^1.0.1",
+    "world-countries": "^5.0.0",
     "zustand": "^4.5.0"
   },
   "devDependencies": {

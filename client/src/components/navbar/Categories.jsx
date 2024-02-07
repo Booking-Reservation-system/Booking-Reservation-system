@@ -1,6 +1,9 @@
 import Container from "../Container";
 import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
-import { GiBarn, GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, GiForestCamp, GiIsland, GiWindmill } from 'react-icons/gi';
+import { GiBarn, GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, GiForestCamp, GiIsland, GiWindmill, GiTreehouse } from 'react-icons/gi';
+import { LuPalmtree } from "react-icons/lu";
+import { LiaGolfBallSolid, LiaFireAltSolid } from "react-icons/lia";
+import { TbCamper } from "react-icons/tb";
 import { FaSkiing } from 'react-icons/fa';
 import { BsSnow } from 'react-icons/bs';
 import { IoDiamond } from 'react-icons/io5';
@@ -29,6 +32,11 @@ export const categories = [
       description: 'This property is in the countryside!'
     },
     {
+      label: 'Treehouses',
+      icon: GiTreehouse,
+      description: 'This property is a tree house!'
+    },
+    {
       label: 'Pools',
       icon: TbPool,
       description: 'This is property has a beautiful pool!'
@@ -47,6 +55,11 @@ export const categories = [
       label: 'Skiing',
       icon: FaSkiing,
       description: 'This property has skiing activies!'
+    },
+    {
+      label: 'Campers',
+      icon: TbCamper,
+      description: 'This property is a camper van!'
     },
     {
       label: 'Castles',
@@ -69,6 +82,11 @@ export const categories = [
       description: 'This property is in arctic environment!'
     },
     {
+      label: 'Tropical',
+      icon: LuPalmtree,
+      description: 'This property is in a tropical environment!'
+    },
+    {
       label: 'Desert',
       icon: GiCactus,
       description: 'This property is in the desert!'
@@ -82,6 +100,11 @@ export const categories = [
       label: 'Lux',
       icon: IoDiamond,
       description: 'This property is brand new and luxurious!'
+    },
+    {
+      label: 'Golfing',
+      icon: LiaGolfBallSolid,
+      description: 'This property is near a golf course!'
     }
   ]
 
@@ -98,7 +121,7 @@ const Categories = () => {
 
     return (
        <Container>
-            <div className="pt-4 flex flex-row items-center justify-between overflow-x-auto">
+            <div className="pt-4 flex flex-row items-center overflow-x-auto justify-between gap-4">
                 {categories.map((category) => (
                     <CategoryBox key={category.label} selected={categoryParams === category.label} icon={category.icon} label={category.label}/>
                 ))}
