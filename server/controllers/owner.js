@@ -88,7 +88,7 @@ exports.createPlace = async (req, res, next) => {
         });
         await place.save()
         const user = await User.findById(req.userId)
-        user.listings.push(place)
+        user.places.push(place)
         await user.save();
         res.status(201).json({
             message: 'Post created successfully!',
@@ -99,4 +99,23 @@ exports.createPlace = async (req, res, next) => {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
+}
+
+exports.getPlace = async (req, res, next) => {
+    const placeId = req.params.placeId;
+    try {
+        const place = await Place.findById(placeId).populate('userId');
+        if(!place){
+            const error = new Error('Could not find place.');
+            error.statusCode = 404;
+            throw error;
+        }
+        res.status(200).json({ message: 'Place fetched.', place: place });
+    }
+    catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 }
