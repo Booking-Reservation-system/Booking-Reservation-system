@@ -311,4 +311,25 @@ exports.newFavoriteId = async (req, res, next) => {
     }
 }
 
+exports.deleteFavoriteId = async (req, res, next) => {
+    const placeId = req.params.placeId;
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) {
+            const error = new Error('Could not find user.');
+            error.statusCode = 404;
+            throw error;
+        }
+        user.favoritePlaces.pull(placeId);
+        await user.save();
+        res.status(200).json({message: 'Favorite removed.'});
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+const clearImage = filePath => {
+    filePath = join(__dirname, '..', filePath);
+    unlink(filePath, err => console.log(err));
 }
