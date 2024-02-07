@@ -2,6 +2,53 @@ const { validationResult } = require('express-validator');
 
 const Place = require('../models/place');
 const User = require('../models/user');
+const Reservation = require('../models/reservation');
+const {join} = require("path");
+const {unlink} = require("fs");
+
+exports.getPlaces = async (req, res, next) => {
+    const {userId, roomCount, bathroomCount, guestCount, locationValue, startDate, endDate, category} = req.params;
+    let query = {};
+    if (userId) query.userId = userId;
+    if (roomCount) query.roomCount = roomCount;
+    if (bathroomCount) query.bathroomCount = bathroomCount;
+    if (guestCount) query.guestCapacity = {$gte: guestCount};
+    if (locationValue) query.locationValue = locationValue;
+    if (category) query.category = category;
+    // check place that is not reserved in the date range of startDate and endDate
+    if(startDate && endDate) {
+        query.reservations = {
+            $not: {
+                $elemMatch: {
+                    $or: [
+                        {
+                            startDate: {
+                                $gte: startDate,
+                                $lt: endDate
+                            }
+                        },
+                        {
+                            endDate: {
+                                $gt: startDate,
+                                $lte: endDate
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+    try {
+        const places = await Place.find(query, null, {sort: {createdAt: -1}});
+        res.status(200).json({
+            message: 'Fetched places successfully.',
+            places: places
+        });
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
 
 exports.createPlace = async (req, res, next) => {
     const err = validationResult(req);
