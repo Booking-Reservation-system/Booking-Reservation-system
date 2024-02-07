@@ -49,10 +49,10 @@ router.post(
 );
 
 // /api/owner/place => GET
-router.get('/place', isAuth, ownerController.getPlaces);
+router.get('/place', ownerController.getPlaces);
 
 // /api/owner/place/:placeId => GET
-router.get('/place/:placeId', isAuth, ownerController.getPlace);
+router.get('/place/:placeId', ownerController.getPlace);
 
 // /api/owner/place/:placeId => PUT
 router.put(
