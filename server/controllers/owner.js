@@ -118,4 +118,51 @@ exports.getPlace = async (req, res, next) => {
     }
 }
 
+exports.updatePlace = async (req, res, next) => {
+    const placeId = req.params.placeId;
+    const err = validationResult(req);
+    if(!err.isEmpty()){
+        const errs = new Error('Validation failed, entered data is incorrect!');
+        errs.statusCode = 422;
+        throw errs;
+    }
+    const title = req.body.title;
+    const description = req.body.description;
+    const imageSrc = req.body.imageSrc;
+    const category = req.body.category;
+    const roomCount = req.body.roomCount;
+    const bathroomCount = req.body.bathroomCount;
+    const guestCapacity = req.body.guestCapacity;
+    const location = req.body.location;
+    const price = req.body.price;
+    try {
+        const place = await Place.findById(placeId).populate('userId');
+        if(!place){
+            const error = new Error('Could not find place.');
+            error.statusCode = 404;
+            throw error;
+        }
+        if(place.userId._id.toString() !== req.userId){
+            const error = new Error('Not authorized!');
+            error.statusCode = 403;
+            throw error;
+        }
+        place.title = title;
+        place.description = description;
+        if(req.file){
+            place.imageSrc = req.file.path.replace("\\" ,"/");
+        }
+        place.category = category;
+        place.roomCount = roomCount;
+        place.bathroomCount = bathroomCount;
+        place.guestCapacity = guestCapacity;
+        place.locationValue = location.value;
+        place.price = parseInt(price, 10);
+        const result = await place.save();
+        res.status(200).json({ message: 'Place updated!', place: result });
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
 }
