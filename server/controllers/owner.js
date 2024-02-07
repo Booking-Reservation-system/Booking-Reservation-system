@@ -278,4 +278,19 @@ exports.deleteReservation = async (req, res, next) => {
     }
 }
 
+exports.getFavorites = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.userId).populate('favoriteIds');
+        if (!user) {
+            const error = new Error('Could not find user.');
+            error.statusCode = 404;
+            throw error;
+        }
+        res.status(200).json({message: 'Favorites fetched.', favoritePlaces: user.favoritePlaces});
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 }
