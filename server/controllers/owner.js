@@ -258,4 +258,24 @@ exports.createReservation = async (req, res, next) => {
     }
 }
 
+exports.deleteReservation = async (req, res, next) => {
+    const reservationId = req.params.reservationId;
+    try {
+        const reservation = await Reservation.findById(reservationId);
+        if (!reservation) {
+            const error = new Error('Could not find reservation.');
+            error.statusCode = 404;
+            throw error;
+        }
+        const place = await Place.findById(reservation.placeId);
+        place.reservations.pull(reservationId);
+        await place.save();
+        await Reservation.findByIdAndRemove(reservationId);
+        res.status(200).json({message: 'Deleted reservation.'});
+    } catch(err){
+        if(!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 }
