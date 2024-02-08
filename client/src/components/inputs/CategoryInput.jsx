@@ -2,6 +2,7 @@ const CategoryInput = (props) => {
     const { label, icon: Icon, selected, onClick } = props;
     return (
         <div 
+            id="category"
             onClick={() => onClick(label)}
             className={`
                 rounded-xl 
