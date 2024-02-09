@@ -155,6 +155,6 @@ router.post(
 );
 
 // /api/owner/favorite/:favoriteId => DELETE
-router.delete('/favorite/:favoriteId', isAuth, ownerController.deleteFavorite);
+router.delete('/favorite/:favoriteId', isAuth, ownerController.deleteFavoriteId);
 
 module.exports = router;
