@@ -3,6 +3,7 @@ const { body } = require('express-validator');
 
 const ownerController = require('../controllers/owner');
 const isAuth = require('../utils/isAuth');
+const aes256 = require('../utils/aes-crypto');
 
 const router = express.Router();
 
