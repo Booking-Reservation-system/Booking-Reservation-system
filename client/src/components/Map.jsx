@@ -41,11 +41,14 @@ const Map = (props) => {
   const myIcon = L.Icon.extend({
     options: {
         // shadowUrl: 'leaf-shadow.png',
-        iconSize:     [50, 50],
+        // iconSize:     [50, 50],
+       
+        // iconAnchor:   [30, 94],
         shadowSize:   [50, 64],
-        iconAnchor:   [30, 94],
         shadowAnchor: [4, 62],
-        popupAnchor:  [-10, -76]
+        popupAnchor:  [-10, -76],
+        iconSize: [36,36],
+        iconAnchor: [12,36]
     }
 });
 
