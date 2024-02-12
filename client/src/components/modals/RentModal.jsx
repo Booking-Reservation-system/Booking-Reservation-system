@@ -115,7 +115,6 @@ const RentModal = () => {
           onChange={(value) => setCustomValue("location", value)}
         />
         <Suspense fallback={<div>Loading...</div>}>
-         
           <Map center={watchLocation?.lating} />
         </Suspense>
       </div>

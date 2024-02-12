@@ -13,7 +13,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow.src,
 });
 
-
 // const Map = (props) => {
 //   const { center } = props;
 
@@ -39,28 +38,52 @@ L.Icon.Default.mergeOptions({
 
 const Map = (props) => {
 
+  const myIcon = L.Icon.extend({
+    options: {
+        // shadowUrl: 'leaf-shadow.png',
+        iconSize:     [50, 50],
+        shadowSize:   [50, 64],
+        iconAnchor:   [30, 94],
+        shadowAnchor: [4, 62],
+        popupAnchor:  [-10, -76]
+    }
+});
+
+
+  const centerMarkerIcon   = new myIcon({iconUrl:'red_marker.png',});
+
   const mapContainer = useRef();
   const [map, setMap] = useState({});
-  useEffect(()=>{
-      const map = L.map(mapContainer.current, {attributionControl: false}).setView(props.center || [51.505, -0.09], 8);
+  useEffect(() => {
+    const map = L.map(mapContainer.current, {
+      attributionControl: false,
+    }).setView(props.center || [51.505, -0.09], 8);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      id: 'mapbox/streets-v11',
-  }).addTo(map);
+    const mainLayer = L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+      {
+        maxZoom: 17,
+        attribution:
+          '&copy; <a href="https://carto.com/">carto.com</a> contributors',
+      }
+    );
+    mainLayer.addTo(map);
 
-  
-  // add marker
+    // add marker
+    {props.center && (
+      L.marker(props.center, {icon: centerMarkerIcon}).addTo(map)
+    )}
 
-  // unmount map function
-  return () => map.remove();
+
+    // unmount map function
+    return () => map.remove();
   }, []);
 
   return (
-      <div style={{padding: 0, margin: 0, width: "100%", height: "50vh",}}
-           ref={el => mapContainer.current = el}>
-      </div>
+    <div
+      style={{ padding: 0, margin: 0, width: "100%", height: "50vh" }}
+      ref={(el) => (mapContainer.current = el)}
+    ></div>
   );
-  }
+};
 export default Map;
