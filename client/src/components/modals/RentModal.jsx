@@ -5,6 +5,7 @@ import useRentModal from "../../hooks/useRentModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import { categories } from "../navbar/Categories";
+import ImageUpload from "../inputs/ImageUpload";
 import CategoryInput from "../inputs/CategoryInput";
 import CountrySelect from "../inputs/CountrySelect";
 import Counter from "../inputs/Counter";
@@ -49,6 +50,7 @@ const RentModal = () => {
   const guestCount = watch("guestCount");
   const roomCount = watch("roomCount");
   const bathroomCount = watch("bathroomCount");
+  const imageSrc = watch("imageSrc");
 
   const Map = useMemo(
     () => React.lazy(() => import("../Map")),
@@ -157,6 +159,18 @@ const RentModal = () => {
         />
       </div>
     );
+  }
+
+  if (step === STEPS.IMAGES) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Add a photo of your place"
+          subtitle="Show guests what your place looks like"
+        />
+        <ImageUpload value={imageSrc} onChange={() => setCustomValue('imageSrc', imageSrc)}/>
+      </div>
+    )
   }
 
   return (
