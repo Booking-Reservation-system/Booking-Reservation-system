@@ -23,16 +23,12 @@ exports.getPlaces = async (req, res, next) => {
                 $elemMatch: {
                     $or: [
                         {
-                            startDate: {
-                                $gte: startDate,
-                                $lt: endDate
-                            }
+                            endDate: {$gte: new Date(startDate)},
+                            startDate: {$lte: new Date(startDate)}
                         },
                         {
-                            endDate: {
-                                $gt: startDate,
-                                $lte: endDate
-                            }
+                            startDate: {$lte: new Date(endDate)},
+                            endDate: {$gte: new Date(endDate)}
                         }
                     ]
                 }
