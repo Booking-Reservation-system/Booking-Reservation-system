@@ -42,7 +42,6 @@ const Map = (props) => {
     options: {
         // shadowUrl: 'leaf-shadow.png',
         // iconSize:     [50, 50],
-       
         // iconAnchor:   [30, 94],
         shadowSize:   [50, 64],
         shadowAnchor: [4, 62],
@@ -53,19 +52,20 @@ const Map = (props) => {
 });
 
 
-  const centerMarkerIcon   = new myIcon({iconUrl:'red_marker.png',});
+  const centerMarkerIcon = new myIcon({iconUrl:'red_marker.png',});
 
   const mapContainer = useRef();
-  const [map, setMap] = useState({});
+  // const [map, setMap] = useState({});
   useEffect(() => {
     const map = L.map(mapContainer.current, {
       attributionControl: false,
     }).setView(props.center || [51.505, -0.09], 8);
 
+    // add layer
     const mainLayer = L.tileLayer(
       "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
       {
-        maxZoom: 17,
+        maxZoom: 18,
         attribution:
           '&copy; <a href="https://carto.com/">carto.com</a> contributors',
       }
@@ -79,8 +79,11 @@ const Map = (props) => {
 
 
     // unmount map function
-    return () => map.remove();
-  }, []);
+    return () => {
+      map.off()
+      map.remove()
+    } 
+  }, [props.center]);
 
   return (
     <div
