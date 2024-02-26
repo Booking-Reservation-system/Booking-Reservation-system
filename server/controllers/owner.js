@@ -5,6 +5,7 @@ const User = require('../models/user');
 const Reservation = require('../models/reservation');
 const {join} = require("path");
 const {unlink} = require("fs");
+const aes256 = require('../utils/aes-crypto');
 
 exports.getPlaces = async (req, res, next) => {
     const {userId, roomCount, bathroomCount, guestCount, locationValue, startDate, endDate, category} = req.params;
@@ -40,6 +41,10 @@ exports.getPlaces = async (req, res, next) => {
     }
     try {
         const places = await Place.find(query, null, {sort: {createdAt: -1}});
+        // encrypt placeId for security
+        places.forEach(place => {
+            place._id = aes256.encryptData(place._id.toString());
+        });
         res.status(200).json({
             message: 'Fetched places successfully.',
             places: places
@@ -91,10 +96,11 @@ exports.createPlace = async (req, res, next) => {
         const user = await User.findById(req.userId)
         user.places.push(place)
         await user.save();
+        place._id = aes256.encryptData(place._id.toString());
         res.status(201).json({
             message: 'Post created successfully!',
             place: place,
-            creator: {_id: user._id, name: user.name}
+            creator: {_id: aes256.encryptData(user._id.toString()), name: user.name}
         });
     } catch(err) {
         if (!err.statusCode) err.statusCode = 500;
@@ -103,7 +109,7 @@ exports.createPlace = async (req, res, next) => {
 }
 
 exports.getPlace = async (req, res, next) => {
-    const placeId = req.params.placeId;
+    const placeId = aes256.decryptData(req.params.placeId);
     try {
         const place = await Place.findById(placeId).populate('userId');
         if(!place){
@@ -112,7 +118,7 @@ exports.getPlace = async (req, res, next) => {
             throw error;
         }
         const placeFormatted = {
-            _id: place._id,
+            _id: aes256.encryptData(place._id),
             title: place.title,
             description: place.description,
             imageSrc: place.imageSrc,
@@ -123,7 +129,7 @@ exports.getPlace = async (req, res, next) => {
             location: place.locationValue,
             price: place.price,
             creator: {
-                _id: place.userId._id,
+                _id: aes256.encryptData(place.userId._id.toString()),
                 name: place.userId.name
             }
         }
@@ -136,7 +142,7 @@ exports.getPlace = async (req, res, next) => {
 }
 
 exports.updatePlace = async (req, res, next) => {
-    const placeId = req.params.placeId;
+    const placeId = aes256.decryptData(req.params.placeId);
     const err = validationResult(req);
     try{
         if(!err.isEmpty()){
@@ -177,6 +183,8 @@ exports.updatePlace = async (req, res, next) => {
         place.locationValue = location.value;
         place.price = parseInt(price, 10);
         const result = await place.save();
+        place._id = aes256.encryptData(place._id.toString());
+        place.userId._id = aes256.encryptData(place.userId._id.toString());
         res.status(200).json({ message: 'Place updated!', place: result });
     } catch(err){
         if(!err.statusCode) err.statusCode = 500;
@@ -185,7 +193,7 @@ exports.updatePlace = async (req, res, next) => {
 }
 
 exports.deletePlace = async (req, res, next) => {
-    const placeId = req.params.placeId;
+    const placeId = aes256.decryptData(req.params.placeId);
     try {
         const place = await Place.findById(placeId);
         if (!place) {
@@ -213,11 +221,18 @@ exports.deletePlace = async (req, res, next) => {
 exports.getReservations = async (req, res, next) => {
     const {userId, placeId, authorId} = req.params;
     let query = {};
-    if (userId) query.userId = userId;
-    if (placeId) query.placeId = placeId;
-    if (authorId) query.placeId = {$in: authorId};
+    if (userId) query.userId = aes256.decryptData(userId);
+    if (placeId) query.placeId = aes256.decryptData(placeId);
+    // query userId in place model through reservation model that is populated with placeId;
+    if (authorId) query['placeId.userId'] = aes256.decryptData(authorId);
     try {
         const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate('placeId');
+        // encrypt all id
+        reservations.forEach(reservation => {
+            reservation._id = aes256.encryptData(reservation._id.toString());
+            reservation.userId = aes256.encryptData(reservation.userId.toString());
+            reservation.placeId = aes256.encryptData(reservation.placeId.toString());
+        });
         res.status(200).json({
             message: 'Fetched reservations successfully.',
             reservations: reservations
@@ -229,8 +244,8 @@ exports.getReservations = async (req, res, next) => {
 }
 
 exports.getReservation = async (req, res, next) => {
-    const placeId = req.params.placeId;
-    const reservationId = req.params.reservationId;
+    const placeId = aes256.decryptData(req.params.placeId);
+    const reservationId = aes256.decryptData(req.params.reservationId);
     try {
         const place = await Place.findById(placeId).populate('reservations');
         if(!place){
@@ -238,7 +253,14 @@ exports.getReservation = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
-        const reservation = place.reservations.filter(reservation => reservation._id.toString() === reservationId);
+        let reservation = place.reservations.filter(reservation => reservation._id.toString() === reservationId);
+        // encrypt all id
+        reservation = reservation.map(reservation => {
+            reservation._id = aes256.encryptData(reservation._id.toString());
+            reservation.userId = aes256.encryptData(reservation.userId.toString());
+            reservation.placeId = aes256.encryptData(reservation.placeId.toString());
+            return reservation;
+        });
         res.status(200).json({ message: 'Place fetched.', reservation: reservation });
     }
     catch(err){
@@ -276,6 +298,10 @@ exports.createReservation = async (req, res, next) => {
         await reservation.save();
         place.reservations.push(reservation);
         await place.save();
+        // encrypt all id
+        reservation._id = aes256.encryptData(reservation._id.toString());
+        reservation.userId = aes256.encryptData(reservation.userId.toString());
+        reservation.placeId = aes256.encryptData(reservation.placeId.toString());
         res.status(201).json({message: 'Reservation created.', reservation: reservation});
     } catch(err){
         if(!err.statusCode) err.statusCode = 500;
@@ -284,7 +310,7 @@ exports.createReservation = async (req, res, next) => {
 }
 
 exports.deleteReservation = async (req, res, next) => {
-    const reservationId = req.params.reservationId;
+    const reservationId = aes256.decryptData(req.params.reservationId);
     try {
         const reservation = await Reservation.findById(reservationId);
         if (!reservation) {
@@ -311,6 +337,13 @@ exports.getFavorites = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
+        // encrypt all id
+        user.favoritePlaces = user.favoritePlaces.map(place => {
+            return {
+                ...place,
+                _id: aes256.encryptData(place._id.toString())
+            }
+        });
         res.status(200).json({message: 'Favorites fetched.', favoritePlaces: user.favoritePlaces});
     } catch(err){
         if(!err.statusCode) err.statusCode = 500;
@@ -344,7 +377,7 @@ exports.newFavoriteId = async (req, res, next) => {
 }
 
 exports.deleteFavoriteId = async (req, res, next) => {
-    const placeId = req.params.placeId;
+    const placeId = aes256.decryptData(req.params.placeId);
     try {
         const user = await User.findById(req.userId);
         if (!user) {

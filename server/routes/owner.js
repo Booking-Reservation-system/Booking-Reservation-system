@@ -7,6 +7,11 @@ const aes256 = require('../utils/aes-crypto');
 
 const router = express.Router();
 
+router.get('/test', (req, res, next) => {
+        const aesEcrypted = aes256.encryptData('123456');
+    res.status(200).json({ message: 'Owner route works.', data: {aesEcrypted} });
+});
+
 // /api/owner/place => POST
 router.post(
     '/place',
