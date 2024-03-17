@@ -50,8 +50,8 @@ const RentModal = () => {
     },
   });
 
-  const watchCategory = watch("category");
-  const watchLocation = watch("location");
+  const category = watch("category");
+  const location = watch("location");
   const guestCount = watch("guestCount");
   const roomCount = watch("roomCount");
   const bathroomCount = watch("bathroomCount");
@@ -59,7 +59,7 @@ const RentModal = () => {
 
   const Map = useMemo(
     () => React.lazy(() => import("../Map")),
-    [watchLocation]
+    [location]
   );
   const setCustomValue = (id, value) => {
     setValue(id, value, {
@@ -99,6 +99,7 @@ const RentModal = () => {
       .finally(() => {
         setIsLoading(false)
       })
+    console.log(data)
   }
 
   const actionLabel = useMemo(() => {
@@ -125,10 +126,10 @@ const RentModal = () => {
         {categories.map((item) => (
           <div key={item.label} className="col-span-1 font-semibold">
             <CategoryInput
-              onClick={(watchCategory) =>
-                setCustomValue("category", watchCategory)
+              onClick={(category) =>
+                setCustomValue("category", category)
               }
-              selected={watchCategory === item.label}
+              selected={category === item.label}
               label={item.label}
               icon={item.icon}
             />
@@ -146,11 +147,11 @@ const RentModal = () => {
           subtitle="Help guests find you"
         />
         <CountrySelect
-          value={watchLocation}
+          value={location}
           onChange={(value) => setCustomValue("location", value)}
         />
         <Suspense fallback={<div>Loading...</div>}>
-          <Map center={watchLocation?.lating} />
+          <Map center={location?.lating} />
         </Suspense>
       </div>
     );
@@ -253,7 +254,7 @@ const RentModal = () => {
     <Modal
       isOpen={rentModal.isOpen}
       onClose={rentModal.onClose}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}

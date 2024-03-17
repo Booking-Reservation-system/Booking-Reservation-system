@@ -16,7 +16,7 @@ const CategoryInput = (props) => {
                 cursor-pointer
                 ${selected ? 'border-black' : 'border-neutral-200'}
             `}>    
-            <Icon size={30}/>
+            <Icon size={31}/>
             <div className="font-semibold">
                 {label}
             </div>
