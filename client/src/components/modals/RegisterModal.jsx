@@ -29,6 +29,7 @@ const RegisterModal = () => {
   });
 
   const onSubmit = (data) => {
+    console.log(data)
     setIsLoading(true);
     // sent a request to the server that will create a new user
     // then onClose() the modal

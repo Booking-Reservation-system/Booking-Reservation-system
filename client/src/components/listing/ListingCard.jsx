@@ -26,11 +26,14 @@ const ListingCard = (props) => {
     // bug appear beacuse of the date is undefined
   }, [reservation]);
 
+  const imgSrc = '/server/' + data.imageSrc;
+  console.log(imgSrc);
+
   return (
     <div className="col-span-1 cursor-pointer group">
       <div className="flex flex-col gap-2 w-full">
         <div className="aspect-square overflow-hidden w-full relative rounded-xl">
-          <img src={data.imageSrc} className=" object-cover w-full h-full transition group-hover:scale-110"></img>
+          <img src={imgSrc} className=" object-cover w-full h-full transition group-hover:scale-110"></img>
           <div className="absolute top-3 right-3">
             <HeartButton listingId={data.id} currentUser={data.user} />
           </div>

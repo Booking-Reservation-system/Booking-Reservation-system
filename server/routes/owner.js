@@ -39,7 +39,7 @@ router.post(
         body('bathroomCount')
             .isNumeric()
             .withMessage('Bathroom count must be a number.'),
-        body('guestCount')
+        body('guestCapacity')
             .isNumeric()
             .withMessage('Guest count must be a number.'),
         body('location')

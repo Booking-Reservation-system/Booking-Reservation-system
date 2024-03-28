@@ -6,11 +6,20 @@ import { useNavigate } from 'react-router-dom';
 import useRegisterModal from '../../hooks/useRegisterModal';
 import useLoginModal from '../../hooks/useLoginModal';
 import useRentModal from '../../hooks/useRentModal';
+import useTokenStore from '../../hooks/storeToken';
 const UserMenu = (props) => {
+    const {token, setToken} = useTokenStore()
+    const navigate = useNavigate()
+    let currentUser = false
+    if (token !== null) {
+      currentUser = true
+    }
 
-   const currentUser = true
+    const logoutHandler = () => {
+      setToken(null)
+      navigate('/')
+    }
 
-   const navigate = useNavigate()
    const registerModal = useRegisterModal()
    const loginModal = useLoginModal()
    const rentModal = useRentModal()
@@ -58,7 +67,7 @@ const UserMenu = (props) => {
                 <MenuItem label="My properties" onClick={() => navigate("/properties")}/>
                 <MenuItem label="Add your home" onClick={rentModal.onOpen}/>
                 <hr/>
-                <MenuItem label="Logout" onClick={() => {}}/>
+                <MenuItem label="Logout" onClick={logoutHandler}/>
               </>
             ) : (
               <>

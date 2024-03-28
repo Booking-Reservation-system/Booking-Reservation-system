@@ -6,102 +6,24 @@ import ToasterProvider from "./providers/ToasterProvider";
 import Container from "./components/Container";
 import EmptyState from "./components/EmptyState";
 import ListingCard from "./components/listing/ListingCard";
-
-const DUMMY_DATA = [
-  {
-    id: 1,
-    title: "East Side Beehive",
-    locationValue: "US",
-    price: 315,
-    imageSrc: "/Dummy_Img/Beach.webp",
-    category: "Beach",
-    roomCount: 3,
-    bathroomCount: 2,
-    guestCapacity: 6,
-    description: "A beautiful beach house with a view of the ocean",
-    user: "Tung Lam",
-  },
-  {
-    id: 2,
-    title: "East Side Beehive",
-    locationValue: "US",
-    price: 315,
-    imageSrc: "/Dummy_Img/Beach.webp",
-    category: "Beach",
-    roomCount: 3,
-    bathroomCount: 2,
-    guestCapacity: 6,
-    description: "A beautiful beach house with a view of the ocean",
-    user: "Tung Lam",
-  },
-  {
-    id: 3,
-    title: "East Side Beehive",
-    locationValue: "US",
-    price: 315,
-    imageSrc: "/Dummy_Img/Beach.webp",
-    category: "Beach",
-    roomCount: 3,
-    bathroomCount: 2,
-    guestCapacity: 6,
-    description: "A beautiful beach house with a view of the ocean",
-    user: "Tung Lam",
-  },
-  {
-    id: 4,
-    title: "East Side Beehive",
-    locationValue: "US",
-    price: 315,
-    imageSrc: "/Dummy_Img/Beach.webp",
-    category: "Beach",
-    roomCount: 3,
-    bathroomCount: 2,
-    guestCapacity: 6,
-    description: "A beautiful beach house with a view of the ocean",
-    user: "Tung Lam",
-  },
-  {
-    id: 5,
-    title: "East Side Beehive",
-    locationValue: "US",
-    price: 315,
-    imageSrc: "/Dummy_Img/Beach.webp",
-    category: "Beach",
-    roomCount: 3,
-    bathroomCount: 2,
-    guestCapacity: 6,
-    description: "A beautiful beach house with a view of the ocean",
-    user: "Tung Lam",
-  },
-  {
-    id: 6,
-    title: "East Side Beehive",
-    locationValue: "US",
-    price: 315,
-    imageSrc: "/Dummy_Img/Beach.webp",
-    category: "Beach",
-    roomCount: 3,
-    bathroomCount: 2,
-    guestCapacity: 6,
-    description: "A beautiful beach house with a view of the ocean",
-    user: "Tung Lam",
-  },
-  {
-    id: 7,
-    title: "East Side Beehive",
-    locationValue: "US",
-    price: 315,
-    imageSrc: "/Dummy_Img/Beach.webp",
-    category: "Beach",
-    roomCount: 3,
-    bathroomCount: 2,
-    guestCapacity: 6,
-    description: "A beautiful beach house with a view of the ocean",
-    user: "Tung Lam",
-  },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const IndexPage = () => {
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/owner/place")
+        setData(response.data.places)
+      } catch (error) {
+        toast.error("Something went wrong")
+      }
+    }
+    fetchData()
+  }, [])
+
   const isEmpty = false;
   return (
     <>
@@ -127,8 +49,8 @@ const IndexPage = () => {
                 gap-10
               "
             >
-              {DUMMY_DATA.map((item) => (
-                <ListingCard data={item} key={item.id} reservation="false" />
+              {data.map((item) => (
+                <ListingCard data={item} key={item._id} reservation="false" />
               ))}
             </div>
           </Container>

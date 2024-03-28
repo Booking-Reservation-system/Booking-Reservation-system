@@ -84,7 +84,7 @@ exports.createPlace = async (req, res, next) => {
             roomCount: roomCount,
             bathroomCount: bathroomCount,
             guestCapacity: guestCapacity,
-            locationValue: location.value,
+            locationValue: location,
             price: parseInt(price, 10),
             userId: req.userId
         });

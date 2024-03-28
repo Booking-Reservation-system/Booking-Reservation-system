@@ -13,6 +13,7 @@ import Input from "../inputs/Input"
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import useTokenStore from "../../hooks/storeToken";
 
 const STEPS = {
   CATEGORY: 0,
@@ -40,11 +41,11 @@ const RentModal = () => {
     defaultValues: {
       category: "",
       location: null,
-      guestCount: 1,
+      guestCapacity: 1,
       roomCount: 1,
       bathroomCount: 1,
       imageSrc: "",
-      price: "",
+      price: 0,
       title: "",
       description: "",
     },
@@ -52,7 +53,7 @@ const RentModal = () => {
 
   const category = watch("category");
   const location = watch("location");
-  const guestCount = watch("guestCount");
+  const guestCapacity = watch("guestCapacity");
   const roomCount = watch("roomCount");
   const bathroomCount = watch("bathroomCount");
   const imageSrc = watch("imageSrc");
@@ -71,7 +72,7 @@ const RentModal = () => {
       // check if the input has been touched (focused and leaved)
     });
   };
-
+  
   const onBack = (value) => {
     setStep((value) => value - 1);
   };
@@ -80,12 +81,33 @@ const RentModal = () => {
     setStep((value) => value + 1);
   };
 
+  const { token } = useTokenStore();
+
   const onSubmit = (data) => {
     if (step !== STEPS.PRICE) {
       return onNext();
     }
+    console.log(data)
+    const formDB = new FormData();
+    formDB.append('title', data.title);
+    formDB.append('description', data.description);
+    formDB.append('category', data.category);
+    formDB.append('roomCount', data.roomCount);
+    formDB.append('bathroomCount', data.bathroomCount);
+    formDB.append('guestCapacity', data.guestCapacity);
+    formDB.append('location', data.location.value);
+    formDB.append('price', data.price);
+    formDB.append('image', data.imageSrc);
+    for (const value of formDB.entries()) {
+      console.log(value[0], value[1]);
+    }
+
     setIsLoading(true);
-    axios.post('', data)
+    axios.post('http://localhost:8080/api/owner/place', formDB, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+    })
       .then(() => {
         toast.success('Your place has been added');
         navigate('/') // redirect to the home page
@@ -99,7 +121,7 @@ const RentModal = () => {
       .finally(() => {
         setIsLoading(false)
       })
-    console.log(data)
+    // console.log(data)
   }
 
   const actionLabel = useMemo(() => {
@@ -167,8 +189,8 @@ const RentModal = () => {
         <Counter 
           title="Guests"
           subtitle="How many guests do you allow?"
-          value={guestCount}
-          onChange={(value) => setCustomValue('guestCount', value)}
+          value={guestCapacity}
+          onChange={(value) => setCustomValue('guestCapacity', value)}
         />
         <hr/>
         <Counter 
@@ -190,15 +212,14 @@ const RentModal = () => {
 
   if (step === STEPS.IMAGES) {
     bodyContent = (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 h-[500px]">
         <Heading
           title="Add a photo of your place"
           subtitle="Show guests what your place looks like"
         />
-        <ImageUpload value={imageSrc} onChange={() => setCustomValue('imageSrc', imageSrc)}/>
+        <ImageUpload value={imageSrc} onChange={(value) => setCustomValue('imageSrc', value)}/>
       </div>
     )
-    console.log(imageSrc);
   }
 
   if (step === STEPS.DESCRIPTION) {
@@ -254,7 +275,7 @@ const RentModal = () => {
     <Modal
       isOpen={rentModal.isOpen}
       onClose={rentModal.onClose}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit)} 
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}

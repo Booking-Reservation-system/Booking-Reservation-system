@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillGithub } from "react-icons/ai";
 import toast from "react-hot-toast";
@@ -11,9 +11,11 @@ import Heading from "../Heading";
 import Input from "../inputs/Input";
 import Button from "../Button";
 import Modal from "./Modal";
+import useTokenStore from "../../hooks/storeToken";
 
 const LoginModal = () => {
   const navigate = useNavigate();
+  const { token, setToken} = useTokenStore();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +31,20 @@ const LoginModal = () => {
     },
   });
 
+  useEffect(() => {
+    console.log(token)
+    if (token !== null) {
+      const clearTokenAfterOneHour = () => {
+        setToken(null);
+        toast.error("Session expired. Please log in again.");
+      };
+  
+      const timeoutId = setTimeout(clearTokenAfterOneHour, 3600000); // 1 hour
+  
+      return () => clearTimeout(timeoutId);
+    }
+  }, [token]);
+
   const submitHandler = (data) => {
     setIsLoading(true);
     axios
@@ -36,7 +52,7 @@ const LoginModal = () => {
       .then((res) => {
         loginModal.onClose();
         const token = res.data.token 
-        localStorage.setItem("token", token);
+        setToken(token);
         toast.success("Logged in successfully");
         navigate("/")
       })
