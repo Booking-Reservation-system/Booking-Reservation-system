@@ -12,6 +12,7 @@ router.get('/test', (req, res, next) => {
     res.status(200).json({ message: 'Owner route works.', data: {aesEcrypted} });
 });
 
+// Create a new place
 // /api/owner/place => POST
 router.post(
     '/place',
@@ -54,12 +55,15 @@ router.post(
     ownerController.createPlace
 );
 
+// Get all places
 // /api/owner/place => GET
 router.get('/place', ownerController.getPlaces);
 
+// Get a place by ID
 // /api/owner/place/:placeId => GET
 router.get('/place/:placeId', ownerController.getPlace);
 
+// Update a place by ID
 // /api/owner/place/:placeId => PUT
 router.put(
     '/place/:placeId',
@@ -87,7 +91,7 @@ router.put(
         body('bathroomCount')
             .isNumeric()
             .withMessage('Bathroom count must be a number.'),
-        body('guestCount')
+        body('guestCapacity')
             .isNumeric()
             .withMessage('Guest count must be a number.'),
         body('location')
@@ -102,15 +106,19 @@ router.put(
     ownerController.updatePlace
 );
 
+// Delete a place by ID
 // /api/owner/place/:placeId => DELETE
 router.delete('/place/:placeId', isAuth, ownerController.deletePlace);
 
+// Get all reservations
 // /api/owner/reservation => GET
 router.get('/reservation', isAuth, ownerController.getReservations);
 
+// Get a reservation by ID
 // /api/owner/reservation/:reservationId => GET
 router.get('/reservation/:reservationId', isAuth, ownerController.getReservation);
 
+// Create a new reservation
 // /api/owner/reservation/=> POST
 router.post(
     '/reservation',
@@ -139,12 +147,15 @@ router.post(
     ownerController.createReservation
 );
 
+// Delete a reservation by ID
 // /api/owner/reservation/:reservationId => DELETE
 router.delete('/reservation/:reservationId', isAuth, ownerController.deleteReservation);
 
+// Get all favorites
 // /api/owner/favorite => GET
 router.get('/favorite', isAuth, ownerController.getFavorites);
 
+// Add a favorite
 // /api/owner/favorite => POST
 router.post(
     '/favorite',
@@ -160,6 +171,7 @@ router.post(
     ownerController.newFavoriteId
 );
 
+// Delete a favorite by ID
 // /api/owner/favorite/:favoriteId => DELETE
 router.delete('/favorite/:favoriteId', isAuth, ownerController.deleteFavoriteId);
 

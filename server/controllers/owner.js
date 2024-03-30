@@ -176,7 +176,7 @@ exports.updatePlace = async (req, res, next) => {
         place.roomCount = roomCount;
         place.bathroomCount = bathroomCount;
         place.guestCapacity = guestCapacity;
-        place.locationValue = location.value;
+        place.locationValue = location;
         place.price = parseInt(price, 10);
         const result = await place.save();
         place._id = aes256.encryptData(place._id.toString());
