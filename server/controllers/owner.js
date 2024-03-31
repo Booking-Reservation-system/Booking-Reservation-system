@@ -37,13 +37,17 @@ exports.getPlaces = async (req, res, next) => {
     }
     try {
         const places = await Place.find(query, null, {sort: {createdAt: -1}});
-        // encrypt placeId for security
-        places.forEach(place => {
-            place._id = aes256.encryptData(place._id.toString());
+        // encrypt placeId for security and save the original id in _id
+        const placesFormatted = places.map(place => {
+            return {
+                _id: aes256.encryptData(place._id.toString()),
+                title: place.title,
+                imageSrc: place.imageSrc,
+            }
         });
         res.status(200).json({
             message: 'Fetched places successfully.',
-            places: places
+            places: placesFormatted
         });
     } catch(err){
         if(!err.statusCode) err.statusCode = 500;
@@ -107,6 +111,11 @@ exports.createPlace = async (req, res, next) => {
 exports.getPlace = async (req, res, next) => {
     const placeId = aes256.decryptData(req.params.placeId);
     try {
+        if(!placeId) {
+            const error = new Error('Place ID is missing or invalid.');
+            error.statusCode = 404;
+            throw error;
+        }
         const place = await Place.findById(placeId).populate('userId');
         if(!place){
             const error = new Error('Could not find place.');
@@ -125,7 +134,6 @@ exports.getPlace = async (req, res, next) => {
             location: place.locationValue,
             price: place.price,
             creator: {
-                _id: aes256.encryptData(place.userId._id.toString()),
                 name: place.userId.name
             }
         }
