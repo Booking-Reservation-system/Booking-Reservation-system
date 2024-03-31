@@ -1,19 +1,13 @@
 const express = require('express');
 const { body } = require('express-validator');
 
-const ownerController = require('../controllers/owner');
+const placeController = require('../controllers/place');
 const isAuth = require('../utils/isAuth');
-const aes256 = require('../utils/aes-crypto');
 
 const router = express.Router();
 
-router.get('/test', (req, res, next) => {
-        const aesEcrypted = aes256.encryptData('123456');
-    res.status(200).json({ message: 'Owner route works.', data: {aesEcrypted} });
-});
-
 // Create a new place
-// /api/owner/place => POST
+// /api/v1/place => POST
 router.post(
     '/place',
     isAuth,
@@ -52,19 +46,19 @@ router.post(
             .isNumeric()
             .withMessage('Price must be a number.'),
     ],
-    ownerController.createPlace
+    placeController.createPlace
 );
 
 // Get all places
-// /api/owner/place => GET
-router.get('/place', ownerController.getPlaces);
+// /api/v1/place => GET
+router.get('/place', placeController.getPlaces);
 
 // Get a place by ID
-// /api/owner/place/:placeId => GET
-router.get('/place/:placeId', ownerController.getPlace);
+// /api/v1/place/:placeId => GET
+router.get('/place/:placeId', placeController.getPlace);
 
 // Update a place by ID
-// /api/owner/place/:placeId => PUT
+// /api/v1/place/:placeId => PUT
 router.put(
     '/place/:placeId',
     isAuth,
@@ -103,76 +97,11 @@ router.put(
             .isNumeric()
             .withMessage('Price must be a number.'),
     ],
-    ownerController.updatePlace
+    placeController.updatePlace
 );
 
 // Delete a place by ID
-// /api/owner/place/:placeId => DELETE
-router.delete('/place/:placeId', isAuth, ownerController.deletePlace);
-
-// Get all reservations
-// /api/owner/reservation => GET
-router.get('/reservation', isAuth, ownerController.getReservations);
-
-// Get a reservation by ID
-// /api/owner/reservation/:reservationId => GET
-router.get('/reservation/:reservationId', isAuth, ownerController.getReservation);
-
-// Create a new reservation
-// /api/owner/reservation/=> POST
-router.post(
-    '/reservation',
-    isAuth,
-    [
-        // check fields: placeId, startDate, endDate, totalPrice
-        body('placeId')
-            .trim()
-            .not()
-            .isEmpty()
-            .withMessage('Place ID cannot be empty.'),
-        body('startDate')
-            .trim()
-            .not()
-            .isEmpty()
-            .withMessage('Start date cannot be empty.'),
-        body('endDate')
-            .trim()
-            .not()
-            .isEmpty()
-            .withMessage('End date cannot be empty.'),
-        body('totalPrice')
-            .isNumeric()
-            .withMessage('Total price must be a number.'),
-    ],
-    ownerController.createReservation
-);
-
-// Delete a reservation by ID
-// /api/owner/reservation/:reservationId => DELETE
-router.delete('/reservation/:reservationId', isAuth, ownerController.deleteReservation);
-
-// Get all favorites
-// /api/owner/favorite => GET
-router.get('/favorite', isAuth, ownerController.getFavorites);
-
-// Add a favorite
-// /api/owner/favorite => POST
-router.post(
-    '/favorite',
-    isAuth,
-    [
-        // check fields: placeId
-        body('placeId')
-            .trim()
-            .not()
-            .isEmpty()
-            .withMessage('Place ID cannot be empty.'),
-    ],
-    ownerController.newFavoriteId
-);
-
-// Delete a favorite by ID
-// /api/owner/favorite/:favoriteId => DELETE
-router.delete('/favorite/:favoriteId', isAuth, ownerController.deleteFavoriteId);
+// /api/v1/place/:placeId => DELETE
+router.delete('/place/:placeId', isAuth, placeController.deletePlace);
 
 module.exports = router;

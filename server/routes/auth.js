@@ -7,7 +7,7 @@ const User = require('../models/user');
 const router = express.Router();
 
 // SIGNUP
-// /api/auth/signup => POST
+// /api/v1/auth/signup => POST
 router.post(
     '/signup',
     [
@@ -35,7 +35,7 @@ router.post(
 );
 
 // LOGIN
-// /api/auth/login => POST
+// /api/v1/auth/login => POST
 router.post('/login', authController.login);
 
 module.exports = router;

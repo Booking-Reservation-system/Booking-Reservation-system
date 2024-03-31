@@ -1,4 +1,4 @@
-// Use AES to encrypt and decrypt the id of the user, place, réservation, etc. in the URL parameters to prevent information leakage.
+// Use AES to encrypt and decrypt the id of the user, place, reservation, etc. in the URL parameters to prevent information leakage.
 const crypto = require('crypto');
 
 // Generate secret hash with crypto to use for encryption

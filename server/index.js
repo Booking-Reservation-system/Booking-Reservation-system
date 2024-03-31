@@ -2,9 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
 const multer = require('multer');
 const authRoutes = require('./routes/auth');
-const ownerRoutes = require('./routes/owner');
+const placeRoutes = require('./routes/place');
+const reservationRoutes = require('./routes/reservation');
+const favouriteRoutes = require('./routes/favourite');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -23,6 +26,8 @@ const fileFilter = (req, file, cb) => {
 
 const app = express();
 
+dotenv.config();
+
 app.use(bodyParser.json()); // application/json
 app.use(multer({storage: storage, fileFilter: fileFilter}).single('image'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -39,7 +44,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/owner', ownerRoutes);
+app.use('/api', placeRoutes);
+app.use('/api', reservationRoutes);
+app.use('/api', favouriteRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
