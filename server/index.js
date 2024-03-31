@@ -2,12 +2,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
 const multer = require('multer');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const authRoutes = require('./routes/auth');
 const placeRoutes = require('./routes/place');
 const reservationRoutes = require('./routes/reservation');
 const favouriteRoutes = require('./routes/favourite');
+
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -25,8 +29,6 @@ const fileFilter = (req, file, cb) => {
 }
 
 const app = express();
-
-dotenv.config();
 
 app.use(bodyParser.json()); // application/json
 app.use(multer({storage: storage, fileFilter: fileFilter}).single('image'));
