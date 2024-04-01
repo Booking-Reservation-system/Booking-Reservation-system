@@ -41,6 +41,9 @@ exports.getPlaces = async (req, res, next) => {
                 _id: aes256.encryptData(place._id.toString()),
                 title: place.title,
                 imageSrc: place.imageSrc,
+                price: place.price,
+                location: place.locationValue,
+                category: place.category,
             }
         });
         res.status(200).json({
