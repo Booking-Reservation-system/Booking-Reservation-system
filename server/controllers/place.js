@@ -57,7 +57,7 @@ exports.getPlaces = async (req, res, next) => {
 }
 
 exports.getPlace = async (req, res, next) => {
-    const placeId = aes256.decryptData(req.params.placeId);
+    const placeId = aes256.decryptData(req.params.placeId.toString());
     try {
         if(!placeId) {
             const error = new Error('Place ID is missing or invalid.');
