@@ -1,7 +1,7 @@
 import Container from "../Container";
 import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
 import { GiBarn, GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, GiForestCamp, GiIsland, GiWindmill, GiTreehouse } from 'react-icons/gi';
-import { LuPalmtree } from "react-icons/lu";
+import { LuPalmtree, LuBedDouble } from "react-icons/lu";
 import { LiaGolfBallSolid, LiaFireAltSolid } from "react-icons/lia";
 import { TbCamper } from "react-icons/tb";
 import { FaSkiing } from 'react-icons/fa';
@@ -20,6 +20,11 @@ export const categoriesArray = [
       label: 'Windmills',
       icon: GiWindmill,
       description: 'This property is has windmills!',
+    },
+    {
+      label: 'Room',
+      icon: LuBedDouble,
+      description: 'This property is a room!',
     },
     {
       label: 'Modern',

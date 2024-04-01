@@ -20,8 +20,8 @@ const ListingPage = () => {
       try {
         const response = await axios.get(
           `http://localhost:8080/api/place/${listingId}`
-        )
-          setData(response.data.place);
+        );
+        setData(response.data.place);
       } catch (error) {
         toast.error("Something went wrong");
       }
@@ -48,40 +48,42 @@ const ListingPage = () => {
   }
 
   return (
-    <Container>
-      <div className="max-w-screen-xl mx-auto pt-[120px]">
-        <div className="flex flex-col gap-6">
-          <ListingHead
-            title={data?.title}
-            imageSrc={data?.imageSrc}
-            locationValue={data?.location}
-            id={data?._id}
-          />
-          <div className="grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-6">
-            <ListingInfo
-              user={data?.creator?.name}
-              roomCount={data?.roomCount}
-              category={category}
-              description={data?.description}
-              guestCapacity={data?.guestCapacity}
-              bathroomCount={data?.bathroomCount}
+    <>
+      <Container>
+        <div className="max-w-screen-lg mx-auto pt-[120px]">
+          <div className="flex flex-col gap-6">
+            <ListingHead
+              title={data?.title}
+              imageSrc={data?.imageSrc}
               locationValue={data?.location}
+              id={data?._id}
             />
+            <div className="grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-6">
+              <ListingInfo
+                user={data?.creator?.name}
+                roomCount={data?.roomCount}
+                category={category}
+                description={data?.description}
+                guestCapacity={data?.guestCapacity}
+                bathroomCount={data?.bathroomCount}
+                locationValue={data?.location}
+              />
+            </div>
+          </div>
+          <hr />
+          <div className="flex flex-col gap-6 py-8">
+            <div className="text-xl font-semibold">Where you will go</div>
+            <div className="font-light text-md text-neutral-500">{`${location?.region}, ${location?.label}`}</div>
+            <div className="">
+              <Suspense fallback={<div>Loading...</div>}>
+                <Map center={location?.lating} />
+              </Suspense>
+            </div>
           </div>
         </div>
-        <hr />
-        <div className="flex flex-col gap-6 py-8">
-          <div className="text-xl font-semibold">Where you will go</div>
-          <div className="font-light text-md text-neutral-500">{`${location?.region}, ${location?.label}`}</div>
-          <div className="">
-            <Suspense fallback={<div>Loading...</div>}>
-              <Map center={location?.lating} />
-            </Suspense>
-          </div>
-        </div>
-        <ListingFooter />
-      </div>
-    </Container>
+      </Container>
+      <ListingFooter />
+    </>
   );
 };
 
