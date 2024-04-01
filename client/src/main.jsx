@@ -1,13 +1,23 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { BrowserRouter } from 'react-router-dom'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+import { BrowserRouter } from "react-router-dom";
+import Navbar from "./components/navbar/Navbar.jsx";
+import ToasterProvider from "./providers/ToasterProvider.jsx";
+import RentModal from "./components/modals/RentModal.jsx";
+import LoginModal from "./components/modals/LoginModal.jsx";
+import RegisterModal from "./components/modals/RegisterModal.jsx";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App/>
+      <ToasterProvider />
+      <RentModal />
+      <LoginModal />
+      <RegisterModal />
+      <Navbar />
+      <App />
     </BrowserRouter>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);

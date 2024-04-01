@@ -10,7 +10,7 @@ import { IoDiamond } from 'react-icons/io5';
 import { MdOutlineVilla } from 'react-icons/md';
 import { useLocation } from "react-router-dom";
 import CategoryBox from "../CategoryBox";
-export const categories = [
+export const categoriesArray = [
     {
       label: 'Beach',
       icon: TbBeach,
@@ -122,7 +122,7 @@ const Categories = () => {
     return (
        <Container>
             <div className="pt-4 flex flex-row items-center overflow-x-auto justify-between gap-4">
-                {categories.map((category) => (
+                {categoriesArray.map((category) => (
                     <CategoryBox key={category.label} selected={categoryParams === category.label} icon={category.icon} label={category.label}/>
                 ))}
             </div>

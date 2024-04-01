@@ -87,7 +87,7 @@ const Map = (props) => {
 
   return (
     <div
-      style={{ padding: 0, margin: 0, width: "100%", height: "50vh" }}
+      style={{ padding: 0, margin: 0, width: "100%", height: "60vh" }}
       ref={(el) => (mapContainer.current = el)}
     ></div>
   );

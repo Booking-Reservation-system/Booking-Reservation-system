@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import useRentModal from "../../hooks/useRentModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
-import { categories } from "../navbar/Categories";
+import { categoriesArray } from "../navbar/Categories";
 import ImageUpload from "../inputs/ImageUpload";
 import CategoryInput from "../inputs/CategoryInput";
 import CountrySelect from "../inputs/CountrySelect";
@@ -103,7 +103,7 @@ const RentModal = () => {
     }
 
     setIsLoading(true);
-    axios.post('http://localhost:8080/api/owner/place', formDB, {
+    axios.post('http://localhost:8080/api/place', formDB, {
       headers: {
         Authorization: 'Bearer ' + token
       },
@@ -145,7 +145,7 @@ const RentModal = () => {
         subtitle="Pick a category"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto">
-        {categories.map((item) => (
+        {categoriesArray.map((item) => (
           <div key={item.label} className="col-span-1 font-semibold">
             <CategoryInput
               onClick={(category) =>

@@ -7,8 +7,8 @@ const Logo = () => {
     <img
       onClick={() => navigate("/")}
       alt="Logo"
-      height={80}
-      width={80}
+      height={50}
+      width={50}
       src="/icon.png"
       className="
             hidden 

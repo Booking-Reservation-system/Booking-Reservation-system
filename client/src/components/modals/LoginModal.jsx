@@ -32,7 +32,6 @@ const LoginModal = () => {
   });
 
   useEffect(() => {
-    console.log(token)
     if (token !== null) {
       const clearTokenAfterOneHour = () => {
         setToken(null);
