@@ -71,7 +71,7 @@ exports.getPlace = async (req, res, next) => {
             throw error;
         }
         const placeFormatted = {
-            _id: aes256.encryptData(place._id),
+            _id: aes256.encryptData(place._id.toString()),
             title: place.title,
             description: place.description,
             imageSrc: place.imageSrc,
