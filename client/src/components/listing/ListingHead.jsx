@@ -9,7 +9,7 @@ const ListingHead = (props) => {
   const imgSrc = "http://localhost:8080/" + imageSrc;
   return (
     <>
-      <div className="flex flex-row justify-between pb-[30px]">
+      <div className="flex flex-row justify-between pb-[10px]">
         <div className="flex flex-col gap-2">
           <div className="text-2xl font-bold">{title}</div>
           <div className="font-light text-md text-neutral-500">{`${location.region}, ${location.label}`}</div>

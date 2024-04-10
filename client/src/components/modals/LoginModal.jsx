@@ -12,10 +12,13 @@ import Input from "../inputs/Input";
 import Button from "../Button";
 import Modal from "./Modal";
 import useTokenStore from "../../hooks/storeToken";
+import { useGoogleLogin } from '@react-oauth/google';
+// import { useGoogleOneTapLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 const LoginModal = () => {
   const navigate = useNavigate();
-  const { token, setToken} = useTokenStore();
+  const { token, setToken } = useTokenStore();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +40,9 @@ const LoginModal = () => {
         setToken(null);
         toast.error("Session expired. Please log in again.");
       };
-  
+
       const timeoutId = setTimeout(clearTokenAfterOneHour, 3600000); // 1 hour
-  
+
       return () => clearTimeout(timeoutId);
     }
   }, [token]);
@@ -50,10 +53,10 @@ const LoginModal = () => {
       .post("http://localhost:8080/api/auth/login", data)
       .then((res) => {
         loginModal.onClose();
-        const token = res.data.token 
+        const token = res.data.token;
         setToken(token);
         toast.success("Logged in successfully");
-        navigate("/")
+        navigate("/");
       })
       .catch((err) => {
         toast.error(err.response.data.message);
@@ -89,6 +92,15 @@ const LoginModal = () => {
     registerModal.onOpen();
   }, [loginModal, registerModal]);
 
+
+  
+  const login = useGoogleLogin({
+    onSuccess: credentialResponse => console.log(credentialResponse.access_token),
+  });
+  
+ 
+  
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading title="Welcome to our App" subtitle="Login an account" />
@@ -118,12 +130,9 @@ const LoginModal = () => {
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
-      <Button
-        outline
-        label="Continue with Google"
-        icon={FcGoogle}
-        onClick={() => {}}
-      />
+      {/* <Button outline label="Continue with Google" icon={FcGoogle}/> */}
+      <Button outline label="Continue with Google" icon={FcGoogle} onClick={() => login()}></Button>
+
       <Button
         outline
         label="Continue with Github"

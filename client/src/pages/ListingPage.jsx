@@ -22,7 +22,7 @@ const initialDateRange = {
   endDate: new Date(),
   key: "selection",
 };
-const reservations = []
+const reservations = [];
 
 const ListingPage = () => {
   const { token } = useTokenStore();
@@ -58,10 +58,10 @@ const ListingPage = () => {
       const range = eachDayOfInterval({
         start: new Date(reservation.startDate),
         end: new Date(reservation.endDate),
-      })
-      dates = [...dates, ...range]
-    })
-  }, [reservations])
+      });
+      dates = [...dates, ...range];
+    });
+  }, [reservations]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(data?.price);
@@ -122,8 +122,8 @@ const ListingPage = () => {
       <Container>
         <div className="max-w-screen-lg mx-auto pt-[120px]">
           <div className="flex flex-col gap-6">
-            <div className="flex flex-row gap-8">
-              <div className="">
+            <div className="flex flex-row gap-6 max-md:flex-col">
+              <div className="w-[60%] max-md:w-full">
                 <ListingHead
                   title={data?.title}
                   imageSrc={data?.imageSrc}
@@ -131,15 +131,15 @@ const ListingPage = () => {
                   id={data?._id}
                 />
               </div>
-              <div className="w-[35%]">
+              <div className="w-[40%] sticky top-0 max-md:w-full pt-[75px]">
                 <ListingReservation
-                price={data.price}
-                totalPrice={totalPrice}
-                onChangeDate={(value) => setDateRange(value)}
-                dateRange={dateRange}
-                onSubmit={onCreateReservation}
-                disabled={isLoading}
-                disabledDate={disabledDate}
+                  price={data.price}
+                  totalPrice={totalPrice}
+                  onChangeDate={(value) => setDateRange(value)}
+                  dateRange={dateRange}
+                  onSubmit={onCreateReservation}
+                  disabled={isLoading}
+                  disabledDate={disabledDate}
                 />
               </div>
             </div>
@@ -154,6 +154,9 @@ const ListingPage = () => {
                 bathroomCount={data?.bathroomCount}
                 locationValue={data?.location}
               />
+              {/* <div className="order-first mb-10 md:order-last md:col-span-3">
+               
+              </div> */}
             </div>
           </div>
           <hr />
