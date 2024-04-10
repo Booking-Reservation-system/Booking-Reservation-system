@@ -2,8 +2,8 @@
 import Container from "../components/Container";
 import EmptyState from "../components/EmptyState";
 import ListingCard from "../components/listing/ListingCard";
+import getAllPlaces from "../action/getAllPlaces";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 
 const IndexPage = () => {
@@ -11,8 +11,8 @@ const IndexPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/place")
-        setData(response.data.places)
+        const response = await getAllPlaces()
+        setData(response)
       } catch (error) {
         toast.error("Something went wrong")
       }
@@ -38,7 +38,7 @@ const IndexPage = () => {
               "
             >
               {data.map((item) => (
-                <ListingCard data={item} key={item._id} reservation="false" />
+                <ListingCard data={item} key={item._id} />
               ))}
             </div>
           </Container>

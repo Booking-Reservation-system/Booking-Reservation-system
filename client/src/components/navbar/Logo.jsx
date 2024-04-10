@@ -13,7 +13,8 @@ const Logo = () => {
       className="
             hidden 
             md:block 
-            cursor-pointer"
+            cursor-pointer
+            w-[50px] h-[50px]"
     ></img>
   );
 };

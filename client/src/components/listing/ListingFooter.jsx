@@ -6,7 +6,7 @@ import { FaTwitter } from "react-icons/fa";
 const ListingFooter = () => {
   return (
     <>
-      <div className="max-w-screen-lg mx-auto pb-[40px] pt-[20px]">
+      <div className="max-w-screen-lg mx-auto pb-[40px] pt-[20px] max-lg:px-[20px]">
         <div className="border-t-2 pt-[20px]"></div>
         <div className="font-semibold text-xl pb-[20px] max-md:hidden">
           Things to know
@@ -48,7 +48,7 @@ const ListingFooter = () => {
         </div>
       </div>
 
-      <div className="pt-[40px] pb-[40px] bg-[#f7f7f7] border-t-2">
+      <div className="pt-[40px] pb-[40px] bg-[#f7f7f7] border-t-2 max-lg:px-[20px]">
         <div className="max-w-screen-lg mx-auto">
           <div className="grid grid-cols-3 gap-4 max-md:grid-cols-1 max-md:px-[20px]">
             <div className="flex flex-col gap-3 max-md:border-b-2 max-md:pb-[15px]">
