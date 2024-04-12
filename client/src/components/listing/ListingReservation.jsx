@@ -12,10 +12,17 @@ const ListingReservation = (props) => {
     disabled,
     disabledDate,
   } = props;
+
+  const formatter =  new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumSignificantDigits: 3
+  })
+
   return (
-    <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden">
+    <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden sticky top-[100px]">
       <div className="flex flex-row items-center gap-1 p-4">
-        <div className="text-2xl font-semibold">$ {price}</div>
+        <div className="text-2xl font-semibold">{formatter.format(price)}</div>
         <div className="font-light text-neutral-600">/ night</div>
       </div>
       <hr />
@@ -26,14 +33,14 @@ const ListingReservation = (props) => {
       />
       <hr/>
       <div className="p-4">
-        <Button disabled={disabled} label="Reverse" onClick={onSubmit}/>
+        <Button label="Reserve" onClick={onSubmit}/>
       </div>
       <div className="p-4 flex flex-row items-center justify-between font-semibold text-lg">
         <div>
           Total:
         </div>
         <div>
-          $ {totalPrice}
+          {formatter.format(totalPrice)}
         </div>
       </div>
     </div>

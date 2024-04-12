@@ -28,13 +28,14 @@ const ListingPage = () => {
   const { token } = useTokenStore();
   const params = useParams();
   const listingId = params.listingId;
-  const [data, setData] = useState();
+  const [listingData, setListingData] = useState();
   useEffect(() => {
     setIsLoading(true);
     const fetchPlace = async () => {
       try {
         const response = await getPlaceById(listingId);
-        setData(response);
+        setListingData(response);
+        console.log(response)
       } catch (error) {
         toast.error("Something went wrong");
       }
@@ -44,7 +45,7 @@ const ListingPage = () => {
   const loginModal = useLoginModal();
   const navigate = useNavigate();
   const { getByValue } = useCountries();
-  const location = getByValue(data?.location);
+  const location = getByValue(listingData?.location);
 
   const Map = useMemo(
     () => React.lazy(() => import("../components/Map")),
@@ -64,7 +65,7 @@ const ListingPage = () => {
   }, [reservations]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(data?.price);
+  const [totalPrice, setTotalPrice] = useState(listingData?.price);
   const [dateRange, setDateRange] = useState(initialDateRange);
 
   const onCreateReservation = useCallback(() => {
@@ -73,12 +74,19 @@ const ListingPage = () => {
       return;
     }
     setIsLoading(true);
+    const reservationDB = new FormData()
+    reservationDB.append('totalPrice', totalPrice)
+    reservationDB.append('startDate', dateRange.startDate)
+    reservationDB.append('endDate', dateRange.endDate)
+    reservationDB.append('placeId', listingId)
+    for (const value of reservationDB.entries()) {
+      console.log(value[0], value[1]);
+    }
     axios
-      .post("/api/reservation", {
-        totalPrice,
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-        placeId: listingId,
+      .post("http://localhost:8080/api/reservation", reservationDB, {
+       headers: {
+          Authorization: "Bearer " + token,
+       }
       })
       .then(() => {
         toast.success("Reservation created successfully");
@@ -99,21 +107,21 @@ const ListingPage = () => {
         dateRange.startDate
       );
 
-      if (dayCount && data.price) {
-        setTotalPrice(dayCount * data?.price);
+      if (dayCount && listingData.price) {
+        setTotalPrice(dayCount * listingData?.price);
       } else {
-        setTotalPrice(data?.price);
+        setTotalPrice(listingData?.price);
       }
     }
-  }, [dateRange, data?.price]);
+  }, [dateRange, listingData?.price]);
 
   const category = useMemo(() => {
     return categoriesArray.find(
-      (category) => category.label === data?.category
+      (category) => category.label === listingData?.category
     );
-  }, [data?.category]);
+  }, [listingData?.category]);
 
-  if (!data) {
+  if (!listingData) {
     return <EmptyState showReset />;
   }
 
@@ -121,42 +129,36 @@ const ListingPage = () => {
     <>
       <Container>
         <div className="max-w-screen-lg mx-auto pt-[120px]">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-row gap-6 max-md:flex-col">
-              <div className="w-[60%] max-md:w-full">
-                <ListingHead
-                  title={data?.title}
-                  imageSrc={data?.imageSrc}
-                  locationValue={data?.location}
-                  id={data?._id}
-                />
-              </div>
-              <div className="w-[40%] sticky top-0 max-md:w-full pt-[75px]">
-                <ListingReservation
-                  price={data.price}
-                  totalPrice={totalPrice}
-                  onChangeDate={(value) => setDateRange(value)}
-                  dateRange={dateRange}
-                  onSubmit={onCreateReservation}
-                  disabled={isLoading}
-                  disabledDate={disabledDate}
-                />
+          <div className="grid grid-cols-3 gap-6">
+            <div className="col-span-2 max-lg:w-full max-lg:grid-cols-1">
+              <ListingHead
+                title={listingData?.title}
+                imageSrc={listingData?.imageSrc}
+                locationValue={listingData?.location}
+                id={listingData?._id}
+              />
+              <div className="pt-[50px]">
+              <ListingInfo
+                user={listingData?.creator?.name}
+                roomCount={listingData?.roomCount}
+                category={category}
+                description={listingData?.description}
+                guestCapacity={listingData?.guestCapacity}
+                bathroomCount={listingData?.bathroomCount}
+                locationValue={listingData?.location}
+              />
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-6">
-              <ListingInfo
-                user={data?.creator?.name}
-                roomCount={data?.roomCount}
-                category={category}
-                description={data?.description}
-                guestCapacity={data?.guestCapacity}
-                bathroomCount={data?.bathroomCount}
-                locationValue={data?.location}
+            <div className=" max-lg:grid-cols-1 top-[75px] relative">
+              <ListingReservation
+                price={listingData.price}
+                totalPrice={totalPrice}
+                onChangeDate={(value) => setDateRange(value)}
+                dateRange={dateRange}
+                onSubmit={onCreateReservation}
+                disabled={isLoading}
+                disabledDate={disabledDate}
               />
-              {/* <div className="order-first mb-10 md:order-last md:col-span-3">
-               
-              </div> */}
             </div>
           </div>
           <hr />

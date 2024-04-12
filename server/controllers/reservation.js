@@ -2,6 +2,8 @@ const aes256 = require("../utils/aes-crypto");
 const Reservation = require("../models/reservation");
 const Place = require("../models/place");
 const {validationResult} = require("express-validator");
+const ObjectId = require('mongodb').ObjectId;
+
 
 exports.getReservations = async (req, res, next) => {
     const {userId, placeId, authorId} = req.params;
@@ -63,7 +65,8 @@ exports.createReservation = async (req, res, next) => {
             errs.data = err.array();
             throw errs;
         }
-        const placeId = req.body.placeId;
+        
+        const placeId = new ObjectId(aes256.decryptData(req.body.placeId));
         const startDate = req.body.startDate;
         const endDate = req.body.endDate;
         const totalPrice = req.body.totalPrice;
