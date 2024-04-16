@@ -66,7 +66,7 @@ const Map = (props) => {
     const mainLayer = L.tileLayer(
       "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
       {
-        maxZoom: 15,
+        maxZoom: 20,
         attribution:
           '&copy; <a href="https://carto.com/">carto.com</a> contributors',
       }

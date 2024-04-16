@@ -6,12 +6,13 @@ const ObjectId = require('mongodb').ObjectId;
 
 
 exports.getReservations = async (req, res, next) => {
-    const {userId, placeId, authorId} = req.params;
+    const {userId, placeId, authorId} = req.body;
     let query = {};
     if (userId) query.userId = aes256.decryptData(userId);
     if (placeId) query.placeId = aes256.decryptData(placeId);
     // query userId in place model through reservation model that is populated with placeId;
     if (authorId) query['placeId.userId'] = aes256.decryptData(authorId);
+    console.log(query)
     try {
         const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate('placeId');
         // encrypt all id

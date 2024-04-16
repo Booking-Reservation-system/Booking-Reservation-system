@@ -14,11 +14,12 @@ const IndexPage = () => {
         const response = await getAllPlaces()
         setData(response)
       } catch (error) {
-        toast.error("Something went wrong")
+        toast.error(error?.response?.data?.message || "Something went wrong")
       }
     }
     fetchData()
   }, [])
+
   const isEmpty = false;
   return (
     <>

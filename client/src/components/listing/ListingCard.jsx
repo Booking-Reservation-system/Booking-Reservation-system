@@ -8,10 +8,11 @@ import HeartButton from "../HeartButton";
 import Button from "../Button";
 
 const ListingCard = (props) => {
+  const navigate = useNavigate();
   const { data, reservation, onAction, disabled, actionLabel, actionId } =
     props;
   const { getByValue } = useCountries();
-  const location = getByValue(data.location);
+  const location = getByValue(data.locationValue);
 
   const handleCancel = useCallback(
     (event) => {
@@ -36,15 +37,20 @@ const ListingCard = (props) => {
     if (!reservation) return null;
     const start = new Date(reservation.startDate);
     const end = new Date(reservation.endDate);
-    return `${format(start, 'PP')} - ${format(end, 'PP')}`;
+    return `${format(start, "PP")} - ${format(end, "PP")}`;
     // bug appear beacuse of the date is undefined
   }, [reservation]);
 
+  const navigateToListingItem = () => {
+    navigate(`/listing/${data._id}`)
+  } 
+
   const imgSrc = "http://localhost:8080/" + data.imageSrc;
   const formatNumber = data.price.toLocaleString("en-US");
+  const totalPrice = price.toLocaleString("en-US");
   return (
-    <Link to={`listing/${data._id}`}>
-      <div className="col-span-1 cursor-pointer group">
+    <div className="flex flex-col gap-4">
+      <div className="col-span-1 cursor-pointer group" onClick={navigateToListingItem}>
         <div className="flex flex-col gap-2 w-full">
           <div className="aspect-square overflow-hidden w-full relative rounded-xl">
             <img
@@ -53,7 +59,7 @@ const ListingCard = (props) => {
               className=" object-cover w-full h-full transition group-hover:scale-110"
             ></img>
             <div className="absolute top-3 right-3">
-              <HeartButton listingId={data.id} />
+              <HeartButton listingId={data._id} />
             </div>
           </div>
           <div className="flex flex-row justify-between">
@@ -65,24 +71,33 @@ const ListingCard = (props) => {
             </div>
             <div>{revervationDate || data.category}</div>
           </div>
-          <div className="flex flex-row items-center gap-1">
-            <div className="text-md font-semibold flex flex-row">
-              ${formatNumber}
-              {!reservation && <div className="font-light"> / night</div>}
+          <div className="flex flex-col gap-1">
+            <div className="flex flex-row">
+              {!reservation && (
+                <div className="text-md font-semibold">
+                  {" "}
+                  ${formatNumber} / night
+                </div>
+              )}
+              {reservation && (
+                <div className="text-md font-semibold">
+                  {" "}
+                  Total price: ${totalPrice}{" "}
+                </div>
+              )}
             </div>
-
-            {onAction && actionLabel && (
-              <Button
-                disabled={disabled}
-                small
-                label={actionLabel}
-                onClick={handleCancel}
-              />
-            )}
           </div>
         </div>
       </div>
-    </Link>
+      {onAction && actionLabel && (
+        <Button
+          disabled={disabled}
+          small
+          label={actionLabel}
+          onClick={handleCancel}
+        />
+      )}
+    </div>
   );
 };
 

@@ -12,7 +12,7 @@ import Input from "../inputs/Input";
 import Button from "../Button";
 import Modal from "./Modal";
 import useTokenStore from "../../hooks/storeToken";
-import { useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from "@react-oauth/google";
 // import { useGoogleOneTapLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 
@@ -34,18 +34,30 @@ const LoginModal = () => {
     },
   });
 
-  useEffect(() => {
-    if (token !== null) {
-      const clearTokenAfterOneHour = () => {
-        setToken(null);
-        toast.error("Session expired. Please log in again.");
-      };
+  // useEffect(() => {
+  //   if (token !== null) {
+  //     const clearTokenAfterOneHour = () => {
+  //       setToken(null);
+  //       toast.error("Session expired. Please log in again.");
+  //     };
 
-      const timeoutId = setTimeout(clearTokenAfterOneHour, 3600000); // 1 hour
+  //     const timeoutId = setTimeout(clearTokenAfterOneHour, 1000*60*60); // 1 hour
 
-      return () => clearTimeout(timeoutId);
-    }
-  }, [token]);
+  //     return () => clearTimeout(timeoutId);
+  //   }
+  // }, [token]);
+
+    const setTimeToken = () => {
+      const basetime = Date.now();
+      const intervalId = setInterval(() => {
+          console.log(Date.now() - basetime);
+          if (Date.now() - basetime >= 10000) {
+              clearInterval(intervalId); // Stop the interval
+              setToken(null);
+              toast.error("Session expired. Please log in again.");
+          }
+      }, 1000); // Check every second
+  };
 
   const submitHandler = (data) => {
     setIsLoading(true);
@@ -55,6 +67,7 @@ const LoginModal = () => {
         loginModal.onClose();
         const token = res.data.token;
         setToken(token);
+        setTimeToken()
         toast.success("Logged in successfully");
         navigate("/");
       })
@@ -92,14 +105,10 @@ const LoginModal = () => {
     registerModal.onOpen();
   }, [loginModal, registerModal]);
 
-
-  
   const login = useGoogleLogin({
-    onSuccess: credentialResponse => console.log(credentialResponse.access_token),
+    onSuccess: (credentialResponse) =>
+      console.log(credentialResponse.access_token),
   });
-  
- 
-  
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -131,7 +140,12 @@ const LoginModal = () => {
     <div className="flex flex-col gap-4 mt-3">
       <hr />
       {/* <Button outline label="Continue with Google" icon={FcGoogle}/> */}
-      <Button outline label="Continue with Google" icon={FcGoogle} onClick={() => login()}></Button>
+      <Button
+        outline
+        label="Continue with Google"
+        icon={FcGoogle}
+        onClick={() => login()}
+      ></Button>
 
       <Button
         outline

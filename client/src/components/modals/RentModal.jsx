@@ -98,9 +98,9 @@ const RentModal = () => {
     formDB.append('location', data.location.value);
     formDB.append('price', data.price);
     formDB.append('image', data.imageSrc);
-    for (const value of formDB.entries()) {
-      console.log(value[0], value[1]);
-    }
+    // for (const value of formDB.entries()) {
+    //   console.log(value[0], value[1]);
+    // }
 
     setIsLoading(true);
     axios.post('http://localhost:8080/api/place', formDB, {
