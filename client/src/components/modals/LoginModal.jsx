@@ -50,8 +50,7 @@ const LoginModal = () => {
     const setTimeToken = () => {
       const basetime = Date.now();
       const intervalId = setInterval(() => {
-          console.log(Date.now() - basetime);
-          if (Date.now() - basetime >= 10000) {
+          if (Date.now() - basetime >= 3600 * 1000) {
               clearInterval(intervalId); // Stop the interval
               setToken(null);
               toast.error("Session expired. Please log in again.");

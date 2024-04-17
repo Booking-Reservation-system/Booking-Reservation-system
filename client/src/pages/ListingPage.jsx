@@ -14,10 +14,8 @@ import ListingReservation from "../components/listing/ListingReservation";
 import EmptyState from "../components/EmptyState";
 import useLoginModal from "../hooks/useLoginModal";
 import getPlaceById from "../action/getPlaceById";
-import getReservation from "../action/getReservation";
 import { differenceInCalendarDays, eachDayOfInterval } from "date-fns";
 import useTokenStore from "../hooks/storeToken";
-
 
 const initialDateRange = {
   startDate: new Date(),
@@ -33,25 +31,9 @@ const ListingPage = () => {
   const navigate = useNavigate();
 
   const [listingData, setListingData] = useState();
-  const [reservations, setReservations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(listingData?.price);
   const [dateRange, setDateRange] = useState(initialDateRange);
-
-  useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const response = await getReservation(token, placeId);
-        setReservations(response.data.reservations);
-      } catch (error) {
-        // toast.error("Something went wrong");
-        console.log(error)
-      }
-    }
-    fetchReservations();
-  }, []);
-  console.log(reservations)
-
 
   useEffect(() => {
     setIsLoading(true);
@@ -75,10 +57,12 @@ const ListingPage = () => {
     [location]
   );
 
+  console.log(listingData?.reservedDate)
+
   const disabledDate = useMemo(() => {
     let dates = [];
 
-    reservations?.forEach((reservation) => {
+    listingData?.reservedDate?.forEach((reservation) => {
       const range = eachDayOfInterval({
         start: new Date(reservation.startDate),
         end: new Date(reservation.endDate),
@@ -86,7 +70,7 @@ const ListingPage = () => {
       dates = [...dates, ...range];
     });
     return dates
-  }, [reservations]);
+  }, [listingData?.reservedDate]);
 
   const onCreateReservation = useCallback(() => {
     if (!token) {
@@ -99,9 +83,7 @@ const ListingPage = () => {
     reservationDB.append('startDate', dateRange.startDate)
     reservationDB.append('endDate', dateRange.endDate)
     reservationDB.append('placeId', placeId)
-    // for (const value of reservationDB.entries()) {
-    //   console.log(value[0], value[1]);
-    // }
+   
     axios
       .post("http://localhost:8080/api/reservation", reservationDB, {
        headers: {
