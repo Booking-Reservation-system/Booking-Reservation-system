@@ -38,19 +38,19 @@ const ListingPage = () => {
   const [totalPrice, setTotalPrice] = useState(listingData?.price);
   const [dateRange, setDateRange] = useState(initialDateRange);
 
-  useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const response = await getReservation(token, placeId);
-        setReservations(response.data.reservations);
-      } catch (error) {
-        // toast.error("Something went wrong");
-        console.log(error)
-      }
-    }
-    fetchReservations();
-  }, []);
-  console.log(reservations)
+  // useEffect(() => {
+  //   const fetchReservations = async () => {
+  //     try {
+  //       const response = await getReservation(token, placeId);
+  //       setReservations(response.data.reservations);
+  //     } catch (error) {
+  //       // toast.error("Something went wrong");
+  //       console.log(error)
+  //     }
+  //   }
+  //   fetchReservations();
+  // }, []);
+  // // console.log(reservations)
 
 
   useEffect(() => {
@@ -67,6 +67,8 @@ const ListingPage = () => {
     fetchPlace();
   }, []);
 
+  console.log(listingData)
+
   const { getByValue } = useCountries();
   const location = getByValue(listingData?.locationValue);
 
@@ -78,7 +80,7 @@ const ListingPage = () => {
   const disabledDate = useMemo(() => {
     let dates = [];
 
-    reservations?.forEach((reservation) => {
+    listingData?.reservedDate?.forEach((reservation) => {
       const range = eachDayOfInterval({
         start: new Date(reservation.startDate),
         end: new Date(reservation.endDate),

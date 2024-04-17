@@ -64,7 +64,7 @@ exports.getPlace = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
-        const place = await Place.findById(placeId).populate('userId');
+        const place = await Place.findById(placeId).populate('userId').populate('reservations');
         if(!place){
             const error = new Error('Could not find place.');
             error.statusCode = 404;
