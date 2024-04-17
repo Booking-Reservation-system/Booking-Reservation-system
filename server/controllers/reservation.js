@@ -96,7 +96,8 @@ exports.createReservation = async (req, res, next) => {
 }
 
 exports.deleteReservation = async (req, res, next) => {
-    const reservationId = aes256.decryptData(req.params.reservationId);
+    const reservationId = req.params.reservationId;
+    // remove encripted id
     try {
         const reservation = await Reservation.findById(reservationId);
         if (!reservation) {
@@ -107,7 +108,7 @@ exports.deleteReservation = async (req, res, next) => {
         const place = await Place.findById(reservation.placeId);
         place.reservations.pull(reservationId);
         await place.save();
-        await Reservation.findByIdAndRemove(reservationId);
+        await Reservation.findByIdAndDelete(reservationId);
         res.status(200).json({message: 'Deleted reservation.'});
     } catch(err){
         if(!err.statusCode) err.statusCode = 500;
