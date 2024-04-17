@@ -120,11 +120,6 @@ exports.createPlace = async (req, res, next) => {
       errs.data = err.array();
       throw errs;
     }
-    if (!req.file) {
-      const error = new Error("No image provided.");
-      error.statusCode = 422;
-      throw error;
-    }
     // Create place in db
     const title = req.body.title;
     const description = req.body.description;
@@ -153,27 +148,6 @@ exports.createPlace = async (req, res, next) => {
       title: title,
       description: description,
       imageSrc: uploadResponse.secure_url,
-    }
-    if (!req.file) {
-      const error = new Error("No image provided.");
-      error.statusCode = 422;
-      throw error;
-    }
-    // Create place in db
-    const title = req.body.title;
-    const description = req.body.description;
-    const imageSrc = req.file.path.replace("\\", "/");
-    const category = req.body.category;
-    const roomCount = req.body.roomCount;
-    const bathroomCount = req.body.bathroomCount;
-    const guestCapacity = req.body.guestCapacity;
-    const location = req.body.location;
-    const price = req.body.price;
-
-    const place = new Place({
-      title: title,
-      description: description,
-      imageSrc: imageSrc,
       category: category,
       roomCount: roomCount,
       bathroomCount: bathroomCount,
@@ -256,57 +230,9 @@ exports.updatePlace = async (req, res, next) => {
         place.userId._id = aes256.encryptData(place.userId._id.toString());
         res.status(200).json({ message: "Place updated!", place: result });
     } catch (err) {
-    if (!err.statusCode) err.statusCode = 500;
-    next(err);
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
     }
-  const placeId = aes256.decryptData(req.params.placeId);
-  const err = validationResult(req);
-  try {
-    if (!err.isEmpty()) {
-      const errs = new Error("Validation failed, entered data is incorrect!");
-      errs.statusCode = 422;
-      errs.data = err.array();
-      throw errs;
-    }
-    const title = req.body.title;
-    const description = req.body.description;
-    const imageSrc = req.body.imageSrc;
-    const category = req.body.category;
-    const roomCount = req.body.roomCount;
-    const bathroomCount = req.body.bathroomCount;
-    const guestCapacity = req.body.guestCapacity;
-    const location = req.body.location;
-    const price = req.body.price;
-    const place = await Place.findById(placeId).populate("userId");
-    if (!place) {
-      const error = new Error("Could not find place.");
-      error.statusCode = 404;
-      throw error;
-    }
-    if (place.userId._id.toString() !== req.userId) {
-      const error = new Error("Not authorized!");
-      error.statusCode = 403;
-      throw error;
-    }
-    place.title = title;
-    place.description = description;
-    if (req.file) {
-      place.imageSrc = req.file.path.replace("\\", "/");
-    }
-    place.category = category;
-    place.roomCount = roomCount;
-    place.bathroomCount = bathroomCount;
-    place.guestCapacity = guestCapacity;
-    place.locationValue = location;
-    place.price = parseInt(price, 10);
-    const result = await place.save();
-    place._id = aes256.encryptData(place._id.toString());
-    place.userId._id = aes256.encryptData(place.userId._id.toString());
-    res.status(200).json({ message: "Place updated!", place: result });
-  } catch (err) {
-    if (!err.statusCode) err.statusCode = 500;
-    next(err);
-  }
 };
 
 exports.deletePlace = async (req, res, next) => {
