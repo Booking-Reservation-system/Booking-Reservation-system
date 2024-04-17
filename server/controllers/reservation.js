@@ -4,12 +4,10 @@ const Place = require("../models/place");
 const {validationResult} = require("express-validator");
 
 exports.getReservations = async (req, res, next) => {
-    const {userId, placeId, authorId} = req.params;
+    const {placeId} = req.params;
     let query = {};
-    if (userId) query.userId = aes256.decryptData(userId);
+    query.userId = req.userId;
     if (placeId) query.placeId = aes256.decryptData(placeId);
-    // query userId in place model through reservation model that is populated with placeId;
-    if (authorId) query['placeId.userId'] = aes256.decryptData(authorId);
     try {
         const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate('placeId');
         // encrypt all id

@@ -70,6 +70,22 @@ exports.getPlace = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
+        const bookedDate = place.reservations.map(reservation => {
+            return {
+                startDate: reservation.startDate,
+                endDate: reservation.endDate
+            }
+        });
+        // create an array of reserved date
+        const reservedDate = [];
+        bookedDate.forEach(date => {
+            let start = new Date(date.startDate);
+            let end = new Date(date.endDate);
+            while(start <= end){
+                reservedDate.push(new Date(start).toISOString().split('T')[0]);
+                start.setDate(start.getDate() + 1);
+            }
+        });
         const placeFormatted = {
             _id: aes256.encryptData(place._id.toString()),
             title: place.title,
@@ -81,6 +97,7 @@ exports.getPlace = async (req, res, next) => {
             guestCapacity: place.guestCapacity,
             location: place.locationValue,
             price: place.price,
+            reservedDate: reservedDate,
             creator: {
                 name: place.userId.name
             }
