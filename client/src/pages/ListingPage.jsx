@@ -14,10 +14,8 @@ import ListingReservation from "../components/listing/ListingReservation";
 import EmptyState from "../components/EmptyState";
 import useLoginModal from "../hooks/useLoginModal";
 import getPlaceById from "../action/getPlaceById";
-import getReservation from "../action/getReservation";
 import { differenceInCalendarDays, eachDayOfInterval } from "date-fns";
 import useTokenStore from "../hooks/storeToken";
-
 
 const initialDateRange = {
   startDate: new Date(),
@@ -33,7 +31,6 @@ const ListingPage = () => {
   const navigate = useNavigate();
 
   const [listingData, setListingData] = useState();
-  const [reservations, setReservations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(listingData?.price);
   const [dateRange, setDateRange] = useState(initialDateRange);
@@ -51,8 +48,6 @@ const ListingPage = () => {
     };
     fetchPlace();
   }, []);
-
-  console.log(listingData)
 
   const { getByValue } = useCountries();
   const location = getByValue(listingData?.locationValue);

@@ -34,6 +34,7 @@ const TripPage = () => {
 
     const onCancel = useCallback((id) => {
         setDeleteId(id)
+        // id in here not encrypt
         axios.delete(`http://localhost:8080/api/reservation/${id}`, {
             headers: {
                 Authorization: "Bearer " + token
