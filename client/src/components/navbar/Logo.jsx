@@ -7,13 +7,14 @@ const Logo = () => {
     <img
       onClick={() => navigate("/")}
       alt="Logo"
-      height={80}
-      width={80}
-      src="/icon.png"
+      height={60}
+      width={60}
+      src="../public/icon.png"
       className="
             hidden 
             md:block 
-            cursor-pointer"
+            cursor-pointer
+            w-[60px] h-[60px]"
     ></img>
   );
 };

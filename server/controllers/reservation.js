@@ -2,12 +2,17 @@ const aes256 = require("../utils/aes-crypto");
 const Reservation = require("../models/reservation");
 const Place = require("../models/place");
 const {validationResult} = require("express-validator");
+const ObjectId = require('mongodb').ObjectId;
+
 
 exports.getReservations = async (req, res, next) => {
     const {placeId} = req.params;
     let query = {};
     query.userId = req.userId;
     if (placeId) query.placeId = aes256.decryptData(placeId);
+    // query userId in place model through reservation model that is populated with placeId;
+    if (authorId) query['placeId.userId'] = aes256.decryptData(authorId);
+    console.log(query)
     try {
         const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate('placeId');
         // encrypt all id
@@ -61,7 +66,8 @@ exports.createReservation = async (req, res, next) => {
             errs.data = err.array();
             throw errs;
         }
-        const placeId = req.body.placeId;
+        
+        const placeId = new ObjectId(aes256.decryptData(req.body.placeId));
         const startDate = req.body.startDate;
         const endDate = req.body.endDate;
         const totalPrice = req.body.totalPrice;

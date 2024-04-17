@@ -42,7 +42,7 @@ exports.getPlaces = async (req, res, next) => {
                 title: place.title,
                 imageSrc: place.imageSrc,
                 price: place.price,
-                location: place.locationValue,
+                locationValue: place.locationValue,
                 category: place.category,
             }
         });
@@ -95,7 +95,7 @@ exports.getPlace = async (req, res, next) => {
             roomCount: place.roomCount,
             bathroomCount: place.bathroomCount,
             guestCapacity: place.guestCapacity,
-            location: place.locationValue,
+            locationValue: place.locationValue,
             price: place.price,
             reservedDate: reservedDate,
             creator: {

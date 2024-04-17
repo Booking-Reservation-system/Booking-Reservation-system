@@ -1,7 +1,7 @@
 import Container from "../Container";
 import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
 import { GiBarn, GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, GiForestCamp, GiIsland, GiWindmill, GiTreehouse } from 'react-icons/gi';
-import { LuPalmtree } from "react-icons/lu";
+import { LuPalmtree, LuBedDouble } from "react-icons/lu";
 import { LiaGolfBallSolid, LiaFireAltSolid } from "react-icons/lia";
 import { TbCamper } from "react-icons/tb";
 import { FaSkiing } from 'react-icons/fa';
@@ -10,7 +10,7 @@ import { IoDiamond } from 'react-icons/io5';
 import { MdOutlineVilla } from 'react-icons/md';
 import { useLocation } from "react-router-dom";
 import CategoryBox from "../CategoryBox";
-export const categories = [
+export const categoriesArray = [
     {
       label: 'Beach',
       icon: TbBeach,
@@ -20,6 +20,11 @@ export const categories = [
       label: 'Windmills',
       icon: GiWindmill,
       description: 'This property is has windmills!',
+    },
+    {
+      label: 'Room',
+      icon: LuBedDouble,
+      description: 'This property is a room!',
     },
     {
       label: 'Modern',
@@ -122,7 +127,7 @@ const Categories = () => {
     return (
        <Container>
             <div className="pt-4 flex flex-row items-center overflow-x-auto justify-between gap-4">
-                {categories.map((category) => (
+                {categoriesArray.map((category) => (
                     <CategoryBox key={category.label} selected={categoryParams === category.label} icon={category.icon} label={category.label}/>
                 ))}
             </div>

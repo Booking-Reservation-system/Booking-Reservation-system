@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import useRentModal from "../../hooks/useRentModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
-import { categories } from "../navbar/Categories";
+import { categoriesArray } from "../navbar/Categories";
 import ImageUpload from "../inputs/ImageUpload";
 import CategoryInput from "../inputs/CategoryInput";
 import CountrySelect from "../inputs/CountrySelect";
@@ -98,12 +98,12 @@ const RentModal = () => {
     formDB.append('location', data.location.value);
     formDB.append('price', data.price);
     formDB.append('image', data.imageSrc);
-    for (const value of formDB.entries()) {
-      console.log(value[0], value[1]);
-    }
+    // for (const value of formDB.entries()) {
+    //   console.log(value[0], value[1]);
+    // }
 
     setIsLoading(true);
-    axios.post('http://localhost:8080/api/owner/place', formDB, {
+    axios.post('http://localhost:8080/api/place', formDB, {
       headers: {
         Authorization: 'Bearer ' + token
       },
@@ -145,7 +145,7 @@ const RentModal = () => {
         subtitle="Pick a category"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto">
-        {categories.map((item) => (
+        {categoriesArray.map((item) => (
           <div key={item.label} className="col-span-1 font-semibold">
             <CategoryInput
               onClick={(category) =>
@@ -163,7 +163,7 @@ const RentModal = () => {
 
   if (step === STEPS.LOCATION) {
     bodyContent = (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 max-h-[65vh]">
         <Heading
           title="Where is your place located?"
           subtitle="Help guests find you"
@@ -212,7 +212,7 @@ const RentModal = () => {
 
   if (step === STEPS.IMAGES) {
     bodyContent = (
-      <div className="flex flex-col gap-8 h-[500px]">
+      <div className="flex flex-col gap-8 h-[65vh]">
         <Heading
           title="Add a photo of your place"
           subtitle="Show guests what your place looks like"

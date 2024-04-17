@@ -47,8 +47,8 @@ const CategoryBox = (props) => {
             ${selected ? 'border-b-neutral-800' : 'border-transparent'}
             ${selected ? 'text-neutral-800' : 'text-neutral-500'}  
         `}>
-            <Icon size={32} />
-            <p className="text-md font-medium">{label}</p>
+            <Icon size={24} />
+            <p className="text-xs font-medium">{label}</p>
         </div>
     )
 }

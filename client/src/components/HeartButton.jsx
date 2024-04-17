@@ -1,6 +1,6 @@
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 const HeartButton = ( props ) => {
-    const { listingId, currentUser } = props;
+    const { listingId } = props;
 
     const hasFavorite = false
     const toggleFavorite = () => {

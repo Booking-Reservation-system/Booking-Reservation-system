@@ -8,7 +8,7 @@ const useTokenStore = create (persist(
     }),
     {
         name: 'token-storage',
-        storage: createJSONStorage(() => sessionStorage)
+        storage: createJSONStorage(() => localStorage)
     }
 ))
 
