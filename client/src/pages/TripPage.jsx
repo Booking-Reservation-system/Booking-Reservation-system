@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import useTokenStore from "../hooks/storeToken";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 import EmptyState from "../components/EmptyState";
 import Container from "../components/Container";
@@ -15,10 +16,14 @@ const TripPage = () => {
     const { token } = useTokenStore();
     const [reservations, setReservations] = useState([]);
     const [deleteId, setDeleteId] = useState('')
+
+    const decodedToken = jwtDecode(token)
+    const userId = decodedToken.userId
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getReservation(token)
+                const response = await getReservation(token, userId)
                 setReservations(response.data.reservations)
             } catch (error) {
                 toast.error("Something went wrong")
@@ -27,13 +32,11 @@ const TripPage = () => {
         fetchData()
     }, [])
 
-    console.log(reservations)
-
     const onCancel = useCallback((id) => {
         setDeleteId(id)
-        axios.delete(`http://localhost:8080/reservation/${id}`, {
+        axios.delete(`http://localhost:8080/api/reservation/${id}`, {
             headers: {
-                Authorization: `Bearer` + token
+                Authorization: "Bearer " + token
             }
         })
         .then(() => {

@@ -5,10 +5,31 @@ const ImageUpload = (props) => {
   const { value, onChange } = props;
 
   const [preview, setPreview] = useState();
+  const [productImg, setProductImg] = useState("");
   const fileInputRef = useRef(null);
   const handleUploadClick = () => {
     fileInputRef.current.click();
   };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    TransformDataType(file);
+  }
+
+  const TransformDataType = (file) => {
+    const reader = new FileReader();
+
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setProductImg(reader.result);
+      };
+    } else {
+      setProductImg("");
+    }
+    console.log(productImg);
+    onChange(productImg)
+  }
 
   // const cloudinaryRef = useRef();
   // const widgetRef = useRef();
@@ -34,9 +55,9 @@ const ImageUpload = (props) => {
         type="file"
         style={{ display: "none" }}
         onChange={(e) => {
-            onChange(e.target.files[0]);
+            // onChange(e.target.files[0]);
             setPreview(URL.createObjectURL(e.target.files[0]));
-            console.log(e.target.files[0]);
+            handleImageUpload(e);
         }}
       />
       <div
