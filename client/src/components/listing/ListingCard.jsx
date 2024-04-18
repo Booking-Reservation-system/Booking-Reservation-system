@@ -45,7 +45,6 @@ const ListingCard = (props) => {
     navigate(`/listing/${data._id}`)
   } 
 
-  const imgSrc = "http://localhost:8080/" + data.imageSrc;
   const formatNumber = data.price.toLocaleString("en-US");
   const totalPrice = price.toLocaleString("en-US");
   return (
@@ -54,7 +53,7 @@ const ListingCard = (props) => {
         <div className="flex flex-col gap-2 w-full">
           <div className="aspect-square overflow-hidden w-full relative rounded-xl">
             <img
-              src={imgSrc}
+              src={data.imageSrc}
               alt="listing"
               className=" object-cover w-full h-full transition group-hover:scale-110"
             ></img>

@@ -5,7 +5,6 @@ const ImageUpload = (props) => {
   const { value, onChange } = props;
 
   const [preview, setPreview] = useState();
-  const [productImg, setProductImg] = useState("");
   const fileInputRef = useRef(null);
   const handleUploadClick = () => {
     fileInputRef.current.click();
@@ -22,31 +21,12 @@ const ImageUpload = (props) => {
     if (file) {
       reader.readAsDataURL(file);
       reader.onloadend = () => {
-        setProductImg(reader.result);
+        onChange(reader.result);
       };
     } else {
-      setProductImg("");
+      onChange(null);
     }
-    console.log(productImg);
-    onChange(productImg)
   }
-
-  // const cloudinaryRef = useRef();
-  // const widgetRef = useRef();
-  // useEffect(() => {
-  //   cloudinaryRef.current = window.cloudinary;
-  //   widgetRef.current = cloudinaryRef.current.createUploadWidget(
-  //     {
-  //       cloudName: "dpantwqyf",
-  //       uploadPreset: "ml_default",
-  //       folder: "ImageUploads",
-  //       cropping: true,
-  //     },
-  //     function (error, result) {
-  //       // console.log(result);
-  //     }
-  //   );
-  // }, []);
 
   return (
     <>

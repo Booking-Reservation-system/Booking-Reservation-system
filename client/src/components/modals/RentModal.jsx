@@ -87,23 +87,37 @@ const RentModal = () => {
     if (step !== STEPS.PRICE) {
       return onNext();
     }
-    console.log(data)
-    const formDB = new FormData();
-    formDB.append('title', data.title);
-    formDB.append('description', data.description);
-    formDB.append('category', data.category);
-    formDB.append('roomCount', data.roomCount);
-    formDB.append('bathroomCount', data.bathroomCount);
-    formDB.append('guestCapacity', data.guestCapacity);
-    formDB.append('location', data.location.value);
-    formDB.append('price', data.price);
-    formDB.append('image', data.imageSrc);
+
+    const inputListingData = {
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      roomCount: data.roomCount,
+      bathroomCount: data.bathroomCount,
+      guestCapacity: data.guestCapacity,
+      location: data.location.value,
+      price: data.price,
+      imageSrc: data.imageSrc,
+    }
+
+    console.log(inputListingData)
+
+    // const formDB = new FormData();
+    // formDB.append('title', data.title);
+    // formDB.append('description', data.description);
+    // formDB.append('category', data.category);
+    // formDB.append('roomCount', data.roomCount);
+    // formDB.append('bathroomCount', data.bathroomCount);
+    // formDB.append('guestCapacity', data.guestCapacity);
+    // formDB.append('location', data.location.value);
+    // formDB.append('price', data.price);
+    // formDB.append('image', data.imageSrc);
     // for (const value of formDB.entries()) {
     //   console.log(value[0], value[1]);
     // }
 
     setIsLoading(true);
-    axios.post('http://localhost:8080/api/place', formDB, {
+    axios.post('http://localhost:8080/api/place', inputListingData, {
       headers: {
         Authorization: 'Bearer ' + token
       },

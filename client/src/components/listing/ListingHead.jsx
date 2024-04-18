@@ -6,7 +6,6 @@ const ListingHead = (props) => {
   const { getByValue } = useCountries();
   const location = getByValue(locationValue);
 
-  const imgSrc = "http://localhost:8080/" + imageSrc;
   return (
     <>
       <div className="flex flex-row justify-between pb-[10px]">
@@ -18,7 +17,7 @@ const ListingHead = (props) => {
       <div className="flex flex-row justify-between">
         <div className="w-full h-[70vh] relative overflow-hidden">
           <img
-            src={imgSrc}
+            src={imageSrc}
             alt="listingImg"
             className="object-cover h-full rounded-xl"
           ></img>

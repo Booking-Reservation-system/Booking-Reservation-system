@@ -78,14 +78,22 @@ const ListingPage = () => {
       return;
     }
     setIsLoading(true);
-    const reservationDB = new FormData()
-    reservationDB.append('totalPrice', totalPrice)
-    reservationDB.append('startDate', dateRange.startDate)
-    reservationDB.append('endDate', dateRange.endDate)
-    reservationDB.append('placeId', placeId)
+
+    const inputReservationData = {
+      totalPrice,
+      startDate: dateRange.startDate,
+      endDate: dateRange.endDate,
+      placeId,
+    }
+
+    // const reservationDB = new FormData()
+    // reservationDB.append('totalPrice', totalPrice)
+    // reservationDB.append('startDate', dateRange.startDate)
+    // reservationDB.append('endDate', dateRange.endDate)
+    // reservationDB.append('placeId', placeId)
    
     axios
-      .post("http://localhost:8080/api/reservation", reservationDB, {
+      .post("http://localhost:8080/api/reservation", inputReservationData, {
        headers: {
           Authorization: "Bearer " + token,
        }

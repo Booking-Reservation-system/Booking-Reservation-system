@@ -112,7 +112,6 @@ exports.getPlace = async (req, res, next) => {
 };
 
 exports.createPlace = async (req, res, next) => {
-    console.log(req.body);
   const err = validationResult(req);
   try {
     if (!err.isEmpty()) {
@@ -137,7 +136,7 @@ exports.createPlace = async (req, res, next) => {
         error.statusCode = 422;
         throw error;
     }
-    const uploadResponse = await imageUpload(imageSrc, "reservation-place");
+    const uploadResponse = await imageUpload(imageSrc, "reservationPlace");
     if(!uploadResponse) {
         const error = new Error("Image upload failed.");
         error.statusCode = 422;
@@ -146,7 +145,7 @@ exports.createPlace = async (req, res, next) => {
     const place = new Place({
       title: title,
       description: description,
-      imageSrc: uploadResponse.secure_url,
+      imageSrc: uploadResponse,
       category: category,
       roomCount: roomCount,
       bathroomCount: bathroomCount,
