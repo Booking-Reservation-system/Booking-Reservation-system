@@ -4,7 +4,7 @@ const { validationResult } = require("express-validator");
 const User = require("../models/user");
 const { join } = require("path");
 const { unlink } = require("fs");
-const { cloudinary } = require("../utils/upload-image");
+const imageUpload = require("../utils/upload-image");
 
 exports.getPlaces = async (req, res, next) => {
   const {
@@ -112,6 +112,7 @@ exports.getPlace = async (req, res, next) => {
 };
 
 exports.createPlace = async (req, res, next) => {
+    console.log(req.body);
   const err = validationResult(req);
   try {
     if (!err.isEmpty()) {
@@ -136,9 +137,7 @@ exports.createPlace = async (req, res, next) => {
         error.statusCode = 422;
         throw error;
     }
-    const uploadResponse = await cloudinary.uploader.upload(imageSrc, {
-        upload_preset: "reservation-place",
-    });
+    const uploadResponse = await imageUpload(imageSrc, "reservation-place");
     if(!uploadResponse) {
         const error = new Error("Image upload failed.");
         error.statusCode = 422;
