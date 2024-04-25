@@ -99,6 +99,25 @@ exports.getPlace = async (req, res, next) => {
       guestCapacity: place.guestCapacity,
       locationValue: place.locationValue,
       price: place.price,
+      amenities: {
+        wifi: place.wifi,
+        tv: place.tv,
+        kitchen: place.kitchen,
+        washer: place.washer,
+        parking: place.parking,
+        ac: place.ac,
+        pool: place.pool,
+        hotTub: place.hotTub,
+        balcony: place.balcony,
+        grill: place.grill,
+        campFire: place.campFire,
+        billiards: place.billiards,
+        gym: place.gym,
+        piano: place.piano,
+        shower: place.shower,
+        firstAid: place.firstAid,
+        fireExtinguisher: place.fireExtinguisher,
+      },
       reservedDate: bookedDate,
       creator: {
         name: place.userId.name,
@@ -131,6 +150,25 @@ exports.createPlace = async (req, res, next) => {
     const location = req.body.location;
     const price = req.body.price;
 
+    // amenities
+    const wifi = req.body.amenities.wifi;
+    const tv = req.body.amenities.tv;
+    const kitchen = req.body.amenities.kitchen;
+    const washer = req.body.amenities.washer;
+    const parking = req.body.amenities.parking;
+    const ac = req.body.amenities.ac;
+    const pool = req.body.amenities.pool;
+    const hotTub = req.body.amenities.hotTub;
+    const balcony = req.body.amenities.balcony;
+    const grill = req.body.amenities.grill;
+    const campFire = req.body.amenities.campFire;
+    const billiards = req.body.amenities.billiards;
+    const gym = req.body.amenities.gym;
+    const piano = req.body.amenities.piano;
+    const shower = req.body.amenities.shower;
+    const firstAid = req.body.amenities.firstAid;
+    const fireExtinguisher = req.body.amenities.fireExtinguisher;
+
     if(!imageSrc) {
         const error = new Error("Image source is missing.");
         error.statusCode = 422;
@@ -152,6 +190,25 @@ exports.createPlace = async (req, res, next) => {
       guestCapacity: guestCapacity,
       locationValue: location,
       price: parseInt(price, 10),
+      amenities: {
+        wifi: wifi,
+        tv: tv,
+        kitchen: kitchen,
+        washer: washer,
+        parking: parking,
+        ac: ac,
+        pool: pool,
+        hotTub: hotTub,
+        balcony: balcony,
+        grill: grill,
+        campFire: campFire,
+        billiards: billiards,
+        gym: gym,
+        piano: piano,
+        shower: shower,
+        firstAid: firstAid,
+        fireExtinguisher: fireExtinguisher,
+      },
       userId: req.userId,
     });
     await place.save();
