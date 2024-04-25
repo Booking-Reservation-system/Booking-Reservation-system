@@ -1,24 +1,22 @@
 import getReservation from "../action/getReservation";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
-import useTokenStore from "../hooks/storeToken";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import useAuth from "../hooks/useAuth";
+import ROUTES from "../constants/routes";
 
 import EmptyState from "../components/EmptyState";
 import Container from "../components/Container";
 import Heading from "../components/Heading";
-import axios from "axios";
 import ListingCard from "../components/listing/ListingCard";
 
 const TripPage = () => {
     const navigate = useNavigate();
-    const { token } = useTokenStore();
     const [reservations, setReservations] = useState([]);
     const [deleteId, setDeleteId] = useState('')
 
-    const decodedToken = jwtDecode(token)
-    const userId = decodedToken.userId
+    const { userId, token } = useAuth()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,24 +30,42 @@ const TripPage = () => {
         fetchData()
     }, [])
 
-    const onCancel = useCallback((id) => {
+     // TODO: hạn chế dùng promise, dùng try catch với async await đi
+    //     // Cái này không cần dùng useCallback vì navigate, token không thay đổi, tốn bộ nhớ cho useCallback
+
+    // const onCancel = useCallback((id) => {
+    //     setDeleteId(id)
+    //     // id in here not encrypt
+    //     axios.delete(`http://localhost:8080/api/reservation/${id}`, {
+    //         headers: {
+    //             Authorization: "Bearer " + token
+    //         }
+    //     })
+    //     .then(() => {
+    //         toast.success("Reservation has been cancelled")
+    //     })
+    //     .catch((error) => {
+    //         toast.error(error?.response?.data?.message || "Something went wrong")
+    //     })
+    //     .finally(() => {
+    //         setDeleteId('')
+    //     })
+    // }, [navigate, token])
+
+    const onCancel = async (id) => {
         setDeleteId(id)
-        // id in here not encrypt
-        axios.delete(`http://localhost:8080/api/reservation/${id}`, {
-            headers: {
-                Authorization: "Bearer " + token
-            }
-        })
-        .then(() => {
-            toast.success("Reservation has been cancelled")
-        })
-        .catch((error) => {
+        try {
+            const response = await axios.delete(`http://localhost:8080/api/reservation/${id}`, {
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            })
+        } catch (error) {
             toast.error(error?.response?.data?.message || "Something went wrong")
-        })
-        .finally(() => {
-            setDeleteId('')
-        })
-    }, [navigate, token])
+        }
+        setDeleteId('')
+        navigate(ROUTES.TRIPS)
+    }
 
     return (
         <Container>

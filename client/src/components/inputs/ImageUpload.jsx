@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { TbPhotoPlus } from "react-icons/tb";
 
 const ImageUpload = (props) => {

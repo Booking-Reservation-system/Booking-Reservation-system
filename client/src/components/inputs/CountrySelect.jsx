@@ -14,7 +14,9 @@ const CountrySelect = (props) => {
                 options={getAll()}
                 value={value}
                 // keep the value while user move to another step
-                onChange={(value) => onChange(value)}
+                // TODO: rút ngắn code được
+                onChange={onChange}
+                // onChange={(value) => onChange(value)}
                 formatOptionLabel={(option) => (
                   <div className="
                   flex flex-row items-center gap-3">

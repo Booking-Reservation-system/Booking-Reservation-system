@@ -1,8 +1,9 @@
 import React, { Suspense, useCallback } from "react";
 import { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Routes } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ROUTES from "../constants/routes";
 
 import useCountries from "../hooks/useCountries";
 import { categoriesArray } from "../components/navbar/Categories";
@@ -16,7 +17,7 @@ import EmptyState from "../components/EmptyState";
 import useLoginModal from "../hooks/useLoginModal";
 import getPlaceById from "../action/getPlaceById";
 import { differenceInCalendarDays, eachDayOfInterval } from "date-fns";
-import useTokenStore from "../hooks/storeToken";
+import useAuth from "../hooks/useAuth";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -25,15 +26,15 @@ const initialDateRange = {
 };
 
 const ListingPage = () => {
-  const { token } = useTokenStore();
   const params = useParams();
-  const placeId = params.placeId;
+  const placeId = params.listingId;
   const loginModal = useLoginModal();
   const navigate = useNavigate();
-
+  const { token } = useAuth();
   const [listingData, setListingData] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(listingData?.price);
+  const [totalPrice, setTotalPrice] = useState(listingData?.price || []);
+  // TODO: nên để là listingData?.price || []
   const [dateRange, setDateRange] = useState(initialDateRange);
 
   useEffect(() => {
@@ -58,7 +59,7 @@ const ListingPage = () => {
     [location]
   );
 
-  console.log(listingData?.reservedDate)
+  // console.log(listingData?.reservedDate)
 
   const disabledDate = useMemo(() => {
     let dates = [];
@@ -94,7 +95,7 @@ const ListingPage = () => {
       })
       .then(() => {
         toast.success("Reservation created successfully");
-        navigate('/trips')
+        navigate(ROUTES.TRIPS);
         setDateRange(initialDateRange);
       })
       .catch(() => {
@@ -134,9 +135,6 @@ const ListingPage = () => {
     return <EmptyState showReset />;
   }
   
-  console.log(amenity)
-  console.log(listingData)  
-
   return (
     <>
       <Container>
