@@ -4,6 +4,7 @@ import { FaKitchenSet } from "react-icons/fa6";
 import { GiWashingMachine } from "react-icons/gi";
 import { FaCar } from "react-icons/fa";
 import { FaRegSnowflake } from "react-icons/fa";
+import { BsPersonWorkspace } from "react-icons/bs";
 
 import { FaSwimmingPool } from "react-icons/fa";
 import { FaHotTub } from "react-icons/fa";
@@ -16,6 +17,7 @@ import { CiDumbbell } from "react-icons/ci";
 import { FaShower } from "react-icons/fa";
 import { FaFirstAid } from "react-icons/fa";
 import { FaFireExtinguisher } from "react-icons/fa";
+import { id } from "date-fns/locale";
 
 export const amenitiesArray = [
     {
@@ -38,7 +40,7 @@ export const amenitiesArray = [
     },
     {
         id: "washer",
-        label: 'Washer',
+        label: 'Washing machine',
         icon: GiWashingMachine,
         description: 'This property has a washer!',
     },
@@ -65,6 +67,12 @@ export const amenitiesArray = [
         label: 'Hot tub',
         icon: FaHotTub,
         description: 'This property has a hot tub!',
+    },
+    {
+        id: "workspace",
+        label: 'Workspace',
+        icon: BsPersonWorkspace,
+        description: 'This property has a workspace!',
     },
     {
         id: "balcony",
@@ -104,7 +112,7 @@ export const amenitiesArray = [
     },
     {
         id: "shower",
-        label: 'Shower',
+        label: 'Outside shower',
         icon: FaShower,
         description: 'This property has a shower!',
     },

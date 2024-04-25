@@ -77,6 +77,10 @@ const placeSchema = new Schema({
         type: Boolean,
         required: false,
     },
+    workspace: {
+        type: Boolean,
+        required: false,
+    },
     balcony: {
         type: Boolean,
         required: false,

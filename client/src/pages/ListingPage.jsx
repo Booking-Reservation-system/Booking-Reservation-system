@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 import useCountries from "../hooks/useCountries";
 import { categoriesArray } from "../components/navbar/Categories";
+import { amenitiesArray } from "../components/Amenities";
 import Container from "../components/Container";
 import ListingHead from "../components/listing/ListingHead";
 import ListingInfo from "../components/listing/ListingInfo";
@@ -85,13 +86,6 @@ const ListingPage = () => {
       endDate: dateRange.endDate,
       placeId,
     }
-
-    // const reservationDB = new FormData()
-    // reservationDB.append('totalPrice', totalPrice)
-    // reservationDB.append('startDate', dateRange.startDate)
-    // reservationDB.append('endDate', dateRange.endDate)
-    // reservationDB.append('placeId', placeId)
-   
     axios
       .post("http://localhost:8080/api/reservation", inputReservationData, {
        headers: {
@@ -132,9 +126,16 @@ const ListingPage = () => {
     );
   }, [listingData?.category]);
 
+  const amenity = useMemo(() => {
+    return amenitiesArray.filter((amenity) => listingData?.amenities[amenity.id]);
+  }, [listingData?.amenities])
+
   if (!listingData) {
     return <EmptyState showReset />;
   }
+  
+  console.log(amenity)
+  console.log(listingData)  
 
   return (
     <>
@@ -157,6 +158,7 @@ const ListingPage = () => {
                 guestCapacity={listingData?.guestCapacity}
                 bathroomCount={listingData?.bathroomCount}
                 locationValue={listingData?.locationValue}
+                amenities={amenity}
               />
               </div>
             </div>

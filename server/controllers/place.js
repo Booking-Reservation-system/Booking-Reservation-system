@@ -100,23 +100,24 @@ exports.getPlace = async (req, res, next) => {
       locationValue: place.locationValue,
       price: place.price,
       amenities: {
-        wifi: place.wifi,
-        tv: place.tv,
-        kitchen: place.kitchen,
-        washer: place.washer,
-        parking: place.parking,
-        ac: place.ac,
-        pool: place.pool,
-        hotTub: place.hotTub,
-        balcony: place.balcony,
-        grill: place.grill,
-        campFire: place.campFire,
-        billiards: place.billiards,
-        gym: place.gym,
-        piano: place.piano,
-        shower: place.shower,
-        firstAid: place.firstAid,
-        fireExtinguisher: place.fireExtinguisher,
+        wifi: place.amenities.wifi,
+        tv: place.amenities.tv,
+        kitchen: place.amenities.kitchen,
+        washer: place.amenities.washer,
+        parking: place.amenities.parking,
+        ac: place.amenities.ac,
+        pool: place.amenities.pool,
+        hotTub: place.amenities.hotTub,
+        workspace: place.amenities.workspace,
+        balcony: place.amenities.balcony,
+        grill: place.amenities.grill,
+        campFire: place.amenities.campFire,
+        billiards: place.amenities.billiards,
+        gym: place.amenities.gym,
+        piano: place.amenities.piano,
+        shower: place.amenities.shower,
+        firstAid: place.amenities.firstAid,
+        fireExtinguisher: place.amenities.fireExtinguisher,
       },
       reservedDate: bookedDate,
       creator: {
@@ -159,6 +160,7 @@ exports.createPlace = async (req, res, next) => {
     const ac = req.body.amenities.ac;
     const pool = req.body.amenities.pool;
     const hotTub = req.body.amenities.hotTub;
+    const workspace = req.body.amenities.workspace;
     const balcony = req.body.amenities.balcony;
     const grill = req.body.amenities.grill;
     const campFire = req.body.amenities.campFire;
@@ -199,6 +201,7 @@ exports.createPlace = async (req, res, next) => {
         ac: ac,
         pool: pool,
         hotTub: hotTub,
+        workspace: workspace,
         balcony: balcony,
         grill: grill,
         campFire: campFire,
