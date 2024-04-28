@@ -30,7 +30,7 @@ const ListingPage = () => {
   const placeId = params.listingId;
   const loginModal = useLoginModal();
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { authToken } = useAuth();
   const [listingData, setListingData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(listingData?.price || []);
@@ -90,7 +90,7 @@ const ListingPage = () => {
     axios
       .post("http://localhost:8080/api/reservation", inputReservationData, {
        headers: {
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + authToken,
        }
       })
       .then(() => {
@@ -104,7 +104,7 @@ const ListingPage = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [totalPrice, dateRange, placeId, token, loginModal]);
+  }, [totalPrice, dateRange, placeId, authToken, loginModal]);
 
   useEffect(() => {
     if (dateRange.startDate && dateRange.endDate) {

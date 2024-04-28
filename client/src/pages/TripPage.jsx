@@ -16,12 +16,12 @@ const TripPage = () => {
     const [reservations, setReservations] = useState([]);
     const [deleteId, setDeleteId] = useState('')
 
-    const { userId, token } = useAuth()
+    const { userId, authToken } = useAuth()
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getReservation(token, userId)
+                const response = await getReservation(authToken, userId)
                 setReservations(response.data.reservations)
             } catch (error) {
                 toast.error("Something went wrong")
@@ -57,9 +57,11 @@ const TripPage = () => {
         try {
             const response = await axios.delete(`http://localhost:8080/api/reservation/${id}`, {
                 headers: {
-                    Authorization: "Bearer " + token
+                    Authorization: "Bearer " + authToken
                 }
             })
+            toast.success("Reservation has been cancelled")
+            navigate(ROUTES.TRIPS)
         } catch (error) {
             toast.error(error?.response?.data?.message || "Something went wrong")
         }

@@ -7,6 +7,7 @@ import useRegisterModal from '../../hooks/useRegisterModal';
 import useLoginModal from '../../hooks/useLoginModal';
 import useRentModal from '../../hooks/useRentModal';
 import useTokenStore from '../../hooks/storeToken';
+import ROUTES from '../../constants/routes';
 const UserMenu = (props) => {
     const {token, setToken} = useTokenStore()
     const navigate = useNavigate()
@@ -17,7 +18,7 @@ const UserMenu = (props) => {
 
     const logoutHandler = () => {
       setToken(null)
-      navigate('/')
+      navigate(ROUTES.HOME)
     }
 
    const registerModal = useRegisterModal()
@@ -61,10 +62,9 @@ const UserMenu = (props) => {
           <div className='flex flex-col cursor-pointer'>
             {currentUser ? (
               <>
-                <MenuItem label="My trips" onClick={() => navigate("/trips")}/>
-                <MenuItem label="My favorites" onClick={() => navigate("/favourites")}/>
-                <MenuItem label="My reservation" onClick={() => navigate("/reservation")}/>
-                <MenuItem label="My properties" onClick={() => navigate("/properties")}/>
+                <MenuItem label="My trips" onClick={() => navigate(ROUTES.TRIPS)}/>
+                <MenuItem label="My favorites" onClick={() => navigate(ROUTES.FAVOURITES)}/>
+                <MenuItem label="My properties" onClick={() => navigate(ROUTES.PROPERTIES)}/>
                 <MenuItem label="Add your home" onClick={rentModal.onOpen}/>
                 <hr/>
                 <MenuItem label="Logout" onClick={logoutHandler}/>

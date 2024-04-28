@@ -16,6 +16,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import useTokenStore from "../../hooks/storeToken";
+import ROUTES from "../../constants/routes";
 
 const STEPS = {
   CATEGORY: 0,
@@ -63,8 +64,8 @@ const RentModal = () => {
   const imageSrc = watch("imageSrc");
 
   const handleAmenities = (id) => {
-    const isSelected = selectedAmenities.includes(id)
-      // If it's already selected, remove it; otherwise, add it
+    const isSelected = selectedAmenities.includes(id);
+    // If it's already selected, remove it; otherwise, add it
     const updatedAmenities = isSelected
       ? selectedAmenities.filter((item) => item !== id)
       : [...selectedAmenities, id];
@@ -95,7 +96,54 @@ const RentModal = () => {
 
   const { token } = useTokenStore();
 
-  const onSubmit = (data) => {
+  // const onSubmit = (data) => {
+  //   if (step !== STEPS.PRICE) {
+  //     return onNext();
+  //   }
+
+  //   const inputListingData = {
+  //     title: data.title,
+  //     description: data.description,
+  //     category: data.category,
+  //     roomCount: data.roomCount,
+  //     bathroomCount: data.bathroomCount,
+  //     guestCapacity: data.guestCapacity,
+  //     location: data.location.value,
+  //     price: data.price,
+  //     imageSrc: data.imageSrc,
+  //   };
+
+  //   const amenities = {}
+  //   selectedAmenities.forEach((item) => {
+  //     amenities[item] = true
+  //   })
+  //   inputListingData.amenities = amenities
+
+  //   console.log(inputListingData);
+  //   setIsLoading(true);
+  //   axios
+  //     .post("http://localhost:8080/api/place", inputListingData, {
+  //       headers: {
+  //         Authorization: "Bearer " + token,
+  //       },
+  //     })
+  //     .then(() => {
+  //       toast.success("Your place has been added");
+  //       setSelectedAmenities([]);
+  //       navigate("/"); // redirect to the home page
+  //       reset();
+  //       setStep(STEPS.CATEGORY);
+  //       rentModal.onClose();
+  //     })
+  //     .catch(() => {
+  //       toast.error("Something went wrong");
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
+
+  const onSubmit = async (data) => {
     if (step !== STEPS.PRICE) {
       return onNext();
     }
@@ -112,34 +160,35 @@ const RentModal = () => {
       imageSrc: data.imageSrc,
     };
 
-    const amenities = {}
+    const amenities = {};
     selectedAmenities.forEach((item) => {
-      amenities[item] = true
-    })
-    inputListingData.amenities = amenities
+      amenities[item] = true;
+    });
+    inputListingData.amenities = amenities;
 
     console.log(inputListingData);
     setIsLoading(true);
-    axios
-      .post("http://localhost:8080/api/place", inputListingData, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
-      .then(() => {
-        toast.success("Your place has been added");
-        setSelectedAmenities([]);
-        navigate("/"); // redirect to the home page
-        reset();
-        setStep(STEPS.CATEGORY);
-        rentModal.onClose();
-      })
-      .catch(() => {
-        toast.error("Something went wrong");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/place",
+        inputListingData,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      toast.success("Your place has been added");
+      setSelectedAmenities([]);
+      navigate(ROUTES.HOME); // redirect to the home page
+      reset();
+      setStep(STEPS.CATEGORY);
+      rentModal.onClose();
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const actionLabel = useMemo(() => {

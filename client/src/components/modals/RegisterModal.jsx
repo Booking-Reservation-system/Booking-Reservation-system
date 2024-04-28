@@ -28,24 +28,37 @@ const RegisterModal = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data)
+  // const onSubmit = (data) => {
+  //   console.log(data)
+  //   setIsLoading(true);
+  //   // sent a request to the server that will create a new user
+  //   // then onClose() the modal
+  //   axios
+  //     .post("http://localhost:8080/api/auth/signup", data)
+  //     .then((res) => {
+  //       registerModal.onClose();
+  //       toast.success(res.data.message);
+  //     })
+  //     .catch((err) => {
+  //       toast.error(err.response.data.data[0].msg);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
+
+  const onSubmit = async (data) => {
     setIsLoading(true);
-    // sent a request to the server that will create a new user
-    // then onClose() the modal
-    axios
-      .post("http://localhost:8080/api/auth/signup", data)
-      .then((res) => {
-        registerModal.onClose();
-        toast.success(res.data.message);
-      })
-      .catch((err) => {
-        toast.error(err.response.data.data[0].msg);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+    try {
+      const response = await axios.post("http://localhost:8080/api/auth/signup", data);
+      registerModal.onClose();
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error.response.data.data[0].msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
 
   const emailValidation = {

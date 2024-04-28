@@ -18,7 +18,7 @@ const userSchema = new Schema({
     hashedPassword: {
         type: String,
     },
-    favoriteIds: [{
+    favouritePlaces: [{
             type: Schema.Types.ObjectId,
             ref: 'Place',
             required: true,

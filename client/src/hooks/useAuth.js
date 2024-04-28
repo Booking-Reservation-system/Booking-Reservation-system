@@ -3,8 +3,11 @@ import useTokenStore from "./storeToken"
 import { jwtDecode } from "jwt-decode";
 const useAuth = () => {
     const { token } = useTokenStore();
+    if (!token) return { userId: null, authToken: null, favoriteId: null };
+    const authToken = token
     const decodedToken = jwtDecode(token)
     const userId = useMemo(() => decodedToken.userId, [decodedToken]);
+    const favoriteId = useMemo(() => decodedToken.favoriteId, [decodedToken]);
 
     // muốn return thêm gì thì thêm vào đây, biến thì dùng useMemo, hàm thì dùng useCallback
     /*
@@ -24,7 +27,7 @@ const useAuth = () => {
     dòng 51 file LoginModal.jsx
     */
 
-    return { userId, token };
+    return { userId, authToken, favoriteId };
 }
 
 export default useAuth;

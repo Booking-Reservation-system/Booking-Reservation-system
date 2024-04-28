@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import ROUTES from "../../constants/routes";
 const Logo = () => {
 
   const navigate = useNavigate();
 
   return (
     <img
-      onClick={() => navigate("/")}
+      onClick={() => navigate(ROUTES.HOME)}
       alt="Logo"
       height={60}
       width={60}

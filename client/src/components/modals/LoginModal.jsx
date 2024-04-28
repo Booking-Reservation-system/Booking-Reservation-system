@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillGithub } from "react-icons/ai";
 import toast from "react-hot-toast";
@@ -14,7 +14,6 @@ import Modal from "./Modal";
 import useTokenStore from "../../hooks/storeToken";
 import { useGoogleLogin } from "@react-oauth/google";
 // import { useGoogleOneTapLogin } from '@react-oauth/google';
-import { jwtDecode } from "jwt-decode";
 import ROUTES from "../../constants/routes";
 
 const LoginModal = () => {
@@ -59,8 +58,9 @@ const LoginModal = () => {
       navigate(ROUTES.HOME);
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   const emailValidation = {
