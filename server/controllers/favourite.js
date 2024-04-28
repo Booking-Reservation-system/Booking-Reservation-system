@@ -25,15 +25,13 @@ exports.getFavourites = async (req, res, next) => {
 }
 
 exports.newFavouriteId = async (req, res, next) => {
-    const err = validationResult(req);
     try {
-        if(!err.isEmpty()){
-            const errs = new Error('Validation failed, entered data is incorrect!');
-            errs.statusCode = 422;
-            errs.data = err.array();
-            throw errs;
+        const placeId = req.params.placeId;
+        if(!placeId){
+            const error = new Error('Place ID is required.');
+            error.statusCode = 400;
+            throw error;
         }
-        const placeId = aes256.decryptData(req.params.placeId);
         const user = await User.findById(req.userId);
         if (!user) {
             const error = new Error('Could not find user.');

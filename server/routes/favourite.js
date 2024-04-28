@@ -8,21 +8,13 @@ const router = express.Router();
 
 // Get all favorites
 // /api/v1/favorite => GET
-router.get('/favourite', isAuth, favouriteController.getFavourites);
+router.get('/favourites', isAuth, favouriteController.getFavourites);
 
 // Add a favourite
 // /api/v1/favourite => POST
 router.post(
-    '/favourite',
+    '/favourite/new/:placeId',
     isAuth,
-    [
-        // check fields: placeId
-        body('placeId')
-            .trim()
-            .not()
-            .isEmpty()
-            .withMessage('Place ID cannot be empty.'),
-    ],
     favouriteController.newFavouriteId
 );
 
