@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillGithub } from "react-icons/ai";
 import toast from "react-hot-toast";
@@ -14,7 +14,7 @@ import Modal from "./Modal";
 import useTokenStore from "../../hooks/storeToken";
 import { useGoogleLogin } from "@react-oauth/google";
 // import { useGoogleOneTapLogin } from '@react-oauth/google';
-import { jwtDecode } from "jwt-decode";
+import ROUTES from "../../constants/routes";
 
 const LoginModal = () => {
   const navigate = useNavigate();
@@ -34,19 +34,7 @@ const LoginModal = () => {
     },
   });
 
-  // useEffect(() => {
-  //   if (token !== null) {
-  //     const clearTokenAfterOneHour = () => {
-  //       setToken(null);
-  //       toast.error("Session expired. Please log in again.");
-  //     };
-
-  //     const timeoutId = setTimeout(clearTokenAfterOneHour, 1000*60*60); // 1 hour
-
-  //     return () => clearTimeout(timeoutId);
-  //   }
-  // }, [token]);
-
+  // Đoạn này hơi loằng ngoằng với làm lag web, dùng tạm thì được :v
     const setTimeToken = () => {
       const basetime = Date.now();
       const intervalId = setInterval(() => {
@@ -58,25 +46,22 @@ const LoginModal = () => {
       }, 1000); // Check every second
   };
 
-  const submitHandler = (data) => {
+  const submitHandler = async (data) => {
     setIsLoading(true);
-    axios
-      .post("http://localhost:8080/api/auth/login", data)
-      .then((res) => {
-        loginModal.onClose();
-        const token = res.data.token;
-        setToken(token);
-        setTimeToken()
-        toast.success("Logged in successfully");
-        navigate("/");
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+    try {
+      const response = await axios.post("http://localhost:8080/api/auth/login", data);
+      loginModal.onClose();
+      const token = response.data.token;
+      setToken(token);
+      setTimeToken()
+      toast.success("Logged in successfully");
+      navigate(ROUTES.HOME);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const emailValidation = {
     checkEmailPattern: (value) => {

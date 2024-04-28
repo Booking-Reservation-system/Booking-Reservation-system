@@ -1,9 +1,9 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Routes } from "react-router-dom";
 import useCountries from "../../hooks/useCountries";
 import { useCallback, useMemo } from "react";
 import { format } from "date-fns";
+import ROUTES from "../../constants/routes";
 
-import { FaStar } from "react-icons/fa";
 import HeartButton from "../HeartButton";
 import Button from "../Button";
 
@@ -38,14 +38,14 @@ const ListingCard = (props) => {
     const start = new Date(reservation.startDate);
     const end = new Date(reservation.endDate);
     return `${format(start, "PP")} - ${format(end, "PP")}`;
-    // bug appear beacuse of the date is undefined
   }, [reservation]);
 
   const navigateToListingItem = () => {
-    navigate(`/listing/${data._id}`)
+    navigate(ROUTES.LISTING_DETAIL.replace(":listingId", data._id))
+    // Không để magic string trong code, tạo một cái file là routes.js chứa tất cả các path
+    // Rồi thay thành navigate(ROUTES.LISTING_DETAIL.replace(":listing_id", data._id))
   } 
 
-  const imgSrc = "http://localhost:8080/" + data.imageSrc;
   const formatNumber = data.price.toLocaleString("en-US");
   const totalPrice = price.toLocaleString("en-US");
   return (
@@ -54,7 +54,7 @@ const ListingCard = (props) => {
         <div className="flex flex-col gap-2 w-full">
           <div className="aspect-square overflow-hidden w-full relative rounded-xl">
             <img
-              src={imgSrc}
+              src={data.imageSrc}
               alt="listing"
               className=" object-cover w-full h-full transition group-hover:scale-110"
             ></img>

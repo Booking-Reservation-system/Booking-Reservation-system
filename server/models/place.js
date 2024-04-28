@@ -43,6 +43,82 @@ const placeSchema = new Schema({
         type: Number,
         required: true,
     },
+    // amenities
+   amenities: {
+    wifi: {
+        type: Boolean,
+        required: false,
+    },
+    tv: {
+        type: Boolean,
+        required: false,
+    },
+    kitchen: {
+        type: Boolean,
+        required: false,
+    },
+    washer: {
+        type: Boolean,
+        required: false,
+    },
+    parking: {
+        type: Boolean,
+        required: false,
+    },
+    ac: {
+        type: Boolean,
+        required: false,
+    },
+    pool: {
+        type: Boolean,
+        required: false,
+    },
+    hotTub: {
+        type: Boolean,
+        required: false,
+    },
+    workspace: {
+        type: Boolean,
+        required: false,
+    },
+    balcony: {
+        type: Boolean,
+        required: false,
+    },
+    grill: {
+        type: Boolean,
+        required: false,
+    },
+    campFire: {
+        type: Boolean,
+        required: false,
+    },
+    billiards: {
+        type: Boolean,
+        required: false,
+    },
+    gym: {
+        type: Boolean,
+        required: false,
+    },
+    piano: {
+        type: Boolean,
+        required: false,
+    },
+    shower: {
+        type: Boolean,
+        required: false,
+    },
+    firstAid: {
+        type: Boolean,
+        required: false,
+    },
+    fireExtinguisher: {
+        type: Boolean,
+        required: false,
+    },
+   },
+
     reservations: [{
         type: Schema.Types.ObjectId,
         ref: 'Reservation',

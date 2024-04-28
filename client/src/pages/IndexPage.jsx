@@ -20,6 +20,8 @@ const IndexPage = () => {
     fetchData()
   }, [])
 
+  
+
   const isEmpty = false;
   return (
     <>

@@ -99,6 +99,26 @@ exports.getPlace = async (req, res, next) => {
       guestCapacity: place.guestCapacity,
       locationValue: place.locationValue,
       price: place.price,
+      amenities: {
+        wifi: place.amenities.wifi,
+        tv: place.amenities.tv,
+        kitchen: place.amenities.kitchen,
+        washer: place.amenities.washer,
+        parking: place.amenities.parking,
+        ac: place.amenities.ac,
+        pool: place.amenities.pool,
+        hotTub: place.amenities.hotTub,
+        workspace: place.amenities.workspace,
+        balcony: place.amenities.balcony,
+        grill: place.amenities.grill,
+        campFire: place.amenities.campFire,
+        billiards: place.amenities.billiards,
+        gym: place.amenities.gym,
+        piano: place.amenities.piano,
+        shower: place.amenities.shower,
+        firstAid: place.amenities.firstAid,
+        fireExtinguisher: place.amenities.fireExtinguisher,
+      },
       reservedDate: bookedDate,
       creator: {
         name: place.userId.name,
@@ -112,7 +132,6 @@ exports.getPlace = async (req, res, next) => {
 };
 
 exports.createPlace = async (req, res, next) => {
-    console.log(req.body);
   const err = validationResult(req);
   try {
     if (!err.isEmpty()) {
@@ -132,12 +151,32 @@ exports.createPlace = async (req, res, next) => {
     const location = req.body.location;
     const price = req.body.price;
 
+    // amenities
+    const wifi = req.body.amenities.wifi;
+    const tv = req.body.amenities.tv;
+    const kitchen = req.body.amenities.kitchen;
+    const washer = req.body.amenities.washer;
+    const parking = req.body.amenities.parking;
+    const ac = req.body.amenities.ac;
+    const pool = req.body.amenities.pool;
+    const hotTub = req.body.amenities.hotTub;
+    const workspace = req.body.amenities.workspace;
+    const balcony = req.body.amenities.balcony;
+    const grill = req.body.amenities.grill;
+    const campFire = req.body.amenities.campFire;
+    const billiards = req.body.amenities.billiards;
+    const gym = req.body.amenities.gym;
+    const piano = req.body.amenities.piano;
+    const shower = req.body.amenities.shower;
+    const firstAid = req.body.amenities.firstAid;
+    const fireExtinguisher = req.body.amenities.fireExtinguisher;
+
     if(!imageSrc) {
         const error = new Error("Image source is missing.");
         error.statusCode = 422;
         throw error;
     }
-    const uploadResponse = await imageUpload(imageSrc, "reservation-place");
+    const uploadResponse = await imageUpload(imageSrc, "reservationPlace");
     if(!uploadResponse) {
         const error = new Error("Image upload failed.");
         error.statusCode = 422;
@@ -146,13 +185,33 @@ exports.createPlace = async (req, res, next) => {
     const place = new Place({
       title: title,
       description: description,
-      imageSrc: uploadResponse.secure_url,
+      imageSrc: uploadResponse,
       category: category,
       roomCount: roomCount,
       bathroomCount: bathroomCount,
       guestCapacity: guestCapacity,
       locationValue: location,
       price: parseInt(price, 10),
+      amenities: {
+        wifi: wifi,
+        tv: tv,
+        kitchen: kitchen,
+        washer: washer,
+        parking: parking,
+        ac: ac,
+        pool: pool,
+        hotTub: hotTub,
+        workspace: workspace,
+        balcony: balcony,
+        grill: grill,
+        campFire: campFire,
+        billiards: billiards,
+        gym: gym,
+        piano: piano,
+        shower: shower,
+        firstAid: firstAid,
+        fireExtinguisher: fireExtinguisher,
+      },
       userId: req.userId,
     });
     await place.save();

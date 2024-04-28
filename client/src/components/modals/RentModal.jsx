@@ -1,19 +1,22 @@
 import React, { Suspense, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { categoriesArray } from "../navbar/Categories";
+import { amenitiesArray } from "../Amenities";
 
 import useRentModal from "../../hooks/useRentModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
-import { categoriesArray } from "../navbar/Categories";
 import ImageUpload from "../inputs/ImageUpload";
+import AmenitiesInput from "../AmenitiesInput";
 import CategoryInput from "../inputs/CategoryInput";
 import CountrySelect from "../inputs/CountrySelect";
 import Counter from "../inputs/Counter";
-import Input from "../inputs/Input"
+import Input from "../inputs/Input";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import useTokenStore from "../../hooks/storeToken";
+import ROUTES from "../../constants/routes";
 
 const STEPS = {
   CATEGORY: 0,
@@ -21,13 +24,15 @@ const STEPS = {
   INFO: 2,
   IMAGES: 3,
   DESCRIPTION: 4,
-  PRICE: 5,
+  AMENITIES: 5,
+  PRICE: 6,
 };
 
 const RentModal = () => {
   const rentModal = useRentModal();
   const navigate = useNavigate();
   const [step, setStep] = useState(STEPS.CATEGORY);
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -58,10 +63,18 @@ const RentModal = () => {
   const bathroomCount = watch("bathroomCount");
   const imageSrc = watch("imageSrc");
 
-  const Map = useMemo(
-    () => React.lazy(() => import("../Map")),
-    [location]
-  );
+  const handleAmenities = (id) => {
+    const isSelected = selectedAmenities.includes(id);
+    // If it's already selected, remove it; otherwise, add it
+    const updatedAmenities = isSelected
+      ? selectedAmenities.filter((item) => item !== id)
+      : [...selectedAmenities, id];
+
+    // Update the selected amenities state
+    setSelectedAmenities(updatedAmenities);
+  };
+
+  const Map = useMemo(() => React.lazy(() => import("../Map")), [location]);
   const setCustomValue = (id, value) => {
     setValue(id, value, {
       shouldValidate: true,
@@ -72,7 +85,7 @@ const RentModal = () => {
       // check if the input has been touched (focused and leaved)
     });
   };
-  
+
   const onBack = (value) => {
     setStep((value) => value - 1);
   };
@@ -83,46 +96,100 @@ const RentModal = () => {
 
   const { token } = useTokenStore();
 
-  const onSubmit = (data) => {
+  // const onSubmit = (data) => {
+  //   if (step !== STEPS.PRICE) {
+  //     return onNext();
+  //   }
+
+  //   const inputListingData = {
+  //     title: data.title,
+  //     description: data.description,
+  //     category: data.category,
+  //     roomCount: data.roomCount,
+  //     bathroomCount: data.bathroomCount,
+  //     guestCapacity: data.guestCapacity,
+  //     location: data.location.value,
+  //     price: data.price,
+  //     imageSrc: data.imageSrc,
+  //   };
+
+  //   const amenities = {}
+  //   selectedAmenities.forEach((item) => {
+  //     amenities[item] = true
+  //   })
+  //   inputListingData.amenities = amenities
+
+  //   console.log(inputListingData);
+  //   setIsLoading(true);
+  //   axios
+  //     .post("http://localhost:8080/api/place", inputListingData, {
+  //       headers: {
+  //         Authorization: "Bearer " + token,
+  //       },
+  //     })
+  //     .then(() => {
+  //       toast.success("Your place has been added");
+  //       setSelectedAmenities([]);
+  //       navigate("/"); // redirect to the home page
+  //       reset();
+  //       setStep(STEPS.CATEGORY);
+  //       rentModal.onClose();
+  //     })
+  //     .catch(() => {
+  //       toast.error("Something went wrong");
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
+
+  const onSubmit = async (data) => {
     if (step !== STEPS.PRICE) {
       return onNext();
     }
-    console.log(data)
-    const formDB = new FormData();
-    formDB.append('title', data.title);
-    formDB.append('description', data.description);
-    formDB.append('category', data.category);
-    formDB.append('roomCount', data.roomCount);
-    formDB.append('bathroomCount', data.bathroomCount);
-    formDB.append('guestCapacity', data.guestCapacity);
-    formDB.append('location', data.location.value);
-    formDB.append('price', data.price);
-    formDB.append('image', data.imageSrc);
-    // for (const value of formDB.entries()) {
-    //   console.log(value[0], value[1]);
-    // }
 
+    const inputListingData = {
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      roomCount: data.roomCount,
+      bathroomCount: data.bathroomCount,
+      guestCapacity: data.guestCapacity,
+      location: data.location.value,
+      price: data.price,
+      imageSrc: data.imageSrc,
+    };
+
+    const amenities = {};
+    selectedAmenities.forEach((item) => {
+      amenities[item] = true;
+    });
+    inputListingData.amenities = amenities;
+
+    console.log(inputListingData);
     setIsLoading(true);
-    axios.post('http://localhost:8080/api/place', formDB, {
-      headers: {
-        Authorization: 'Bearer ' + token
-      },
-    })
-      .then(() => {
-        toast.success('Your place has been added');
-        navigate('/') // redirect to the home page
-        reset()
-        setStep(STEPS.CATEGORY)
-        rentModal.onClose()
-      })
-      .catch(() => {
-        toast.error('Something went wrong')
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
-    // console.log(data)
-  }
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/place",
+        inputListingData,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      toast.success("Your place has been added");
+      setSelectedAmenities([]);
+      navigate(ROUTES.HOME); // redirect to the home page
+      reset();
+      setStep(STEPS.CATEGORY);
+      rentModal.onClose();
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const actionLabel = useMemo(() => {
     if (step === STEPS.PRICE) {
@@ -148,9 +215,7 @@ const RentModal = () => {
         {categoriesArray.map((item) => (
           <div key={item.label} className="col-span-1 font-semibold">
             <CategoryInput
-              onClick={(category) =>
-                setCustomValue("category", category)
-              }
+              onClick={(category) => setCustomValue("category", category)}
               selected={category === item.label}
               label={item.label}
               icon={item.icon}
@@ -182,29 +247,29 @@ const RentModal = () => {
   if (step === STEPS.INFO) {
     bodyContent = (
       <div className="flex flex-col gap-8">
-        <Heading 
+        <Heading
           title="Share some basics about your place"
-          subtitle="What amenities do you have?" 
+          subtitle="What amenities do you have?"
         />
-        <Counter 
+        <Counter
           title="Guests"
           subtitle="How many guests do you allow?"
           value={guestCapacity}
-          onChange={(value) => setCustomValue('guestCapacity', value)}
+          onChange={(value) => setCustomValue("guestCapacity", value)}
         />
-        <hr/>
-        <Counter 
+        <hr />
+        <Counter
           title="Rooms"
           subtitle="How many rooms do you have?"
           value={roomCount}
-          onChange={(value) => setCustomValue('roomCount', value)}
+          onChange={(value) => setCustomValue("roomCount", value)}
         />
-        <hr/>
-        <Counter 
+        <hr />
+        <Counter
           title="Bathrooms"
           subtitle="How many bathrooms do you bathroom?"
           value={bathroomCount}
-          onChange={(value) => setCustomValue('bathroomCount', value)}
+          onChange={(value) => setCustomValue("bathroomCount", value)}
         />
       </div>
     );
@@ -217,9 +282,12 @@ const RentModal = () => {
           title="Add a photo of your place"
           subtitle="Show guests what your place looks like"
         />
-        <ImageUpload value={imageSrc} onChange={(value) => setCustomValue('imageSrc', value)}/>
+        <ImageUpload
+          value={imageSrc}
+          onChange={(value) => setCustomValue("imageSrc", value)}
+        />
       </div>
-    )
+    );
   }
 
   if (step === STEPS.DESCRIPTION) {
@@ -237,7 +305,7 @@ const RentModal = () => {
           errors={errors}
           required
         />
-        <hr/>
+        <hr />
         <Input
           id="description"
           label="Description"
@@ -247,7 +315,31 @@ const RentModal = () => {
           required
         />
       </div>
-    )
+    );
+  }
+
+  if (step === STEPS.AMENITIES) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="What amenities does the place have?"
+          subtitle="Select all that apply"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto">
+          {amenitiesArray.map((item) => (
+            <div key={item.id} className="col-span-1 font-semibold">
+              <AmenitiesInput
+                id={item.id}
+                onClick={() => handleAmenities(item.id)}
+                selected={selectedAmenities.includes(item.id)}
+                label={item.label}
+                icon={item.icon}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (step === STEPS.PRICE) {
@@ -268,14 +360,14 @@ const RentModal = () => {
           required
         />
       </div>
-    )
+    );
   }
 
   return (
     <Modal
       isOpen={rentModal.isOpen}
       onClose={rentModal.onClose}
-      onSubmit={handleSubmit(onSubmit)} 
+      onSubmit={handleSubmit(onSubmit)}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}

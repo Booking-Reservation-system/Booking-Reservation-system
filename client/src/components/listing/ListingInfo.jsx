@@ -3,6 +3,7 @@ import React, { Suspense } from "react";
 import useCountries from "../../hooks/useCountries";
 import Avatar from "../Avatar";
 import ListingCategory from "./ListingCategory";
+import ListingAmenity from "./ListingAmenity";
 
 const ListingInfo = (props) => {
   const {
@@ -13,6 +14,7 @@ const ListingInfo = (props) => {
     guestCapacity,
     bathroomCount,
     locationValue,
+    amenities,
   } = props;
   const { getByValue } = useCountries();
   const location = getByValue(locationValue);
@@ -40,6 +42,17 @@ const ListingInfo = (props) => {
         )}
         <hr />
         <div className="font-light text-neutral-500 text-lg pb-[32px]">{description}</div>
+        <hr />
+        <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1 pb-[32px]">
+          {amenities.map((amenity) => (
+            <ListingAmenity
+              key={amenity.label}
+              icon={amenity.icon}
+              label={amenity.label}
+              description={amenity.description}
+            />
+          ))}
+        </div>
       </div>       
     </>
   );

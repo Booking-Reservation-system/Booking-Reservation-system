@@ -1,6 +1,7 @@
 import Heading from "./Heading";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import ROUTES from "../constants/routes";
 const EmptyState = (props) => {
     const navigate = useNavigate();
     const {
@@ -14,7 +15,7 @@ const EmptyState = (props) => {
             <Heading center title={title} subtitle={subtitle}/>
             <div className="w-48 mt-4">
                 {showReset && (
-                    <Button outline label="Remove all filters" onClick={() => {navigate('/')}}></Button>
+                    <Button outline label="Remove all filters" onClick={() => {navigate(ROUTES.HOME)}}></Button>
                 )}
             </div>
         </div>

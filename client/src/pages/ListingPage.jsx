@@ -1,11 +1,13 @@
 import React, { Suspense, useCallback } from "react";
 import { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Routes } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ROUTES from "../constants/routes";
 
 import useCountries from "../hooks/useCountries";
 import { categoriesArray } from "../components/navbar/Categories";
+import { amenitiesArray } from "../components/Amenities";
 import Container from "../components/Container";
 import ListingHead from "../components/listing/ListingHead";
 import ListingInfo from "../components/listing/ListingInfo";
@@ -15,7 +17,7 @@ import EmptyState from "../components/EmptyState";
 import useLoginModal from "../hooks/useLoginModal";
 import getPlaceById from "../action/getPlaceById";
 import { differenceInCalendarDays, eachDayOfInterval } from "date-fns";
-import useTokenStore from "../hooks/storeToken";
+import useAuth from "../hooks/useAuth";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -24,15 +26,15 @@ const initialDateRange = {
 };
 
 const ListingPage = () => {
-  const { token } = useTokenStore();
   const params = useParams();
-  const placeId = params.placeId;
+  const placeId = params.listingId;
   const loginModal = useLoginModal();
   const navigate = useNavigate();
-
+  const { authToken } = useAuth();
   const [listingData, setListingData] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(listingData?.price);
+  const [totalPrice, setTotalPrice] = useState(listingData?.price || []);
+  // TODO: nên để là listingData?.price || []
   const [dateRange, setDateRange] = useState(initialDateRange);
 
   useEffect(() => {
@@ -57,7 +59,7 @@ const ListingPage = () => {
     [location]
   );
 
-  console.log(listingData?.reservedDate)
+  // console.log(listingData?.reservedDate)
 
   const disabledDate = useMemo(() => {
     let dates = [];
@@ -78,21 +80,22 @@ const ListingPage = () => {
       return;
     }
     setIsLoading(true);
-    const reservationDB = new FormData()
-    reservationDB.append('totalPrice', totalPrice)
-    reservationDB.append('startDate', dateRange.startDate)
-    reservationDB.append('endDate', dateRange.endDate)
-    reservationDB.append('placeId', placeId)
-   
+
+    const inputReservationData = {
+      totalPrice,
+      startDate: dateRange.startDate,
+      endDate: dateRange.endDate,
+      placeId,
+    }
     axios
-      .post("http://localhost:8080/api/reservation", reservationDB, {
+      .post("http://localhost:8080/api/reservation", inputReservationData, {
        headers: {
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + authToken,
        }
       })
       .then(() => {
         toast.success("Reservation created successfully");
-        navigate('/trips')
+        navigate(ROUTES.TRIPS);
         setDateRange(initialDateRange);
       })
       .catch(() => {
@@ -101,7 +104,7 @@ const ListingPage = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [totalPrice, dateRange, placeId, token, loginModal]);
+  }, [totalPrice, dateRange, placeId, authToken, loginModal]);
 
   useEffect(() => {
     if (dateRange.startDate && dateRange.endDate) {
@@ -124,10 +127,14 @@ const ListingPage = () => {
     );
   }, [listingData?.category]);
 
+  const amenity = useMemo(() => {
+    return amenitiesArray.filter((amenity) => listingData?.amenities[amenity.id]);
+  }, [listingData?.amenities])
+
   if (!listingData) {
     return <EmptyState showReset />;
   }
-
+  
   return (
     <>
       <Container>
@@ -149,6 +156,7 @@ const ListingPage = () => {
                 guestCapacity={listingData?.guestCapacity}
                 bathroomCount={listingData?.bathroomCount}
                 locationValue={listingData?.locationValue}
+                amenities={amenity}
               />
               </div>
             </div>
