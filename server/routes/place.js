@@ -9,7 +9,7 @@ const router = express.Router();
 // Create a new place
 // /api/v1/place => POST
 router.post(
-    '/place',
+    '/place/new',
     isAuth,
     [
         // check fields: title, description, category, roomCount, bathroomCount, guestCount, location, price
@@ -51,7 +51,7 @@ router.post(
 
 // Get all places
 // /api/v1/place => GET
-router.get('/place', placeController.getPlaces);
+router.get('/places', placeController.getPlaces);
 
 // Get a place by ID
 // /api/v1/place/:placeId => GET

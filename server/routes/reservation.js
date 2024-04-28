@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Get all reservations
 // /api/v1/reservation => GET
-router.get('/reservation', isAuth, reservationController.getReservations);
+router.get('/reservations', isAuth, reservationController.getReservations);
 
 // Get a reservation by ID
 // /api/v1/reservation/:reservationId => GET
@@ -17,7 +17,7 @@ router.get('/reservation/:reservationId', isAuth, reservationController.getReser
 // Create a new reservation
 // /api/v1/reservation/=> POST
 router.post(
-    '/reservation',
+    '/reservation/new',
     isAuth,
     [
         // check fields: placeId, startDate, endDate, totalPrice
