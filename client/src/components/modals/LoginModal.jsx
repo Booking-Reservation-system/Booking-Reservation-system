@@ -55,12 +55,12 @@ const LoginModal = () => {
       setToken(token);
       setTimeToken()
       toast.success("Logged in successfully");
-      navigate(ROUTES.HOME);
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
       setIsLoading(false);
     }
+    navigate(ROUTES.HOME);
   }
 
   const emailValidation = {

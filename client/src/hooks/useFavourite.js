@@ -1,83 +1,74 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import ROUTES from "../constants/routes";
 import useAuth from "./useAuth";
 import useLoginModal from "../hooks/useLoginModal";
-import getFavouriteByUserId from "../action/getFavouriteByUserId";
-
-const useFavourite = (props) => {
+const useFavourite = ({ listingId }) => {
   const { authToken } = useAuth();
-
-  const getUserFavourites = async () => {
-    if (!authToken) {
-      return;
-    } else {
-      try {
-        const response = await getFavouriteByUserId(authToken);
-        console.log(response);
-        return response;
-      } catch (error) {
-        toast.error("Something went wrong");
+  const [hasFavourite, setHasFavourite] = useState(false);
+  useEffect(() => {
+    const fetchData = () => {
+      if (!authToken) {
+        return;
       }
-    }
-  };
+      try {
+        axios
+          .get(`http://localhost:8080/api/favourites`, {
+            headers: {
+              Authorization: "Bearer " + authToken,
+            },
+          })
+          .then((response) => {
+            const favourites = response.data.favouritePlaces.map(
+              (place) => place._id
+            );
+            setHasFavourite(favourites?.includes(listingId));
+          });
+      } catch (error) {
+        console.error("Error fetching user favourites:", error);
+      }
+    };
 
-  const { listingId } = props;
+    fetchData();
+  }, [listingId]);
+
   const navigate = useNavigate();
   const loginModal = useLoginModal();
 
-  const hasFavourite = useMemo(async () => {
-    const list = await getUserFavourites() || [];
-    return list.includes(listingId);
-  }, [listingId]);
-
-  console.log(hasFavourite);
-  console.log(listingId)
-
-  const toggleFavourite = useCallback(
-    async (e) => {
-      e.stopPropagation();
-      if (!authToken) {
-        return loginModal.onOpen();
-      }
+  const toggleFavourite = async () => {
+    if (!authToken) {
+      return loginModal.onOpen();
+    }
+    try {
       let request;
-      try {
-        if (hasFavourite) {
-          request = () =>
-            axios.delete(
-              `http://localhost:8080/api/favourite/${listingId}`,
-              {
-                headers: {
-                  Authorization: "Bearer " + authToken,
-                },
-              }
-            );
-        } else {
-          request = () =>
-            axios.post(
-              `http://localhost:8080/api/favourite/${listingId}`,
-              {
-                headers: {
-                  Authorization: "Bearer " + authToken,
-                },
-              }
-            );
-        }
-        await request();
-        navigate(ROUTES.FAVOURITES);
-        toast.success(
-          `Listing has been ${
-            hasFavourite ? "removed from" : "added to"
-          } favourites`
-        );
-      } catch (error) {
-        toast.error(request.message || "Something went wrong");
+      if (hasFavourite) {
+        request = () =>
+          axios.delete(`http://localhost:8080/api/favourite/${listingId}`, {
+            headers: {
+              Authorization: "Bearer " + authToken,
+            }
+          });
+      } else {
+        request = () => 
+          axios.post(`http://localhost:8080/api/favourite/new/${listingId}`, null, {
+            headers: {
+              Authorization: "Bearer " + authToken,
+            }
+          })
       }
-    },
-    [hasFavourite, authToken, listingId, loginModal]
-  );
+      await request();
+      navigate(ROUTES.FAVOURITES);
+      toast.success(
+        `Listing has been ${
+          hasFavourite ? "removed from" : "added to"
+        } favourites`
+      );
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
 
   return {
     hasFavourite,

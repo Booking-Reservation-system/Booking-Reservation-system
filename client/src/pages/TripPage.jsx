@@ -55,7 +55,7 @@ const TripPage = () => {
     const onCancel = async (id) => {
         setDeleteId(id)
         try {
-            const response = await axios.delete(`http://localhost:8080/api/reservation/${id}`, {
+            const response = await axios.delete(`http://localhost:8080/api/reservations/${id}`, {
                 headers: {
                     Authorization: "Bearer " + authToken
                 }
@@ -68,6 +68,8 @@ const TripPage = () => {
         setDeleteId('')
         navigate(ROUTES.TRIPS)
     }
+
+    console.log(reservations)
 
     return (
         <Container>

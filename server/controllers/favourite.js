@@ -26,7 +26,7 @@ exports.getFavourites = async (req, res, next) => {
 
 exports.newFavouriteId = async (req, res, next) => {
     try {
-        const placeId = req.params.placeId;
+        const placeId = aes256.decryptData(req.params.placeId);
         if(!placeId){
             const error = new Error('Place ID is required.');
             error.statusCode = 400;

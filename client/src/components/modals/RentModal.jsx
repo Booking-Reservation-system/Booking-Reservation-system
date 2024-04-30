@@ -170,7 +170,7 @@ const RentModal = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/place",
+        "http://localhost:8080/api/place/new",
         inputListingData,
         {
           headers: {

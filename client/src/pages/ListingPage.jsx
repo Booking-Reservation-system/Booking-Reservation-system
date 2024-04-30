@@ -75,7 +75,7 @@ const ListingPage = () => {
   }, [listingData?.reservedDate]);
 
   const onCreateReservation = useCallback(() => {
-    if (!token) {
+    if (!authToken) {
       loginModal.onOpen();
       return;
     }
@@ -88,7 +88,7 @@ const ListingPage = () => {
       placeId,
     }
     axios
-      .post("http://localhost:8080/api/reservation", inputReservationData, {
+      .post("http://localhost:8080/api/reservation/new", inputReservationData, {
        headers: {
           Authorization: "Bearer " + authToken,
        }

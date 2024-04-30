@@ -1,4 +1,4 @@
-import { useNavigate, Link, Routes } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useCountries from "../../hooks/useCountries";
 import { useCallback, useMemo } from "react";
 import { format } from "date-fns";
@@ -41,7 +41,7 @@ const ListingCard = (props) => {
   }, [reservation]);
 
   const navigateToListingItem = () => {
-    navigate(ROUTES.LISTING_DETAIL.replace(":listingId", data._id))
+    navigate(ROUTES.LISTING_DETAIL.replace(":listingId", data._id), {replace: true})
     // Không để magic string trong code, tạo một cái file là routes.js chứa tất cả các path
     // Rồi thay thành navigate(ROUTES.LISTING_DETAIL.replace(":listing_id", data._id))
   } 
