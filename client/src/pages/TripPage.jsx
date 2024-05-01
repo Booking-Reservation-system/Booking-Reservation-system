@@ -55,7 +55,7 @@ const TripPage = () => {
     const onCancel = async (id) => {
         setDeleteId(id)
         try {
-            const response = await axios.delete(`http://localhost:8080/api/reservations/${id}`, {
+            const response = await axios.delete(`http://localhost:8080/api/reservation/${id}`, {
                 headers: {
                     Authorization: "Bearer " + authToken
                 }
@@ -69,8 +69,6 @@ const TripPage = () => {
         navigate(ROUTES.TRIPS)
     }
 
-    console.log(reservations)
-
     return (
         <Container>
             <div className="pt-[120px]">
@@ -80,9 +78,10 @@ const TripPage = () => {
                     {reservations?.map((reservation) => (
                         <ListingCard
                             key={reservation._id}
-                            data={reservation.placeId}
                             actionId={reservation._id}
-                            reservation={reservation}
+                            data={reservation._doc.placeId}
+                            reservationParams={reservation.placeReservationParams}
+                            reservation={reservation._doc}
                             onAction={onCancel}
                             disabled={deleteId === reservation._id}
                             actionLabel="Canceled reservation"

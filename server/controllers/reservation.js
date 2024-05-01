@@ -1,8 +1,8 @@
-const aes256 = require("../utils/aes-crypto");
 const Reservation = require("../models/reservation");
 const Place = require("../models/place");
 const {validationResult} = require("express-validator");
 const ObjectId = require('mongodb').ObjectId;
+const aes256 = require("../utils/aes-crypto");
 
 
 exports.getReservations = async (req, res, next) => {
@@ -13,14 +13,19 @@ exports.getReservations = async (req, res, next) => {
     try {
         const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate('placeId');
         // encrypt all id
-        reservations.forEach(reservation => {
-            reservation._id = aes256.encryptData(reservation._id.toString());
-            reservation.userId = aes256.encryptData(reservation.userId.toString());
-            reservation.placeId = aes256.encryptData(reservation.placeId.toString());
+        const encryptReservation = reservations.map(reservation => {
+            return {
+                ...reservation,
+                _id: aes256.encryptData(reservation._id.toString()),
+                userId: aes256.encryptData(reservation.userId.toString()),
+                placeReservationParams: aes256.encryptData(reservation.placeId._id.toString())
+            }
         });
+       
         res.status(200).json({
             message: 'Fetched reservations successfully.',
-            reservations: reservations
+            reservations: encryptReservation,
+            
         });
     } catch(err){
         if(!err.statusCode) err.statusCode = 500;
@@ -96,7 +101,7 @@ exports.createReservation = async (req, res, next) => {
 }
 
 exports.deleteReservation = async (req, res, next) => {
-    const reservationId = req.params.reservationId;
+    const reservationId = aes256.decryptData(req.params.reservationId);
     // remove encripted id
     try {
         const reservation = await Reservation.findById(reservationId);
