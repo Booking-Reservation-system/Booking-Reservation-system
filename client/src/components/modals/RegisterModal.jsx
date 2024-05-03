@@ -1,8 +1,12 @@
 import axios from "axios";
 import { AiFillGithub } from "react-icons/ai";
+import { FaFacebookSquare } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { FacebookAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { auth } from "../../../firebase";
 import useRegisterModal from "../../hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
 import Modal from "./Modal";
@@ -87,6 +91,18 @@ const RegisterModal = () => {
     loginModal.onOpen()
   }, [loginModal, registerModal])
 
+  const FBButtonClick = async() => {
+    try {
+      const provider = new FacebookAuthProvider();
+
+      const result = await signInWithPopup(auth, provider);
+
+      console.log('LOGGED USER', result.user);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading title="Welcome to our App" subtitle="Create an account" />
@@ -131,9 +147,9 @@ const RegisterModal = () => {
       />
       <Button
         outline
-        label="Continue with Github"
-        icon={AiFillGithub}
-        onCLick={() => {}}
+        label="Continue with Facebook"
+        icon={FaFacebookSquare}
+        onClick={FBButtonClick}
       />
       <div className="text-neutral-500 text-center mt-4 font-light justify-center flex flex-row gap-2">
         <div>Already have an account?</div>

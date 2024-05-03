@@ -3,7 +3,10 @@ import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
+import { FaFacebookSquare } from "react-icons/fa";
 import { AiFillGithub } from "react-icons/ai";
+import { FacebookAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { auth } from "../../../firebase";
 import toast from "react-hot-toast";
 import useLoginModal from "../../hooks/useLoginModal";
 import useRegisterModal from "../../hooks/useRegisterModal";
@@ -15,6 +18,7 @@ import useTokenStore from "../../hooks/storeToken";
 import { useGoogleLogin } from "@react-oauth/google";
 // import { useGoogleOneTapLogin } from '@react-oauth/google';
 import ROUTES from "../../constants/routes";
+import { FaB } from "react-icons/fa6";
 
 const LoginModal = () => {
   const navigate = useNavigate();
@@ -94,6 +98,18 @@ const LoginModal = () => {
       console.log(credentialResponse.access_token),
   });
 
+  const FBButtonClick = async() => {
+    try {
+      const provider = new FacebookAuthProvider();
+
+      const result = await signInWithPopup(auth, provider);
+
+      console.log('LOGGED USER', result.user);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading title="Welcome to our App" subtitle="Login an account" />
@@ -134,8 +150,8 @@ const LoginModal = () => {
       <Button
         outline
         label="Continue with Github"
-        icon={AiFillGithub}
-        onClick={() => {}}
+        icon={FaFacebookSquare}
+        onClick={FBButtonClick}
       />
       <div className="text-neutral-500 text-center justify-center mt-4 font-light flex flex-row gap-2">
         <p>First time using this App?</p>
