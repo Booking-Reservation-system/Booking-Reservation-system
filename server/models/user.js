@@ -6,13 +6,7 @@ const userSchema = new Schema({
     name: {
         type: String,
     },
-    email: { // unique
-        type: String,
-    },
-    emailVerified: {
-        type: Date,
-    },
-    image: {
+    email: {
         type: String,
     },
     hashedPassword: {
@@ -21,11 +15,6 @@ const userSchema = new Schema({
     favouritePlaces: [{
             type: Schema.Types.ObjectId,
             ref: 'Place',
-            required: true,
-    }],
-    accounts: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Account',
             required: true,
     }],
     places: [{
