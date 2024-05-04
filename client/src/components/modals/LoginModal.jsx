@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookSquare } from "react-icons/fa";
 import { AiFillGithub } from "react-icons/ai";
-import { FacebookAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { FacebookAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { auth } from "../../../firebase";
 import toast from "react-hot-toast";
 import useLoginModal from "../../hooks/useLoginModal";
@@ -95,19 +95,53 @@ const LoginModal = () => {
 
   const login = useGoogleLogin({
     onSuccess: (credentialResponse) =>
-      console.log(credentialResponse.access_token),
+      console.log(credentialResponse),
   });
 
-  const FBButtonClick = async() => {
+  const GoogleLogin = async() => {
+    setIsLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+
+      const result = await signInWithPopup(auth, provider);
+
+      const userData = {
+        email: result.user.email,
+        password: result.user.uid,
+      }
+
+      const response = await axios.post("http://localhost:8080/api/auth/login", userData);
+      setToken(response.data.token);
+      loginModal.onClose();
+      toast.success(response.data.message);
+      console.log('LOGGED USER', result.user);
+    } catch (error) {
+      console.log(error)
+    } 
+    navigate(ROUTES.HOME);
+  }
+
+  const FBLogin = async() => {
+    setIsLoading(true);
     try {
       const provider = new FacebookAuthProvider();
 
       const result = await signInWithPopup(auth, provider);
 
+      const userData = {
+        email: result.user.email,
+        password: result.user.uid,
+      }
+
+      const response = await axios.post("http://localhost:8080/api/auth/login", userData);
+      setToken(response.data.token);
+      loginModal.onClose();
+      toast.success(response.data.message);
       console.log('LOGGED USER', result.user);
     } catch (error) {
       console.log(error)
-    }
+    } 
+    navigate(ROUTES.HOME);
   }
 
   const bodyContent = (
@@ -144,14 +178,14 @@ const LoginModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={() => login()}
+        onClick={GoogleLogin}
       ></Button>
 
       <Button
         outline
-        label="Continue with Github"
+        label="Continue with Facebook"
         icon={FaFacebookSquare}
-        onClick={FBButtonClick}
+        onClick={FBLogin}
       />
       <div className="text-neutral-500 text-center justify-center mt-4 font-light flex flex-row gap-2">
         <p>First time using this App?</p>
