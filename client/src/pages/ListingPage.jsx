@@ -1,6 +1,6 @@
 import React, { Suspense, useCallback } from "react";
 import { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate, Routes } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ROUTES from "../constants/routes";
@@ -169,6 +169,8 @@ const ListingPage = () => {
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
                 disabledDate={disabledDate}
+                creatorId={listingData?.creator?.id}
+                placeId={listingData?._id}
               />
             </div>
           </div>

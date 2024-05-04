@@ -73,7 +73,7 @@ const TripPage = () => {
         <Container>
             <div className="pt-[120px]">
                 <Heading title="Trips" subtitle="Where you have been and where you are going"/>
-                {!reservations && <EmptyState title="No trips found" subtitle="You haven't made any reservation yet"/>}
+                {reservations.length === 0 && <EmptyState title="No trips found" subtitle="You haven't made any reservation yet"/>}
                 <div className="mt-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10">
                     {reservations?.map((reservation) => (
                         <ListingCard

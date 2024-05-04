@@ -30,7 +30,7 @@ const FavouritePage = () => {
         <Container>
             <div className="pt-[120px]">
                 <Heading title="Favourites" subtitle="Your favourite places"/>
-                {!favouritePlaces && <EmptyState title="No favourites found" subtitle="You haven't added any favourite places yet"/>}
+                {favouritePlaces.length === 0 && <EmptyState title="No favourites found" subtitle="You haven't added any favourite places yet"/>}
                 <div className="mt-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10">
                     {favouritePlaces?.map((favourite) => (
                         <ListingCard

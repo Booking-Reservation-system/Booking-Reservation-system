@@ -2,9 +2,7 @@ const Place = require("../models/place");
 const aes256 = require("../utils/aes-crypto");
 const { validationResult } = require("express-validator");
 const User = require("../models/user");
-const { join } = require("path");
-const { unlink } = require("fs");
-const imageUpload = require("../utils/upload-image");
+const { imageUpload, imageDelete } = require("../utils/upload-image");
 
 exports.getPlaces = async (req, res, next) => {
   const {
@@ -122,6 +120,7 @@ exports.getPlace = async (req, res, next) => {
       reservedDate: bookedDate,
       creator: {
         name: place.userId.name,
+        id: place.userId._id,
       },
     };
     res.status(200).json({ message: "Place fetched.", place: placeFormatted });
@@ -171,21 +170,23 @@ exports.createPlace = async (req, res, next) => {
     const firstAid = req.body.amenities.firstAid;
     const fireExtinguisher = req.body.amenities.fireExtinguisher;
 
-    if(!imageSrc) {
-        const error = new Error("Image source is missing.");
-        error.statusCode = 422;
-        throw error;
+    if (!imageSrc) {
+      const error = new Error("Image source is missing.");
+      error.statusCode = 422;
+      throw error;
     }
     const uploadResponse = await imageUpload(imageSrc, "reservationPlace");
-    if(!uploadResponse) {
-        const error = new Error("Image upload failed.");
-        error.statusCode = 422;
-        throw error;
+    console.log(uploadResponse);
+    if (!uploadResponse) {
+      const error = new Error("Image upload failed.");
+      error.statusCode = 422;
+      throw error;
     }
     const place = new Place({
       title: title,
       description: description,
-      imageSrc: uploadResponse,
+      imageSrc: uploadResponse.secureUrl,
+      imagePublicId: uploadResponse.publicId,
       category: category,
       roomCount: roomCount,
       bathroomCount: bathroomCount,
@@ -234,63 +235,65 @@ exports.createPlace = async (req, res, next) => {
 };
 
 exports.updatePlace = async (req, res, next) => {
-    const placeId = aes256.decryptData(req.params.placeId);
-    const err = validationResult(req);
-    try{
-        if(!err.isEmpty()){
-            const errs = new Error('Validation failed, entered data is incorrect!');
-            errs.statusCode = 422;
-            errs.data = err.array();
-            throw errs;
-        }
-        const title = req.body.title;
-        const description = req.body.description;
-        const imageSrc = req.body.imageSrc;
-        const category = req.body.category;
-        const roomCount = req.body.roomCount;
-        const bathroomCount = req.body.bathroomCount;
-        const guestCapacity = req.body.guestCapacity;
-        const location = req.body.location;
-        const price = req.body.price;
-        const place = await Place.findById(placeId).populate("userId");
-        if (!place) {
-          const error = new Error("Could not find place.");
-          error.statusCode = 404;
-          throw error;
-        }
-        if (place.userId._id.toString() !== req.userId) {
-          const error = new Error("Not authorized!");
-          error.statusCode = 403;
-          throw error;
-        }
-        if(imageSrc) {
-            const uploadResponse = await cloudinary.uploader.upload(imageSrc, {
-                upload_preset: "reservation-place",
-            });
-            if(!uploadResponse) {
-                const error = new Error("Image upload failed.");
-                error.statusCode = 422;
-                throw error;
-            }
-            clearImage(place.imageSrc);
-        }
-        place.title = title;
-        place.description = description;
-        place.imageSrc = uploadResponse.secure_url;
-        place.category = category;
-        place.roomCount = roomCount;
-        place.bathroomCount = bathroomCount;
-        place.guestCapacity = guestCapacity;
-        place.locationValue = location;
-        place.price = parseInt(price, 10);
-        const result = await place.save();
-        place._id = aes256.encryptData(place._id.toString());
-        place.userId._id = aes256.encryptData(place.userId._id.toString());
-        res.status(200).json({ message: "Place updated!", place: result });
-    } catch (err) {
-        if (!err.statusCode) err.statusCode = 500;
-        next(err);
+  const placeId = aes256.decryptData(req.params.placeId);
+  const err = validationResult(req);
+  try {
+    if (!err.isEmpty()) {
+      const errs = new Error("Validation failed, entered data is incorrect!");
+      errs.statusCode = 422;
+      errs.data = err.array();
+      throw errs;
     }
+    const title = req.body.title;
+    const description = req.body.description;
+    const imageSrc = req.body.imageSrc;
+    const category = req.body.category;
+    const roomCount = req.body.roomCount;
+    const bathroomCount = req.body.bathroomCount;
+    const guestCapacity = req.body.guestCapacity;
+    const location = req.body.location;
+    const price = req.body.price;
+    const place = await Place.findById(placeId).populate("userId");
+    if (!place) {
+      const error = new Error("Could not find place.");
+      error.statusCode = 404;
+      throw error;
+    }
+    if (place.userId._id.toString() !== req.userId) {
+      const error = new Error("Not authorized!");
+      error.statusCode = 403;
+      throw error;
+    }
+    if (imageSrc) {
+      const uploadResponse = await cloudinary.uploader.upload(imageSrc, {
+        upload_preset: "reservation-place",
+      });
+      console.log(uploadResponse);
+      if (!uploadResponse) {
+        const error = new Error("Image upload failed.");
+        error.statusCode = 422;
+        throw error;
+      }
+      clearImage(place.imageSrc);
+    }
+    place.title = title;
+    place.description = description;
+    place.imageSrc = uploadResponse.secureUrl;
+    place.imagePublicId = uploadResponse.publicId;
+    place.category = category;
+    place.roomCount = roomCount;
+    place.bathroomCount = bathroomCount;
+    place.guestCapacity = guestCapacity;
+    place.locationValue = location;
+    place.price = parseInt(price, 10);
+    const result = await place.save();
+    place._id = aes256.encryptData(place._id.toString());
+    place.userId._id = aes256.encryptData(place.userId._id.toString());
+    res.status(200).json({ message: "Place updated!", place: result });
+  } catch (err) {
+    if (!err.statusCode) err.statusCode = 500;
+    next(err);
+  }
 };
 
 exports.deletePlace = async (req, res, next) => {
@@ -307,8 +310,17 @@ exports.deletePlace = async (req, res, next) => {
       error.statusCode = 403;
       throw error;
     }
-    clearImage(place.imageSrc);
-    await Place.findByIdAndRemove(placeId);
+    const imagePublicId = place.imagePublicId;
+    console.log(imagePublicId)
+    const deleteResponse = await imageDelete(imagePublicId);
+    if (!deleteResponse) {
+      const error = new Error("Image delete failed.");
+      error.statusCode = 422;
+      throw error;
+    }
+
+    // clearImage(place.imageSrc);
+    await Place.findByIdAndDelete(placeId);
     const user = await User.findById(req.userId);
     user.places.pull(placeId);
     await user.save();
@@ -319,7 +331,7 @@ exports.deletePlace = async (req, res, next) => {
   }
 };
 
-const clearImage = (filePath) => {
-  filePath = join(__dirname, "..", filePath);
-  unlink(filePath, (err) => console.log(err));
-};
+// const clearImage = (filePath) => {
+//   filePath = join(__dirname, "..", filePath);
+//   unlink(filePath, (err) => console.log(err));
+// };

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebookSquare } from "react-icons/fa";
-import { AiFillGithub } from "react-icons/ai";
 import { FacebookAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { auth } from "../../../firebase";
 import toast from "react-hot-toast";
@@ -16,7 +15,6 @@ import Button from "../Button";
 import Modal from "./Modal";
 import useTokenStore from "../../hooks/storeToken";
 import { useGoogleLogin } from "@react-oauth/google";
-// import { useGoogleOneTapLogin } from '@react-oauth/google';
 import ROUTES from "../../constants/routes";
 import { FaB } from "react-icons/fa6";
 

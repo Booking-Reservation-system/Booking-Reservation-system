@@ -6,10 +6,23 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-module.exports = imageUpload = async (imageSrc, uploadPreset) => {
-    const uploadResponse = await cloudinary.uploader.upload(imageSrc, {
-        upload_preset: uploadPreset,
-    });
-    return uploadResponse.secure_url;
-}
-
+// Xuất một đối tượng chứa các hàm
+module.exports = {
+    imageUpload: async (imageSrc, uploadPreset) => {
+        const uploadResponse = await cloudinary.uploader.upload(imageSrc, {
+            upload_preset: uploadPreset,
+        });
+        return {
+            publicId: uploadResponse.public_id,
+            secureUrl: uploadResponse.secure_url,
+        };
+    },
+    
+    imageDelete: async (publicId) => {
+        const deleteResponse = await cloudinary.uploader.destroy(publicId, {
+            resource_type: "image",
+            type: "upload",
+        });
+        return deleteResponse;
+    }
+};
