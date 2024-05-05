@@ -9,13 +9,12 @@ const strategy = new GitHubStrategy(
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL: '/auth/github/callback',
-        scope: ['user:email', 'offline_access', 'profile'],
-        accessType: 'offline',
-        prompt: 'consent',
+        scope: ['user:email', 'profile'],
     },
     async (accessToken, refreshToken, params, profile, callback) => {
         try {
             console.log(params);
+
             let user = await User.findOne({providerId: profile.id});
             if (!user) {
                 const email = (profile.emails && profile.emails.length > 0) ? profile.emails[0].value : '';
@@ -32,7 +31,7 @@ const strategy = new GitHubStrategy(
             if (!refreshTokenDoc) {
                 refreshTokenDoc = new RefreshToken({
                     userId: user._id,
-                    refreshToken: refreshToken,
+                    refreshToken: accessToken,
                 });
                 await refreshTokenDoc.save();
             }

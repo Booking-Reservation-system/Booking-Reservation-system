@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const refresh = require('passport-oauth2-refresh');
+const axios = require('axios');
 
 const User = require('../models/user');
 
@@ -143,7 +144,7 @@ exports.githubSuccess = async (req, res, next) => {
         }
 
         res.status(200).json({
-            message: 'Facebook authentication successful.',
+            message: 'Github authentication successful.',
             accessToken: req.user.accessToken,
             refreshToken: req.user.refreshToken,
             name: req.user.user.name,
@@ -157,38 +158,49 @@ exports.githubSuccess = async (req, res, next) => {
 
 exports.githubRenew = async (req, res, next) => {
     try {
-        if(!req.user){
-            const error = new Error('User not authenticated.');
-            error.statusCode = 401;
-            throw error;
-        }
+        // if(!req.user){
+        //     const error = new Error('User not authenticated.');
+        //     error.statusCode = 401;
+        //     throw error;
+        // }
+        //
+        // const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
+        // if (!refreshTokenDoc) {
+        //     const error = new Error('Refresh token not found.');
+        //     error.statusCode = 404;
+        //     throw error;
+        // }
+        // if(refreshTokenDoc.expires_at < new Date()){
+        //     const error = new Error('Refresh token expired.');
+        //     error.statusCode = 401;
+        //     throw error;
+        // }
+        //
+        // const refreshToken = refreshTokenDoc.refreshToken;
 
-        const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
-        if (!refreshTokenDoc) {
-            const error = new Error('Refresh token not found.');
-            error.statusCode = 404;
-            throw error;
-        }
-        if(refreshTokenDoc.expires_at < new Date()){
-            const error = new Error('Refresh token expired.');
-            error.statusCode = 401;
-            throw error;
-        }
+        const refreshToken = req.body.refreshToken;
 
-        const refreshToken = refreshTokenDoc.refreshToken;
-
-        // Request a new access token
-        refresh.requestNewAccessToken('facebook', refreshToken, function(err, accessToken, refreshToken, params) {
-            if (err) {
-                const error = new Error('Failed to renew access token.');
-                error.statusCode = 500;
-                throw error;
-            }
-            res.status(200).json({
-                message: 'Access token renewed.',
-                accessToken: accessToken,
-            });
+        // Request a new access token using the refresh token with axios and https://github.com/login/oauth/access_token
+        const data = await axios.post('https://github.com/login/oauth/access_token', {
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            refresh_token: refreshToken,
+            grant_type: 'refresh_token',
         });
+
+        // console.log(data);
+
+        if(data.error){
+            const error = new Error(data.error);
+            error.statusCode = 500;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Access token renewed.',
+            accessToken: data.access_token,
+        });
+
     } catch(err) {
         if(!err.statusCode) err.statusCode = 500
         next(err);
