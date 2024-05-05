@@ -16,6 +16,7 @@ import useTokenStore from "../../hooks/storeToken";
 import { useGoogleLogin } from "@react-oauth/google";
 // import { useGoogleOneTapLogin } from '@react-oauth/google';
 import ROUTES from "../../constants/routes";
+import {FaFacebookSquare} from "react-icons/fa";
 
 const LoginModal = () => {
   const navigate = useNavigate();
