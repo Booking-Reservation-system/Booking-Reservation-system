@@ -12,8 +12,7 @@ const refreshTokenSchema = new Schema({
         required: true,
     },
     expires_at: {
-        type: Number,
-        required: true,
+        type: Date,
     },
 });
 

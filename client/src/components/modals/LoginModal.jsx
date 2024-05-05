@@ -3,6 +3,7 @@ import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
+import {FaGithub} from "react-icons/fa";
 import { AiFillGithub } from "react-icons/ai";
 import toast from "react-hot-toast";
 import useLoginModal from "../../hooks/useLoginModal";
@@ -94,6 +95,56 @@ const LoginModal = () => {
       console.log(credentialResponse.access_token),
   });
 
+  const GoogleLogin = async() => {
+    setIsLoading(true);
+    try {
+      window.open("http://localhost:8080/auth/google", "_self");
+      // const provider = new GoogleAuthProvider();
+      //
+      // const result = await signInWithPopup(auth, provider);
+      //
+      // console.log(result);
+      // const userData = {
+      //   email: result.user.email,
+      //   password: result.user.uid,
+      // }
+      //
+      // const response = await axios.post("http://localhost:8080/api/auth/login", userData);
+      // setToken(response.data.token);
+      // loginModal.onClose();
+      // toast.success(response.data.message);
+    } catch (error) {
+      console.log(error)
+    } 
+    navigate(ROUTES.HOME);
+  }
+
+  const GitLogin = async() => {
+    setIsLoading(true);
+    try {
+        window.open("http://localhost:8080/auth/github", "_self");
+      // const provider = new FacebookAuthProvider();
+      //
+      // const result = await signInWithPopup(auth, provider);
+      //
+      // console.log(result);
+      //
+      // const userData = {
+      //   email: result.user.email,
+      //   password: result.user.uid,
+      // }
+      //
+      // const response = await axios.post("http://localhost:8080/api/auth/login", userData);
+      // setToken(response.data.token);
+      // loginModal.onClose();
+      // toast.success(response.data.message);
+      // console.log('LOGGED USER', result.user);
+    } catch (error) {
+      console.log(error)
+    } 
+    navigate(ROUTES.HOME);
+  }
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading title="Welcome to our App" subtitle="Login an account" />
@@ -134,8 +185,8 @@ const LoginModal = () => {
       <Button
         outline
         label="Continue with Github"
-        icon={AiFillGithub}
-        onClick={() => {}}
+        icon={FaGithub}
+        onClick={GitLogin}
       />
       <div className="text-neutral-500 text-center justify-center mt-4 font-light flex flex-row gap-2">
         <p>First time using this App?</p>
