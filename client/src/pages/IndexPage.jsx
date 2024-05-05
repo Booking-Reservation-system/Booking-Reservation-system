@@ -55,19 +55,19 @@ const IndexPage = () => {
         }
         await gitLg();
 
-        const renewGitToken = async () => {
-            try {
-                const response = await axios.post("http://localhost:8080/auth/github/refresh", {
-                    refreshToken: "1//0e5St58NFWnv1CgYIARAAGA4SNwF-L9IrC0hW2tdRYDUQcL1eSUJ1BN5fh7-p4PDW-qPe3dKCJj_Z7e8Ro2Ff6FDFfM-ubXAGpgE",
-                    withCredentials: true,
-                });
-                console.log(response.data);
-                return response.data;
-            } catch (error) {
-                toast.error("Something went wrong");
-            }
-        }
-        await renewGitToken();
+        // const renewGitToken = async () => {
+        //     try {
+        //         const response = await axios.post("http://localhost:8080/auth/github/refresh", {
+        //             refreshToken: "ghr_E3t0lXsHqGIgPYRQkICpKGV4sS4x3uRSH6BvOw2S08wmTXXFd8wp0MxF45IxBWDRagfySx2Fc1W1",
+        //             withCredentials: true,
+        //         });
+        //         console.log(response.data);
+        //         return response.data;
+        //     } catch (error) {
+        //         toast.error("Something went wrong");
+        //     }
+        // }
+        // await renewGitToken();
 
         setData(response)
       } catch (error) {
