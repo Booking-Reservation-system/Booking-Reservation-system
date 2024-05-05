@@ -14,9 +14,7 @@ import Button from "../Button";
 import Modal from "./Modal";
 import useTokenStore from "../../hooks/storeToken";
 import { useGoogleLogin } from "@react-oauth/google";
-// import { useGoogleOneTapLogin } from '@react-oauth/google';
 import ROUTES from "../../constants/routes";
-import {FaFacebookSquare} from "react-icons/fa";
 
 const LoginModal = () => {
   const navigate = useNavigate();
@@ -57,12 +55,12 @@ const LoginModal = () => {
       setToken(token);
       setTimeToken()
       toast.success("Logged in successfully");
-      navigate(ROUTES.HOME);
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
       setIsLoading(false);
     }
+    navigate(ROUTES.HOME);
   }
 
   const emailValidation = {
@@ -93,7 +91,7 @@ const LoginModal = () => {
 
   const login = useGoogleLogin({
     onSuccess: (credentialResponse) =>
-      console.log(credentialResponse.access_token),
+      console.log(credentialResponse),
   });
 
   const GoogleLogin = async() => {
@@ -180,7 +178,7 @@ const LoginModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={() => login()}
+        onClick={GoogleLogin}
       ></Button>
 
       <Button

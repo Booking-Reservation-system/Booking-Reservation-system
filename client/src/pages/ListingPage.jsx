@@ -1,6 +1,6 @@
 import React, { Suspense, useCallback } from "react";
 import { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate, Routes } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ROUTES from "../constants/routes";
@@ -75,7 +75,7 @@ const ListingPage = () => {
   }, [listingData?.reservedDate]);
 
   const onCreateReservation = useCallback(() => {
-    if (!token) {
+    if (!authToken) {
       loginModal.onOpen();
       return;
     }
@@ -88,7 +88,7 @@ const ListingPage = () => {
       placeId,
     }
     axios
-      .post("http://localhost:8080/api/reservation", inputReservationData, {
+      .post("http://localhost:8080/api/reservation/new", inputReservationData, {
        headers: {
           Authorization: "Bearer " + authToken,
        }
@@ -169,6 +169,8 @@ const ListingPage = () => {
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
                 disabledDate={disabledDate}
+                creatorId={listingData?.creator?.id}
+                placeId={listingData?._id}
               />
             </div>
           </div>

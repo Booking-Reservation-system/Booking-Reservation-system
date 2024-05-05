@@ -1,4 +1,4 @@
-import { useNavigate, Link, Routes } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useCountries from "../../hooks/useCountries";
 import { useCallback, useMemo } from "react";
 import { format } from "date-fns";
@@ -9,10 +9,12 @@ import Button from "../Button";
 
 const ListingCard = (props) => {
   const navigate = useNavigate();
-  const { data, reservation, onAction, disabled, actionLabel, actionId } =
+  const {data, reservation, onAction, disabled, actionLabel, actionId, isFavourite, favouriteParams, reservationParams } =
     props;
   const { getByValue } = useCountries();
   const location = getByValue(data.locationValue);
+
+  // console.log(reservation)
 
   const handleCancel = useCallback(
     (event) => {
@@ -41,7 +43,15 @@ const ListingCard = (props) => {
   }, [reservation]);
 
   const navigateToListingItem = () => {
-    navigate(ROUTES.LISTING_DETAIL.replace(":listingId", data._id))
+    if (isFavourite) {
+      navigate(ROUTES.LISTING_DETAIL.replace(":listingId", favouriteParams), {replace: true})
+
+    } else if (reservation) {
+      navigate(ROUTES.LISTING_DETAIL.replace(":listingId", reservationParams), {replace: true})
+    } else {
+      navigate(ROUTES.LISTING_DETAIL.replace(":listingId", data._id), {replace: true})
+
+    }
     // Không để magic string trong code, tạo một cái file là routes.js chứa tất cả các path
     // Rồi thay thành navigate(ROUTES.LISTING_DETAIL.replace(":listing_id", data._id))
   } 
@@ -59,7 +69,9 @@ const ListingCard = (props) => {
               className=" object-cover w-full h-full transition group-hover:scale-110"
             ></img>
             <div className="absolute top-3 right-3">
-              <HeartButton listingId={data._id} />
+              {isFavourite && <HeartButton listingId={favouriteParams} />}
+              {!isFavourite && !reservation && <HeartButton listingId={data._id} />}
+              {reservation && <HeartButton listingId={reservationParams} />}
             </div>
           </div>
           <div className="flex flex-row justify-between">

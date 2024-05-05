@@ -14,6 +14,10 @@ const placeSchema = new Schema({
         type: String,
         required: true,
     },
+    imagePublicId: {
+        type: String,
+        required: true,
+    },
     category: {
         type: String,
         required: true,

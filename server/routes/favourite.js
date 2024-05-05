@@ -20,6 +20,6 @@ router.post(
 
 // Delete a favourite by ID
 // /api/v1/favourite/:favouriteId => DELETE
-router.delete('/favourite/:favouriteId', isAuth, favouriteController.deleteFavouriteId);
+router.delete('/favourite/:placeId', isAuth, favouriteController.deleteFavouriteId);
 
 module.exports = router;

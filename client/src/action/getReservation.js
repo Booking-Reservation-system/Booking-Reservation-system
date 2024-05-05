@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 
 const getReservation = async (token, userId) => {
     try {
-        const response = await axios.get(`http://localhost:8080/api/reservation?userId=${userId}`, {
+        const response = await axios.get(`http://localhost:8080/api/reservations?userId=${userId}`, {
             headers: {
                 Authorization: "Bearer " + token,
             }

@@ -22,7 +22,7 @@ const ListingHead = (props) => {
             className="object-cover h-full rounded-xl"
           ></img>
           <div className="absolute top-5 right-5">
-            <HeartButton id={id} />
+            <HeartButton listingId={id} />
           </div>
         </div>
       </div>
