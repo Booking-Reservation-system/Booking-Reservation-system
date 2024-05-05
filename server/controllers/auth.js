@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
+const refresh = require('passport-oauth2-refresh');
 
 const User = require('../models/user');
 
@@ -65,5 +66,131 @@ exports.login = async (req, res, next) => {
     } catch(err) {
             if(!err.statusCode) err.statusCode = 500
             next(err);
+    }
+}
+
+exports.googleSuccess = async (req, res, next) => {
+    try {
+        if(!req.user){
+            const error = new Error('User not authenticated.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Google authentication successful.',
+            accessToken: req.user.accessToken,
+            expires_in: req.user.expires_in,
+            token_type: req.user.token_type,
+            refreshToken: req.user.refreshToken,
+            name: req.user.user.name,
+            image: req.user.user.image,
+        });
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+}
+
+exports.googleRenew = async (req, res, next) => {
+    try {
+        if(!req.user){
+            const error = new Error('User not authenticated.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
+        if (!refreshTokenDoc) {
+            const error = new Error('Refresh token not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        if(refreshTokenDoc.expires_at < new Date()){
+            const error = new Error('Refresh token expired.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const refreshToken = refreshTokenDoc.refreshToken;
+
+        // Request a new access token
+        refresh.requestNewAccessToken('google', refreshToken, function(err, accessToken, refreshToken, params) {
+            if (err) {
+                const error = new Error('Failed to renew access token.');
+                error.statusCode = 500;
+                throw error;
+            }
+            res.status(200).json({
+                message: 'Access token renewed.',
+                accessToken: accessToken,
+                expires_in: params.expires_in,
+                token_type: params.token_type,
+            });
+        });
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+}
+
+exports.githubSuccess = async (req, res, next) => {
+    try {
+        if(!req.user){
+            const error = new Error('User not authenticated.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Facebook authentication successful.',
+            accessToken: req.user.accessToken,
+            refreshToken: req.user.refreshToken,
+            name: req.user.user.name,
+            image: req.user.user.image,
+        });
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+}
+
+exports.githubRenew = async (req, res, next) => {
+    try {
+        if(!req.user){
+            const error = new Error('User not authenticated.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
+        if (!refreshTokenDoc) {
+            const error = new Error('Refresh token not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        if(refreshTokenDoc.expires_at < new Date()){
+            const error = new Error('Refresh token expired.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const refreshToken = refreshTokenDoc.refreshToken;
+
+        // Request a new access token
+        refresh.requestNewAccessToken('facebook', refreshToken, function(err, accessToken, refreshToken, params) {
+            if (err) {
+                const error = new Error('Failed to renew access token.');
+                error.statusCode = 500;
+                throw error;
+            }
+            res.status(200).json({
+                message: 'Access token renewed.',
+                accessToken: accessToken,
+            });
+        });
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
     }
 }

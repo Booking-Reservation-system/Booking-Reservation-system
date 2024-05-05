@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const session = require('express-session');
+const passport = require('passport');
+const cors = require('cors');
 
 dotenv.config();
 
@@ -16,18 +19,24 @@ const app = express();
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-// CORS error handling
-app.use((req, res, next) => {
-    // Allow access from any client
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
-    // Allow these headers
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    // Allow these methods
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-    next();
-});
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+}));
 
-app.use('/api/auth', authRoutes);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// CORS error handling
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+}));
+
+app.use('/auth', authRoutes);
 app.use('/api', placeRoutes);
 app.use('/api', reservationRoutes);
 app.use('/api', favouriteRoutes);
