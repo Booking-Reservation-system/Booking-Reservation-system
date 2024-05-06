@@ -253,7 +253,8 @@ exports.githubCallback = async (req, res, next) => {
 
 exports.githubSuccess = async (req, res, next) => {
     try {
-        if(!req.user){
+        console.log(req.user);
+        if(!req.user || req.user.provider !== 'github'){
             const error = new Error('User not authenticated.');
             error.statusCode = 401;
             throw error;

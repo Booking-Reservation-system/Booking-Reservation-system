@@ -19,7 +19,7 @@ const IndexPage = () => {
                 const response = await axios.get("http://localhost:8080/auth/google/success", {
                     withCredentials: true,
                 });
-                // console.log(response.data);
+                console.log(response.data);
                 return response.data;
             } catch (error) {
                 toast.error("Something went wrong");
@@ -34,7 +34,7 @@ const IndexPage = () => {
                     refreshToken: "1//0e5St58NFWnv1CgYIARAAGA4SNwF-L9IrC0hW2tdRYDUQcL1eSUJ1BN5fh7-p4PDW-qPe3dKCJj_Z7e8Ro2Ff6FDFfM-ubXAGpgE",
                     withCredentials: true,
                 });
-                console.log(response.data);
+                // console.log(response.data);
                 return response.data;
             } catch (error) {
                 toast.error("Something went wrong");
