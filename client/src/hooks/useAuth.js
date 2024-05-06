@@ -1,12 +1,20 @@
 import { useMemo } from "react";
 import useTokenStore from "./storeToken"
+import useStoreGoogleToken from "./useStoreGoogleToken";
+import useStoreGithubToken from "./useStoreGithubToken";
 import { jwtDecode } from "jwt-decode";
 const useAuth = () => {
     const { token } = useTokenStore();
-    if (!token) return { userId: null, authToken: null};
+    const { accessTokenGoogle, refreshTokenGoogle } = useStoreGoogleToken();
+    const { accessTokenGithub } = useStoreGithubToken();
+    if (!token) {
+        return {userId: null, authToken: null, accessTokenGoogle, refreshTokenGoogle, accessTokenGithub};
+    }
+
     const authToken = token
     const decodedToken = jwtDecode(token)
     const userId = useMemo(() => decodedToken.userId, [decodedToken]);
+
 
     // muốn return thêm gì thì thêm vào đây, biến thì dùng useMemo, hàm thì dùng useCallback
     /*
@@ -26,7 +34,7 @@ const useAuth = () => {
     dòng 51 file LoginModal.jsx
     */
 
-    return { userId, authToken };
+    return { userId, authToken, accessTokenGoogle, refreshTokenGoogle, accessTokenGithub};
 }
 
 export default useAuth;

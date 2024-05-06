@@ -5,8 +5,6 @@ import { FcGoogle } from "react-icons/fc";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { FacebookAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
-import { auth } from "../../../firebase";
 import useRegisterModal from "../../hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
 import Modal from "./Modal";
@@ -32,29 +30,11 @@ const RegisterModal = () => {
     },
   });
 
-  // const onSubmit = (data) => {
-  //   console.log(data)
-  //   setIsLoading(true);
-  //   // sent a request to the server that will create a new user
-  //   // then onClose() the modal
-  //   axios
-  //     .post("http://localhost:8080/api/auth/signup", data)
-  //     .then((res) => {
-  //       registerModal.onClose();
-  //       toast.success(res.data.message);
-  //     })
-  //     .catch((err) => {
-  //       toast.error(err.response.data.data[0].msg);
-  //     })
-  //     .finally(() => {
-  //       setIsLoading(false);
-  //     });
-  // };
-
+  
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/signup", data);
+      const response = await axios.post("http://localhost:8080/auth/signup", data);
       registerModal.onClose();
       toast.success(response.data.message);
     } catch (error) {
@@ -91,52 +71,6 @@ const RegisterModal = () => {
     loginModal.onOpen()
   }, [loginModal, registerModal])
 
-  const GoogleLogin = async() => {
-    setIsLoading(true);
-    try {
-      const provider = new GoogleAuthProvider();
-
-      const result = await signInWithPopup(auth, provider);
-
-      const userData = {
-        name: result.user.displayName,
-        email: result.user.email,
-        password: result.user.uid,
-      };
-
-      // Now, send the user data to your backend
-      const response = await axios.post("http://localhost:8080/api/auth/signup", userData);
-      toast.success(response.data.message);
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred while signing in with Google.");
-    }
-  }
-
-  const FBLogin = async() => {
-    setIsLoading(true);
-    try {
-      const provider = new FacebookAuthProvider();
-
-      const result = await signInWithPopup(auth, provider);
-
-      // After successful Facebook sign-in, you can send the user data to your backend
-      const userData = {
-        name: result.user.displayName,
-        email: result.user.email,
-        password: result.user.uid,
-        // You might not have direct access to the user's password due to security reasons,
-        // so you might not send the password to the backend here.
-      };
-
-      // Now, send the user data to your backend
-      const response = await axios.post("http://localhost:8080/api/auth/signup", userData);
-      toast.success(response.data.message);
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred while signing in with Facebook.");
-    }
-  }
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -178,13 +112,13 @@ const RegisterModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={GoogleLogin}
+        // onClick={}
       />
       <Button
         outline
         label="Continue with Facebook"
         icon={FaFacebookSquare}
-        onClick={FBLogin}
+        // onClick={}
       />
       <div className="text-neutral-500 text-center mt-4 font-light justify-center flex flex-row gap-2">
         <div>Already have an account?</div>

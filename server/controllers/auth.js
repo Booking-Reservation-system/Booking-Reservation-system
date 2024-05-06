@@ -72,7 +72,8 @@ exports.login = async (req, res, next) => {
 
 exports.googleSuccess = async (req, res, next) => {
     try {
-        if(!req.user){
+        console.log(req.user);
+        if(!req.user || req.user.user.provider !== 'google'){
             const error = new Error('User not authenticated.');
             error.statusCode = 401;
             throw error;
@@ -137,7 +138,7 @@ exports.googleRenew = async (req, res, next) => {
 
 exports.githubSuccess = async (req, res, next) => {
     try {
-        if(!req.user){
+        if(!req.user || req.user.provider !== 'github'){
             const error = new Error('User not authenticated.');
             error.statusCode = 401;
             throw error;

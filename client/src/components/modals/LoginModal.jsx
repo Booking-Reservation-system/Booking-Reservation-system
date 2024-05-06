@@ -13,7 +13,6 @@ import Input from "../inputs/Input";
 import Button from "../Button";
 import Modal from "./Modal";
 import useTokenStore from "../../hooks/storeToken";
-import { useGoogleLogin } from "@react-oauth/google";
 import ROUTES from "../../constants/routes";
 
 const LoginModal = () => {
@@ -49,7 +48,7 @@ const LoginModal = () => {
   const submitHandler = async (data) => {
     setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", data);
+      const response = await axios.post("http://localhost:8080/auth/login", data);
       loginModal.onClose();
       const token = response.data.token;
       setToken(token);
@@ -89,29 +88,11 @@ const LoginModal = () => {
     registerModal.onOpen();
   }, [loginModal, registerModal]);
 
-  const login = useGoogleLogin({
-    onSuccess: (credentialResponse) =>
-      console.log(credentialResponse),
-  });
-
   const GoogleLogin = async() => {
     setIsLoading(true);
     try {
       window.open("http://localhost:8080/auth/google", "_self");
-      // const provider = new GoogleAuthProvider();
-      //
-      // const result = await signInWithPopup(auth, provider);
-      //
-      // console.log(result);
-      // const userData = {
-      //   email: result.user.email,
-      //   password: result.user.uid,
-      // }
-      //
-      // const response = await axios.post("http://localhost:8080/api/auth/login", userData);
-      // setToken(response.data.token);
-      // loginModal.onClose();
-      // toast.success(response.data.message);
+     
     } catch (error) {
       console.log(error)
     } 
@@ -121,23 +102,8 @@ const LoginModal = () => {
   const GitLogin = async() => {
     setIsLoading(true);
     try {
-        window.open("http://localhost:8080/auth/github", "_self");
-      // const provider = new FacebookAuthProvider();
-      //
-      // const result = await signInWithPopup(auth, provider);
-      //
-      // console.log(result);
-      //
-      // const userData = {
-      //   email: result.user.email,
-      //   password: result.user.uid,
-      // }
-      //
-      // const response = await axios.post("http://localhost:8080/api/auth/login", userData);
-      // setToken(response.data.token);
-      // loginModal.onClose();
-      // toast.success(response.data.message);
-      // console.log('LOGGED USER', result.user);
+      window.open("http://localhost:8080/auth/github", "_self");
+     
     } catch (error) {
       console.log(error)
     } 
@@ -173,7 +139,6 @@ const LoginModal = () => {
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
-      {/* <Button outline label="Continue with Google" icon={FcGoogle}/> */}
       <Button
         outline
         label="Continue with Google"

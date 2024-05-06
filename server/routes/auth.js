@@ -47,7 +47,7 @@ router.post('/login', authController.login);
 router.get('/google', ggPassport.authenticate('google', {
     scope: ['profile', 'email'],
     accessType: 'offline',
-    // prompt: 'consent',
+    prompt: 'consent',
     // grantType: 'authorization_code',
     // approvalPrompt: 'force',
 }));
