@@ -42,12 +42,11 @@ const TripPage = () => {
                 }
             })
             toast.success("Reservation has been cancelled")
-            navigate(ROUTES.TRIPS)
+            navigate(ROUTES.HOME)
         } catch (error) {
             toast.error(error?.response?.data?.message || "Something went wrong")
         }
         setDeleteId('')
-        navigate(ROUTES.TRIPS)
     }
 
     return (

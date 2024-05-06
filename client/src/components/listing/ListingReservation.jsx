@@ -16,11 +16,12 @@ const ListingReservation = (props) => {
     onSubmit,
     disabled,
     disabledDate,
-    creatorId,
-    placeId
+    placeId,
+    creatorName
   } = props;
 
-  const { authToken, userId } = useAuth();
+  const { authToken } = useAuth();
+  const userName = localStorage.getItem("userName");
   const navigate = useNavigate();
   const formatter =  new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -57,7 +58,7 @@ const ListingReservation = (props) => {
       <hr/>
       <div className="p-4 flex flex-col gap-4">
         <Button label="Reserve" onClick={onSubmit}/>
-        {userId === creatorId && authToken && (
+        {creatorName === userName && authToken && (
           <div className="flex flex-row gap-4">
           <Button label="Delete" onClick={handleDelete}/>
           <Button label="Edit"/>

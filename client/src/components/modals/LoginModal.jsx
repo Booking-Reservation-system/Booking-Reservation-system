@@ -50,7 +50,7 @@ const LoginModal = () => {
       loginModal.onClose();
       const token = response.data.token;
       setToken(token);
-      setTimeToken()
+      localStorage.setItem("userName", response.data.name);
       toast.success("Logged in successfully");
     } catch (error) {
       toast.error(error.response.data.message || "Something went wrong");
