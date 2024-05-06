@@ -3,7 +3,7 @@ const { body } = require('express-validator');
 
 const authController = require('../controllers/auth');
 const ggPassport = require('../utils/ggConf');
-const gitPassport = require('../utils/gitConf');
+require('../utils/gitConf');
 const User = require('../models/user');
 
 const router = express.Router();
@@ -44,13 +44,7 @@ router.post('/login', authController.login);
 
 // GOOGLE AUTH
 // /api/v1/auth/google => GET
-router.get('/google', ggPassport.authenticate('google', {
-    scope: ['profile', 'email'],
-    accessType: 'offline',
-    // prompt: 'consent',
-    // grantType: 'authorization_code',
-    // approvalPrompt: 'force',
-}));
+router.get('/google', authController.google);
 
 // GOOGLE AUTH SUCCESS
 // /api/v1/auth/google/success => GET
@@ -58,33 +52,25 @@ router.get('/google/success', authController.googleSuccess);
 
 // GOOGLE AUTH CALLBACK
 // /api/v1/auth/google/callback => GET
-router.get('/google/callback', ggPassport.authenticate('google', {
-    successRedirect: 'http://localhost:5173/',
-    failureRedirect: 'http://localhost:5173/',
-    session: true,
-}));
+router.get('/google/callback', authController.googleCallback);
 
 // GOOGLE AUTH REFRESH TOKEN
 // /api/v1/auth/google/refresh => POST
 router.post('/google/refresh', authController.googleRenew);
 
+// GOOGLE AUTH LOGOUT
+// /api/v1/auth/google/logout => GET
+router.get('/google/logout', authController.googleLogout);
+
 //--------------------------------------------------------------------------------------------
 
 // GITHUB AUTH
 // /api/v1/auth/github => GET
-router.get('/github', gitPassport.authenticate('github', {
-    accessType: 'offline',
-    // prompt: 'consent',
-    approvalPrompt: 'force',
-}));
+router.get('/github', authController.github);
 
 // GITHUB AUTH CALLBACK
 // /api/v1/auth/github/callback => GET
-router.get('/github/callback', gitPassport.authenticate('github', {
-    successRedirect: 'http://localhost:5173/',
-    failureRedirect: 'http://localhost:5173/',
-    session: true,
-}));
+router.get('/github/callback', authController.githubCallback);
 
 // GITHUB AUTH SUCCESS
 // /api/v1/auth/github/success => GET
@@ -93,5 +79,9 @@ router.get('/github/success', authController.githubSuccess);
 // GITHUB AUTH REFRESH TOKEN
 // /api/v1/auth/github/refresh => POST
 router.post('/github/refresh', authController.githubRenew);
+
+// GITHUB AUTH LOGOUT
+// /api/v1/auth/github/logout => GET
+router.get('/github/logout', authController.githubLogout);
 
 module.exports = router;

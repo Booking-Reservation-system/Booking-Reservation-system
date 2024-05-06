@@ -13,9 +13,7 @@ const strategy = new GitHubStrategy(
     },
     async (accessToken, refreshToken, params, profile, callback) => {
         try {
-            console.log(params);
-
-            let user = await User.findOne({providerId: profile.id});
+            let user = await User.findOne({email: profile.emails[0].value});
             if (!user) {
                 const email = (profile.emails && profile.emails.length > 0) ? profile.emails[0].value : '';
                 user = new User({
@@ -26,6 +24,8 @@ const strategy = new GitHubStrategy(
                     providerId: profile.id,
                 });
                 await user.save();
+            } else if (user.provider !== profile.provider && user.providerId !== profile.id){
+                return callback(new Error('Email already registered with another provider.'), null);
             }
             let refreshTokenDoc = await RefreshToken.findOne({userId: user._id});
             if (!refreshTokenDoc) {
@@ -33,6 +33,9 @@ const strategy = new GitHubStrategy(
                     userId: user._id,
                     refreshToken: accessToken,
                 });
+                await refreshTokenDoc.save();
+            } else {
+                refreshTokenDoc.refreshToken = accessToken;
                 await refreshTokenDoc.save();
             }
             const data = {

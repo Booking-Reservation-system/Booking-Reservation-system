@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+require('cookie-parser');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const session = require('express-session');
@@ -23,6 +24,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: {secure: false},
 }));
 
 app.use(passport.initialize());

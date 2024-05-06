@@ -120,7 +120,6 @@ exports.getPlace = async (req, res, next) => {
       reservedDate: bookedDate,
       creator: {
         name: place.userId.name,
-        id: place.userId._id,
       },
     };
     res.status(200).json({ message: "Place fetched.", place: placeFormatted });
@@ -223,10 +222,6 @@ exports.createPlace = async (req, res, next) => {
     res.status(201).json({
       message: "Post created successfully!",
       place: place,
-      creator: {
-        _id: aes256.encryptData(user._id.toString()),
-        name: user.name,
-      },
     });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
@@ -287,9 +282,43 @@ exports.updatePlace = async (req, res, next) => {
     place.locationValue = location;
     place.price = parseInt(price, 10);
     const result = await place.save();
-    place._id = aes256.encryptData(place._id.toString());
-    place.userId._id = aes256.encryptData(place.userId._id.toString());
-    res.status(200).json({ message: "Place updated!", place: result });
+
+    const placeFormatted = {
+      _id: aes256.encryptData(result._id.toString()),
+      title: result.title,
+      description: result.description,
+      imageSrc: result.imageSrc,
+      category: result.category,
+      roomCount: result.roomCount,
+      bathroomCount: result.bathroomCount,
+      guestCapacity: result.guestCapacity,
+      locationValue: result.locationValue,
+      price: result.price,
+      amenities: {
+        wifi: result.amenities.wifi,
+        tv: result.amenities.tv,
+        kitchen: result.amenities.kitchen,
+        washer: result.amenities.washer,
+        parking: result.amenities.parking,
+        ac: result.amenities.ac,
+        pool: result.amenities.pool,
+        hotTub: result.amenities.hotTub,
+        workspace: result.amenities.workspace,
+        balcony: result.amenities.balcony,
+        grill: result.amenities.grill,
+        campFire: result.amenities.campFire,
+        billiards: result.amenities.billiards,
+        gym: result.amenities.gym,
+        piano: result.amenities.piano,
+        shower: result.amenities.shower,
+        firstAid: result.amenities.firstAid,
+        fireExtinguisher: result.amenities.fireExtinguisher,
+      },
+    };
+    res.status(200).json({
+      message: "Place updated!",
+      place: placeFormatted,
+    });
   } catch (err) {
     if (!err.statusCode) err.statusCode = 500;
     next(err);
@@ -319,7 +348,6 @@ exports.deletePlace = async (req, res, next) => {
       throw error;
     }
 
-    // clearImage(place.imageSrc);
     await Place.findByIdAndDelete(placeId);
     const user = await User.findById(req.userId);
     user.places.pull(placeId);
@@ -330,8 +358,3 @@ exports.deletePlace = async (req, res, next) => {
     next(err);
   }
 };
-
-// const clearImage = (filePath) => {
-//   filePath = join(__dirname, "..", filePath);
-//   unlink(filePath, (err) => console.log(err));
-// };

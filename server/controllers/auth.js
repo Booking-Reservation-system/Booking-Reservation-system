@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const refresh = require('passport-oauth2-refresh');
 const axios = require('axios');
-
+const ggPassport = require('../utils/ggConf');
+const gitPassport = require('../utils/gitConf');
 const User = require('../models/user');
 
 exports.signup = async (req, res, next) => {
@@ -70,10 +71,60 @@ exports.login = async (req, res, next) => {
     }
 }
 
+//-------------------------------------------------------------------------------
+
+exports.google = async (req, res, next) => {
+    try {
+        ggPassport.authenticate('google', {
+            scope: ['profile', 'email'],
+            accessType: 'offline',
+            prompt: 'consent',
+            // grantType: 'authorization_code',
+            // approvalPrompt: 'force',
+        })(req, res, next);
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+}
+
+exports.googleCallback = async (req, res, next) => {
+    try {
+        // use ggPassport.authenticate('google') to authenticate the user and console the error, req, res, next
+        ggPassport.authenticate('google', (err, user, info, status) => {
+            if(err){
+                res.redirect('http://localhost:5173/?authError=true');
+                return next(err);
+            }
+            if(!user){
+                const error = new Error('User not authenticated.');
+                error.statusCode = 401;
+                return next(error);
+            }
+            req.login(user, { session: true }, async (err) => {
+                if(err){
+                    return next(err);
+                }
+                res.redirect('http://localhost:5173/');
+            });
+        })(req, res, next);
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+
+}
+
 exports.googleSuccess = async (req, res, next) => {
     try {
         if(!req.user){
             const error = new Error('User not authenticated.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        if(req.user.user.provider !== 'google'){
+            const error = new Error('User not authenticated with google.');
             error.statusCode = 401;
             throw error;
         }
@@ -135,10 +186,81 @@ exports.googleRenew = async (req, res, next) => {
     }
 }
 
+exports.googleLogout = async (req, res, next) => {
+    try {
+        req.logout();
+        const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
+        if (!refreshTokenDoc) {
+            const error = new Error('Refresh token not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        await refreshTokenDoc.remove();
+
+        res.status(200).json({
+            message: 'Logged out.',
+        });
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+
+}
+
+//-------------------------------------------------------------------------------
+
+exports.github = async (req, res, next) => {
+    try {
+        gitPassport.authenticate('github', {
+            // scope: ['user:email', 'profile'] ,
+            accessType: 'offline',
+            prompt: 'consent',
+            // approvalPrompt: 'force',
+        })(req, res, next);
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+
+}
+
+exports.githubCallback = async (req, res, next) => {
+    try {
+        gitPassport.authenticate('github', async (err, user, info, status) => {
+            if(err) {
+                // redirect to the client and notifiy the user that the authentication failed
+                res.redirect('http://localhost:5173/?authError=true');
+                return next(err);
+            }
+            if (!user) {
+                const error = new Error('User not authenticated.');
+                error.statusCode = 401;
+                return next(error);
+            }
+            req.login(user, {session: true}, async (err) => {
+                if (err) {
+                    return next(err);
+                }
+                res.redirect('http://localhost:5173/');
+            });
+        })(req, res, next);
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+}
+
 exports.githubSuccess = async (req, res, next) => {
     try {
         if(!req.user){
             const error = new Error('User not authenticated.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        if(req.user.provider !== 'github'){
+            const error = new Error('User not authenticated with github.');
             error.statusCode = 401;
             throw error;
         }
@@ -205,4 +327,26 @@ exports.githubRenew = async (req, res, next) => {
         if(!err.statusCode) err.statusCode = 500
         next(err);
     }
+}
+
+exports.githubLogout = async (req, res, next) => {
+    try {
+        req.logout();
+        const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
+        if (!refreshTokenDoc) {
+            const error = new Error('Refresh token not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        await refreshTokenDoc.remove();
+
+        res.status(200).json({
+            message: 'Logged out.',
+        });
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+
 }
