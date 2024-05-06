@@ -1,6 +1,4 @@
 import axios from "axios";
-import { AiFillGithub } from "react-icons/ai";
-import { FaFacebookSquare } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -71,6 +69,15 @@ const RegisterModal = () => {
     loginModal.onOpen()
   }, [loginModal, registerModal])
 
+  const GoogleLogin = async() => {
+    setIsLoading(true);
+    try {
+      window.open("http://localhost:8080/auth/google", "_self");
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred while signing in with Google.");
+    }
+  }
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -112,12 +119,6 @@ const RegisterModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        // onClick={}
-      />
-      <Button
-        outline
-        label="Continue with Facebook"
-        icon={FaFacebookSquare}
         // onClick={}
       />
       <div className="text-neutral-500 text-center mt-4 font-light justify-center flex flex-row gap-2">

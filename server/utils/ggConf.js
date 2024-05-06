@@ -12,7 +12,7 @@ const strategy = new GoogleStrategy(
         },
         async(accessToken, refreshToken, params, profile, callback) => {
             try {
-                let user = await User.findOne({providerId: profile.id});
+                let user = await User.findOne({email: profile.emails[0].value});
                 if (!user) {
                     user = new User({
                         name: profile.displayName,
@@ -22,6 +22,8 @@ const strategy = new GoogleStrategy(
                         providerId: profile.id,
                     });
                     await user.save();
+                } else if (user.provider !== profile.provider && user.providerId !== profile.id){
+                    return callback(new Error("Email already registered with another provider."), null);
                 }
                 let refreshTokenDoc = await RefreshToken.findOne({userId: user._id});
                 if (!refreshTokenDoc) {
@@ -29,6 +31,9 @@ const strategy = new GoogleStrategy(
                         userId: user._id,
                         refreshToken: refreshToken,
                     });
+                    await refreshTokenDoc.save();
+                } else {
+                    refreshTokenDoc.refreshToken = refreshToken;
                     await refreshTokenDoc.save();
                 }
                 const data = {

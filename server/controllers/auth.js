@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const refresh = require('passport-oauth2-refresh');
 const axios = require('axios');
-
+const ggPassport = require('../utils/ggConf');
 const User = require('../models/user');
 
 exports.signup = async (req, res, next) => {
@@ -70,11 +70,61 @@ exports.login = async (req, res, next) => {
     }
 }
 
+//-------------------------------------------------------------------------------
+
+exports.google = async (req, res, next) => {
+    try {
+        ggPassport.authenticate('google', {
+            scope: ['profile', 'email'],
+            accessType: 'offline',
+            prompt: 'consent',
+            // grantType: 'authorization_code',
+            // approvalPrompt: 'force',
+        })(req, res, next);
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+}
+
+exports.googleCallback = async (req, res, next) => {
+    try {
+        // use ggPassport.authenticate('google') to authenticate the user and console the error, req, res, next
+        ggPassport.authenticate('google', (err, user, info, status) => {
+            if(err){
+                res.redirect('http://localhost:5173/?authError=true');
+                return next(err);
+            }
+            if(!user){
+                const error = new Error('User not authenticated.');
+                error.statusCode = 401;
+                return next(error);
+            }
+            req.login(user, { session: true }, async (err) => {
+                if(err){
+                    return next(err);
+                }
+                res.redirect('http://localhost:5173/?auth=true');
+            });
+        })(req, res, next);
+    } catch(err) {
+        if(!err.statusCode) err.statusCode = 500
+        next(err);
+    }
+
+}
+
 exports.googleSuccess = async (req, res, next) => {
     try {
         console.log(req.user);
         if(!req.user || req.user.user.provider !== 'google'){
             const error = new Error('User not authenticated.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        if(req.user.user.provider !== 'google'){
+            const error = new Error('User not authenticated with google.');
             error.statusCode = 401;
             throw error;
         }
@@ -96,38 +146,44 @@ exports.googleSuccess = async (req, res, next) => {
 
 exports.googleRenew = async (req, res, next) => {
     try {
-        if(!req.user){
-            const error = new Error('User not authenticated.');
-            error.statusCode = 401;
-            throw error;
-        }
-
-        const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
+        const token = req.body.refreshToken;
+        const refreshTokenDoc = await RefreshToken.findOne({ refreshToken: token });
         if (!refreshTokenDoc) {
             const error = new Error('Refresh token not found.');
             error.statusCode = 404;
-            throw error;
-        }
-        if(refreshTokenDoc.expires_at < new Date()){
-            const error = new Error('Refresh token expired.');
-            error.statusCode = 401;
             throw error;
         }
 
         const refreshToken = refreshTokenDoc.refreshToken;
 
         // Request a new access token
-        refresh.requestNewAccessToken('google', refreshToken, function(err, accessToken, refreshToken, params) {
+        refresh.requestNewAccessToken('google', refreshToken, function(err, accessToken, refreshToken1, params) {
             if (err) {
                 const error = new Error('Failed to renew access token.');
                 error.statusCode = 500;
                 throw error;
             }
+
+            if(req.user) req.logout();
+
+            const user = {
+                accessToken: accessToken,
+                expires_in: params.expires_in,
+                token_type: params.token_type,
+                refreshToken: refreshToken,
+            };
+
+            req.login(user, { session: true }, async (err) => {
+                if(err){
+                    return next(err);
+                }
+            });
             res.status(200).json({
                 message: 'Access token renewed.',
                 accessToken: accessToken,
                 expires_in: params.expires_in,
                 token_type: params.token_type,
+                user: req.user,
             });
         });
     } catch(err) {
@@ -136,74 +192,24 @@ exports.googleRenew = async (req, res, next) => {
     }
 }
 
-exports.githubSuccess = async (req, res, next) => {
+exports.googleLogout = async (req, res, next) => {
     try {
-        if(!req.user || req.user.provider !== 'github'){
-            const error = new Error('User not authenticated.');
-            error.statusCode = 401;
+        req.logout();
+        const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
+        if (!refreshTokenDoc) {
+            const error = new Error('Refresh token not found.');
+            error.statusCode = 404;
             throw error;
         }
 
+        await refreshTokenDoc.remove();
+
         res.status(200).json({
-            message: 'Github authentication successful.',
-            accessToken: req.user.accessToken,
-            refreshToken: req.user.refreshToken,
-            name: req.user.user.name,
-            image: req.user.user.image,
+            message: 'Logged out.',
         });
     } catch(err) {
         if(!err.statusCode) err.statusCode = 500
         next(err);
     }
-}
 
-exports.githubRenew = async (req, res, next) => {
-    try {
-        // if(!req.user){
-        //     const error = new Error('User not authenticated.');
-        //     error.statusCode = 401;
-        //     throw error;
-        // }
-        //
-        // const refreshTokenDoc = await RefreshToken.findOne({ userId: req.user._id });
-        // if (!refreshTokenDoc) {
-        //     const error = new Error('Refresh token not found.');
-        //     error.statusCode = 404;
-        //     throw error;
-        // }
-        // if(refreshTokenDoc.expires_at < new Date()){
-        //     const error = new Error('Refresh token expired.');
-        //     error.statusCode = 401;
-        //     throw error;
-        // }
-        //
-        // const refreshToken = refreshTokenDoc.refreshToken;
-
-        const refreshToken = req.body.refreshToken;
-
-        // Request a new access token using the refresh token with axios and https://github.com/login/oauth/access_token
-        const data = await axios.post('https://github.com/login/oauth/access_token', {
-            client_id: process.env.GITHUB_CLIENT_ID,
-            client_secret: process.env.GITHUB_CLIENT_SECRET,
-            refresh_token: refreshToken,
-            grant_type: 'refresh_token',
-        });
-
-        // console.log(data);
-
-        if(data.error){
-            const error = new Error(data.error);
-            error.statusCode = 500;
-            throw error;
-        }
-
-        res.status(200).json({
-            message: 'Access token renewed.',
-            accessToken: data.access_token,
-        });
-
-    } catch(err) {
-        if(!err.statusCode) err.statusCode = 500
-        next(err);
-    }
 }

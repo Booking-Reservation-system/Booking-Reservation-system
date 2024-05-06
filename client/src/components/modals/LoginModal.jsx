@@ -3,8 +3,6 @@ import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import {FaGithub} from "react-icons/fa";
-import { AiFillGithub } from "react-icons/ai";
 import toast from "react-hot-toast";
 import useLoginModal from "../../hooks/useLoginModal";
 import useRegisterModal from "../../hooks/useRegisterModal";
@@ -55,7 +53,7 @@ const LoginModal = () => {
       setTimeToken()
       toast.success("Logged in successfully");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -92,18 +90,6 @@ const LoginModal = () => {
     setIsLoading(true);
     try {
       window.open("http://localhost:8080/auth/google", "_self");
-     
-    } catch (error) {
-      console.log(error)
-    } 
-    navigate(ROUTES.HOME);
-  }
-
-  const GitLogin = async() => {
-    setIsLoading(true);
-    try {
-      window.open("http://localhost:8080/auth/github", "_self");
-     
     } catch (error) {
       console.log(error)
     } 
@@ -145,13 +131,6 @@ const LoginModal = () => {
         icon={FcGoogle}
         onClick={GoogleLogin}
       ></Button>
-
-      <Button
-        outline
-        label="Continue with Github"
-        icon={FaGithub}
-        onClick={GitLogin}
-      />
       <div className="text-neutral-500 text-center justify-center mt-4 font-light flex flex-row gap-2">
         <p>First time using this App?</p>
         <span
