@@ -146,7 +146,6 @@ exports.googleSuccess = async (req, res, next) => {
 exports.googleRenew = async (req, res, next) => {
     try {
         const token = req.body.refreshToken;
-
         const refreshTokenDoc = await RefreshToken.findOne({ refreshToken: token });
         if (!refreshTokenDoc) {
             const error = new Error('Refresh token not found.');
@@ -178,12 +177,12 @@ exports.googleRenew = async (req, res, next) => {
                     return next(err);
                 }
             });
-
             res.status(200).json({
                 message: 'Access token renewed.',
                 accessToken: accessToken,
                 expires_in: params.expires_in,
                 token_type: params.token_type,
+                user: req.user,
             });
         });
     } catch(err) {

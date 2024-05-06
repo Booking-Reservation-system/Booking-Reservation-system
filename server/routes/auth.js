@@ -44,13 +44,13 @@ router.post('/login', authController.login);
 // /api/v1/auth/google => GET
 router.get('/google', authController.google);
 
-// GOOGLE AUTH SUCCESS
-// /api/v1/auth/google/success => GET
-router.get('/google/success', authController.googleSuccess);
-
 // GOOGLE AUTH CALLBACK
 // /api/v1/auth/google/callback => GET
 router.get('/google/callback', authController.googleCallback);
+
+// GOOGLE AUTH SUCCESS
+// /api/v1/auth/google/success => GET
+router.get('/google/success', authController.googleSuccess);
 
 // GOOGLE AUTH REFRESH TOKEN
 // /api/v1/auth/google/refresh => POST

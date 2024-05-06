@@ -2,13 +2,13 @@ import Container from "../components/Container";
 import EmptyState from "../components/EmptyState";
 import ListingCard from "../components/listing/ListingCard";
 import getAllPlaces from "../action/getAllPlaces";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Component, Fragment } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import {useLocation} from "react-router-dom";
 
 const IndexPage = () => {
-  const [data, setData] = useState([]);
+    const [data, setData] = useState([]);
     const location = useLocation();
     const query = new URLSearchParams(location.search);
   useEffect(() => {
@@ -51,12 +51,10 @@ const IndexPage = () => {
         toast.error(error?.response?.data?.message || "Something went wrong")
       }
     }
-    fetchData()
-  }, [])
-
-  
-
+    fetchData();
+    }, []);
   const isEmpty = false;
+
   return (
     <>
       {(isEmpty && <EmptyState showReset />) || (
