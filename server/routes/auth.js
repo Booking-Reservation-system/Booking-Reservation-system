@@ -2,8 +2,6 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const authController = require('../controllers/auth');
-const ggPassport = require('../utils/ggConf');
-require('../utils/gitConf');
 const User = require('../models/user');
 
 const router = express.Router();
@@ -61,27 +59,5 @@ router.post('/google/refresh', authController.googleRenew);
 // GOOGLE AUTH LOGOUT
 // /api/v1/auth/google/logout => GET
 router.get('/google/logout', authController.googleLogout);
-
-//--------------------------------------------------------------------------------------------
-
-// GITHUB AUTH
-// /api/v1/auth/github => GET
-router.get('/github', authController.github);
-
-// GITHUB AUTH CALLBACK
-// /api/v1/auth/github/callback => GET
-router.get('/github/callback', authController.githubCallback);
-
-// GITHUB AUTH SUCCESS
-// /api/v1/auth/github/success => GET
-router.get('/github/success', authController.githubSuccess);
-
-// GITHUB AUTH REFRESH TOKEN
-// /api/v1/auth/github/refresh => POST
-router.post('/github/refresh', authController.githubRenew);
-
-// GITHUB AUTH LOGOUT
-// /api/v1/auth/github/logout => GET
-router.get('/github/logout', authController.githubLogout);
 
 module.exports = router;
