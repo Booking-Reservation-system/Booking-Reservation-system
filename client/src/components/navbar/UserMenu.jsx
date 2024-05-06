@@ -7,17 +7,30 @@ import useRegisterModal from '../../hooks/useRegisterModal';
 import useLoginModal from '../../hooks/useLoginModal';
 import useRentModal from '../../hooks/useRentModal';
 import useTokenStore from '../../hooks/storeToken';
+import useStoreGithubToken from '../../hooks/useStoreGithubToken';
+import useStoreGoogleToken from '../../hooks/useStoreGoogleToken';
 import ROUTES from '../../constants/routes';
 const UserMenu = (props) => {
-    const {token, setToken} = useTokenStore()
     const navigate = useNavigate()
+
+    const { token, setToken } = useTokenStore()
+    const { accessTokenGithub, setAccessTokenGithub } = useStoreGithubToken()
+    const { accessTokenGoogle, setAccessTokenGoogle } = useStoreGoogleToken()
+
     let currentUser = false
-    if (token !== null) {
+    if (token || accessTokenGithub !== null || accessTokenGoogle !== null) {
       currentUser = true
     }
 
     const logoutHandler = () => {
-      setToken(null)
+      if (token) {
+        setToken(null)
+      } else if (accessTokenGithub) {
+        setAccessTokenGithub(null)
+      } else if (accessTokenGoogle) {
+        setAccessTokenGoogle(null)
+      }
+      
       navigate(ROUTES.HOME)
     }
 

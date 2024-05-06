@@ -2,6 +2,7 @@ import axios from "axios";
 import { FcGoogle } from "react-icons/fc";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import useRegisterModal from "../../hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
 import Modal from "./Modal";
@@ -27,25 +28,7 @@ const RegisterModal = () => {
     },
   });
 
-  // const onSubmit = (data) => {
-  //   console.log(data)
-  //   setIsLoading(true);
-  //   // sent a request to the server that will create a new user
-  //   // then onClose() the modal
-  //   axios
-  //     .post("http://localhost:8080/api/auth/signup", data)
-  //     .then((res) => {
-  //       registerModal.onClose();
-  //       toast.success(res.data.message);
-  //     })
-  //     .catch((err) => {
-  //       toast.error(err.response.data.data[0].msg);
-  //     })
-  //     .finally(() => {
-  //       setIsLoading(false);
-  //     });
-  // };
-
+  
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
@@ -136,7 +119,7 @@ const RegisterModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={GoogleLogin}
+        // onClick={}
       />
       <div className="text-neutral-500 text-center mt-4 font-light justify-center flex flex-row gap-2">
         <div>Already have an account?</div>

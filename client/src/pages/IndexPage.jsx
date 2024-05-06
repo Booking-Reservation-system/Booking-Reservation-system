@@ -28,7 +28,6 @@ const IndexPage = () => {
                 toast.error("Something went wrong");
             }
         }
-        await ggLg();
 
         // get renew access token
         const renewGgToken = async () => {
@@ -44,8 +43,6 @@ const IndexPage = () => {
                 toast.error("Something went wrong");
             }
         }
-        await renewGgToken();
-
         setData(response)
       } catch (error) {
         toast.error(error?.response?.data?.message || "Something went wrong")
@@ -53,6 +50,7 @@ const IndexPage = () => {
     }
     fetchData();
     }, []);
+
   const isEmpty = false;
 
   return (
@@ -72,7 +70,7 @@ const IndexPage = () => {
                 gap-10
               "
             >
-              {data.map((item) => (
+              {placeData.map((item) => (
                 <ListingCard data={item} key={item._id} />
               ))}
             </div>
