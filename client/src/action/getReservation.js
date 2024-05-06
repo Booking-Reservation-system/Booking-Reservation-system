@@ -1,5 +1,6 @@
 import axios from "axios"
 import toast from "react-hot-toast";
+import instance from "../../utils/customizeAxios";
 
 const getReservation = async (token, userId) => {
     try {
@@ -8,6 +9,7 @@ const getReservation = async (token, userId) => {
                 Authorization: "Bearer " + token,
             }
         });
+        // const response = await instance.get(`/api/reservations?userId=${userId}`);
         return response;
     } catch (error) {
         throw error;

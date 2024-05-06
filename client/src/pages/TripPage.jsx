@@ -28,29 +28,10 @@ const TripPage = () => {
             }
         }
         fetchData()
-    }, [])
+    }, [userId])
 
      // TODO: hạn chế dùng promise, dùng try catch với async await đi
     //     // Cái này không cần dùng useCallback vì navigate, token không thay đổi, tốn bộ nhớ cho useCallback
-
-    // const onCancel = useCallback((id) => {
-    //     setDeleteId(id)
-    //     // id in here not encrypt
-    //     axios.delete(`http://localhost:8080/api/reservation/${id}`, {
-    //         headers: {
-    //             Authorization: "Bearer " + token
-    //         }
-    //     })
-    //     .then(() => {
-    //         toast.success("Reservation has been cancelled")
-    //     })
-    //     .catch((error) => {
-    //         toast.error(error?.response?.data?.message || "Something went wrong")
-    //     })
-    //     .finally(() => {
-    //         setDeleteId('')
-    //     })
-    // }, [navigate, token])
 
     const onCancel = async (id) => {
         setDeleteId(id)
