@@ -13,6 +13,12 @@ const ListingReservation = (props) => {
     disabledDate,
   } = props;
 
+<<<<<<< Updated upstream
+=======
+  const { authToken, authName } = useAuth();
+  const editPlaceModal = useEditPlaceModal();
+  const navigate = useNavigate();
+>>>>>>> Stashed changes
   const formatter =  new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -34,6 +40,15 @@ const ListingReservation = (props) => {
       <hr/>
       <div className="p-4">
         <Button label="Reserve" onClick={onSubmit}/>
+<<<<<<< Updated upstream
+=======
+        {creatorName === authName && authToken && (
+          <div className="flex flex-row gap-4">
+          <Button label="Delete" onClick={handleDelete}/>
+          <Button label="Edit" onClick={editPlaceModal.onOpen}/>
+        </div>
+        )}
+>>>>>>> Stashed changes
       </div>
       <div className="p-4 flex flex-row items-center justify-between font-semibold text-lg">
         <div>

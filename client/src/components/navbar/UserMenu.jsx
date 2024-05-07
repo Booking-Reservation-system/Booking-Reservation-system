@@ -16,8 +16,18 @@ const UserMenu = (props) => {
     }
 
     const logoutHandler = () => {
+<<<<<<< Updated upstream
       setToken(null)
       navigate('/')
+=======
+        setAccess(null)
+        setRefresh(null)
+        setExpires(null)
+        setAuthName(null)
+        setAuth(false)
+        localStorage.removeItem('placeId')
+        navigate(ROUTES.HOME)
+>>>>>>> Stashed changes
     }
 
    const registerModal = useRegisterModal()

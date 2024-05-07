@@ -1,5 +1,9 @@
 import axios from "axios"
 import toast from "react-hot-toast";
+<<<<<<< Updated upstream
+=======
+// import instance from "../../utils/customizeAxios";
+>>>>>>> Stashed changes
 
 const getReservation = async (token, userId) => {
 
