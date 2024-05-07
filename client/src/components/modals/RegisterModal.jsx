@@ -119,7 +119,7 @@ const RegisterModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        // onClick={}
+        onClick={GoogleLogin}
       />
       <div className="text-neutral-500 text-center mt-4 font-light justify-center flex flex-row gap-2">
         <div>Already have an account?</div>

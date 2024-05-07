@@ -1,7 +1,9 @@
-import { Range } from "react-date-range";
 import { useNavigate } from "react-router-dom";  
 import Calendar from "../inputs/Calender";
 import Button from "../Button";
+
+import useEditPlaceModal from "../../hooks/useEditPlaceModal";
+import useRentModal from "../../hooks/useRentModal";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -21,6 +23,8 @@ const ListingReservation = (props) => {
   } = props;
 
   const { authToken } = useAuth();
+  const editPlaceModal = useEditPlaceModal();
+  const rentModal = useRentModal();
   const userName = localStorage.getItem("userName");
   const navigate = useNavigate();
   const formatter =  new Intl.NumberFormat('en-US', {
@@ -43,6 +47,10 @@ const ListingReservation = (props) => {
     }
   }
 
+  const handleEdit = () => {
+    editPlaceModal.onOpen()
+  }
+
   return (
     <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden sticky top-[100px]">
       <div className="flex flex-row items-center gap-1 p-4">
@@ -61,7 +69,7 @@ const ListingReservation = (props) => {
         {creatorName === userName && authToken && (
           <div className="flex flex-row gap-4">
           <Button label="Delete" onClick={handleDelete}/>
-          <Button label="Edit"/>
+          <Button label="Edit" onClick={handleEdit}/>
         </div>
         )}
       </div>

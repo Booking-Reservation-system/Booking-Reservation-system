@@ -15,7 +15,6 @@ import ROUTES from "../../constants/routes";
 
 const LoginModal = () => {
   const navigate = useNavigate();
-  const { token, setToken } = useTokenStore();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);

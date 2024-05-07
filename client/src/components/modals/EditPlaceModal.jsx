@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { categoriesArray } from "../navbar/Categories";
 import { amenitiesArray } from "../Amenities";
 
-import useRentModal from "../../hooks/useRentModal";
+import useEditPlaceModal from "../../hooks/useEditPlaceModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import ImageUpload from "../inputs/ImageUpload";
@@ -28,8 +28,8 @@ const STEPS = {
   PRICE: 6,
 };
 
-const RentModal = () => {
-  const rentModal = useRentModal();
+const EditPlaceModal = () => {
+  const editPlaceModal = useEditPlaceModal();
   const navigate = useNavigate();
   const [step, setStep] = useState(STEPS.CATEGORY);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
@@ -101,7 +101,7 @@ const RentModal = () => {
       return onNext();
     }
 
-    const inputListingData = {
+    const updateListingData = {
       title: data.title,
       description: data.description,
       category: data.category,
@@ -119,24 +119,24 @@ const RentModal = () => {
     });
     inputListingData.amenities = amenities;
 
-    console.log(inputListingData);
+    console.log(updateListingData);
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/place/new",
-        inputListingData,
+      const response = await axios.put(
+        "http://localhost:8080/api/place",
+        updateListingData,
         {
           headers: {
             Authorization: "Bearer " + token,
           },
         }
       );
-      toast.success("Your place has been added");
+      toast.success("Your place has been updated");
       setSelectedAmenities([]);
       navigate(ROUTES.HOME); // redirect to the home page
       reset();
       setStep(STEPS.CATEGORY);
-      rentModal.onClose();
+      editPlaceModal.onClose();
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -146,7 +146,7 @@ const RentModal = () => {
 
   const actionLabel = useMemo(() => {
     if (step === STEPS.PRICE) {
-      return "Create";
+      return "Update";
     }
     return "Next";
   }, [step]);
@@ -315,19 +315,19 @@ const RentModal = () => {
       </div>
     );
   }
-
+  console.log(editPlaceModal.isOpen)
   return (
     <Modal
-      isOpen={rentModal.isOpen}
-      onClose={rentModal.onClose}
+      isOpen={editPlaceModal.isOpen}
+      onClose={editPlaceModal.onClose}
       onSubmit={handleSubmit(onSubmit)}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
-      title="Add your home"
+      title="Edit your home"
       body={bodyContent}
     />
   );
 };
 
-export default RentModal;
+export default EditPlaceModal;
