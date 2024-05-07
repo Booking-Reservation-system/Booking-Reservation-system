@@ -15,13 +15,13 @@ const UserMenu = (props) => {
 
     const {
         accessToken,
-        setAccessToken,
+        setAccess,
         refreshToken,
-        setRefreshToken,
+        setRefresh,
         expiresAt,
         setExpires,
         name,
-        setName,
+        setAuthName,
         setAuth,
     } = useTokenStore()
 
@@ -31,10 +31,10 @@ const UserMenu = (props) => {
     }
 
     const logoutHandler = () => {
-        setAccessToken(null)
-        setRefreshToken(null)
+        setAccess(null)
+        setRefresh(null)
         setExpires(null)
-        setName(null)
+        setAuthName(null)
         setAuth(false)
 
         navigate(ROUTES.HOME)
