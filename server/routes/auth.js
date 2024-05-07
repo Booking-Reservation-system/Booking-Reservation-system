@@ -1,5 +1,5 @@
 const express = require('express');
-const { body } = require('express-validator');
+const {body} = require('express-validator');
 
 const authController = require('../controllers/auth');
 const User = require('../models/user');
@@ -15,10 +15,10 @@ router.post(
             .isEmail()
             .withMessage('Please enter a valid email.')
             .custom((value, {req}) => {
-                return User.findOne({email:value})
-                            .then(doc => {
-                                if(doc) return Promise.reject('Email address already exists.');
-                            })
+                return User.findOne({email: value})
+                    .then(doc => {
+                        if (doc) return Promise.reject('Email address already exists.');
+                    })
             })
             .normalizeEmail(),
         body('password')
@@ -37,6 +37,10 @@ router.post(
 // LOGIN
 // /api/v1/auth/login => POST
 router.post('/login', authController.login);
+
+// REFRESH TOKEN
+// /api/v1/auth/refresh => POST
+router.post('/refresh', authController.refresh);
 
 //--------------------------------------------------------------------------------------------
 
