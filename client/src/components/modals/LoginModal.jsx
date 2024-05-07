@@ -14,6 +14,7 @@ import useTokenStore from "../../hooks/storeToken";
 import ROUTES from "../../constants/routes";
 
 const LoginModal = () => {
+  const {token, setToken} = useTokenStore();
   const navigate = useNavigate();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
