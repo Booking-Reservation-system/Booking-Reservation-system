@@ -6,6 +6,7 @@ import ListingPage from "./pages/ListingPage";
 import TripPage from "./pages/TripPage";
 import FavouritePage from "./pages/FavouritePage";
 import ROUTES from "./constants/routes";
+
 function App() {
   return (
     <Routes>
