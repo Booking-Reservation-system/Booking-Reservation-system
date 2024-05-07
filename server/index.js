@@ -1,10 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
-const session = require('express-session');
+const session = require('cookie-session');
 const passport = require('passport');
 const cors = require('cors');
 
@@ -20,6 +20,7 @@ const app = express();
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
+app.use(cookieParser());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,

@@ -62,6 +62,6 @@ router.post('/google/refresh', authController.googleRenew);
 
 // GOOGLE AUTH LOGOUT
 // /api/v1/auth/google/logout => GET
-router.get('/google/logout', authController.googleLogout);
+router.delete('/google/logout', authController.googleLogout);
 
 module.exports = router;

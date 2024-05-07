@@ -3,7 +3,7 @@ import useTokenStore from "../src/hooks/storeToken.js";
 
 
 export function getTokenDuration() {
-    return 5 * 1000;
+    return 60 * 60 * 1000;
 }
 
 export function getAuthTokens(accessToken) {

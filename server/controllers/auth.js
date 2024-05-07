@@ -148,10 +148,9 @@ exports.google = async (req, res, next) => {
 
 exports.googleCallback = async (req, res, next) => {
     try {
-        // use ggPassport.authenticate('google') to authenticate the user and console the error, req, res, next
         ggPassport.authenticate('google', (err, user, info, status) => {
             if (err) {
-                res.redirect('http://localhost:5173/?authError=true');
+                res.redirect(process.env.CLIENT_URL + '?authError=true');
                 return next(err);
             }
             if (!user) {
@@ -163,7 +162,7 @@ exports.googleCallback = async (req, res, next) => {
                 if (err) {
                     return next(err);
                 }
-                res.redirect('http://localhost:5173/?auth=true');
+                res.redirect(process.env.CLIENT_URL + '?auth=true');
             });
         })(req, res, next);
     } catch (err) {
@@ -176,14 +175,8 @@ exports.googleCallback = async (req, res, next) => {
 exports.googleSuccess = async (req, res, next) => {
     try {
         console.log(req.user);
-        if (!req.user || req.user.user.provider !== 'google') {
+        if (!req.user && req.user.provider !== 'google') {
             const error = new Error('User not authenticated.');
-            error.statusCode = 401;
-            throw error;
-        }
-
-        if (req.user.user.provider !== 'google') {
-            const error = new Error('User not authenticated with google.');
             error.statusCode = 401;
             throw error;
         }
@@ -194,8 +187,8 @@ exports.googleSuccess = async (req, res, next) => {
             expires_in: req.user.expires_in,
             token_type: req.user.token_type,
             refreshToken: req.user.refreshToken,
-            name: req.user.user.name,
-            image: req.user.user.image,
+            name: req.user.name,
+            image: req.user.image,
         });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500
@@ -205,6 +198,7 @@ exports.googleSuccess = async (req, res, next) => {
 
 exports.googleRenew = async (req, res, next) => {
     try {
+        console.log(req.user);
         const token = req.body.refreshToken;
         const refreshTokenDoc = await RefreshToken.findOne({refreshToken: token});
         if (!refreshTokenDoc) {
@@ -223,7 +217,11 @@ exports.googleRenew = async (req, res, next) => {
                 throw error;
             }
 
-            if (req.user) req.logout();
+            if (req.user) req.logout((err) => {
+                if (err) {
+                    return next(err);
+                }
+            });
 
             const user = {
                 accessToken: accessToken,
@@ -242,7 +240,6 @@ exports.googleRenew = async (req, res, next) => {
                 accessToken: accessToken,
                 expires_in: params.expires_in,
                 token_type: params.token_type,
-                user: req.user,
             });
         });
     } catch (err) {
@@ -253,15 +250,26 @@ exports.googleRenew = async (req, res, next) => {
 
 exports.googleLogout = async (req, res, next) => {
     try {
-        req.logout();
-        const refreshTokenDoc = await RefreshToken.findOne({userId: req.user._id});
+        console.log('Google logout');
+        console.log(req.user);
+        const refreshTokenDoc = await RefreshToken.findOne({refreshToken: req.user.refreshToken});
         if (!refreshTokenDoc) {
             const error = new Error('Refresh token not found.');
             error.statusCode = 404;
             throw error;
         }
 
-        await refreshTokenDoc.remove();
+        const result = await refreshTokenDoc.deleteOne();
+        if (!result) {
+            const error = new Error('Failed to delete refresh token.');
+            error.statusCode = 500;
+            throw error;
+        }
+        req.logout((err) => {
+            if (err) {
+                return next(err);
+            }
+        });
 
         res.status(200).json({
             message: 'Logged out.',
