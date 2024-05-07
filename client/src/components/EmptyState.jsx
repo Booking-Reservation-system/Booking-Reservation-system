@@ -11,11 +11,11 @@ const EmptyState = (props) => {
     } = props
 
     return (
-        <div className="h-[100vh] flex flex-col gap-2 justify-center items-center pt-20 pb-[400px]">
+        <div className="h-[100vh] flex flex-col gap-2 justify-center items-center pt-20 pb-[100px]">
             <Heading center title={title} subtitle={subtitle}/>
             <div className="w-48 mt-4">
                 {showReset && (
-                    <Button outline label="Remove all filters" onClick={() => {navigate(ROUTES.HOME)}}></Button>
+                    <Button outline label="Back to Homepage" onClick={() => {navigate(ROUTES.HOME)}}></Button>
                 )}
             </div>
         </div>

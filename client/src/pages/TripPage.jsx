@@ -49,6 +49,10 @@ const TripPage = () => {
         setDeleteId('')
     }
 
+    if (!authToken) {
+        return <EmptyState title="Please login to view your trips" subtitle="You need to login to view your trips" showReset />
+    }
+
     return (
         <Container>
             <div className="pt-[120px]">

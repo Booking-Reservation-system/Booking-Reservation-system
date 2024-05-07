@@ -1,16 +1,14 @@
 import { useMemo } from "react";
 import useTokenStore from "./storeToken"
-import useStoreGoogleToken from "./useStoreGoogleToken";
 import { jwtDecode } from "jwt-decode";
 const useAuth = () => {
-    const { token } = useTokenStore();
-    const { accessTokenGoogle } = useStoreGoogleToken();
-    if (!token) {
-        return {userId: null, authToken: null, accessTokenGoogle};
+    const { accessToken } = useTokenStore();
+    if (!accessToken) {
+        return {userId: null, authToken: null};
     }
 
-    const authToken = token
-    const decodedToken = jwtDecode(token)
+    const authToken = accessToken
+    const decodedToken = jwtDecode(accessToken)
     const userId = useMemo(() => decodedToken.userId, [decodedToken]);
 
 
@@ -32,7 +30,7 @@ const useAuth = () => {
     dòng 51 file LoginModal.jsx
     */
 
-    return { userId, authToken, accessTokenGoogle};
+    return { userId, authToken};
 }
 
 export default useAuth;

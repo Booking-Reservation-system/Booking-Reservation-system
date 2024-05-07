@@ -26,6 +26,10 @@ const FavouritePage = () => {
         fetchData();
     }, [])
     
+    if (!authToken) {
+        <EmptyState title="Please login to view your favourites" subtitle="You need to login to view your favourite places" showReset />
+    }
+
     return (
         <Container>
             <div className="pt-[120px]">
