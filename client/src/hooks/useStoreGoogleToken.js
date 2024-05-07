@@ -8,7 +8,7 @@ const useStoreGoogleToken = create (persist(
     }),
     {
         name: 'google-token-storage',
-        storage: createJSONStorage(() => sessionStorage)
+        storage: createJSONStorage(() => localStorage)
     }
 ))
 

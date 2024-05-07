@@ -13,15 +13,12 @@ const userSchema = new Schema({
     },
     image: {
         type: String,
-        required: true,
     },
     provider: {
         type: String,
-        required: true,
     },
     providerId: {
         type: String,
-        required: true,
     },
     hashedPassword: {
         type: String,

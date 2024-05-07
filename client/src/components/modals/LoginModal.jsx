@@ -14,8 +14,8 @@ import useTokenStore from "../../hooks/storeToken";
 import ROUTES from "../../constants/routes";
 
 const LoginModal = () => {
+  const {token, setToken} = useTokenStore();
   const navigate = useNavigate();
-  const { token, setToken } = useTokenStore();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +50,7 @@ const LoginModal = () => {
       loginModal.onClose();
       const token = response.data.token;
       setToken(token);
-      setTimeToken()
+      localStorage.setItem("userName", response.data.name);
       toast.success("Logged in successfully");
     } catch (error) {
       toast.error(error.response.data.message || "Something went wrong");

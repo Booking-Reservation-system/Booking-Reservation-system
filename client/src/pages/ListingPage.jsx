@@ -169,8 +169,8 @@ const ListingPage = () => {
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
                 disabledDate={disabledDate}
-                creatorId={listingData?.creator?.id}
                 placeId={listingData?._id}
+                creatorName={listingData?.creator?.name}
               />
             </div>
           </div>

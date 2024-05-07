@@ -175,7 +175,6 @@ exports.createPlace = async (req, res, next) => {
       throw error;
     }
     const uploadResponse = await imageUpload(imageSrc, "reservationPlace");
-    console.log(uploadResponse);
     if (!uploadResponse) {
       const error = new Error("Image upload failed.");
       error.statusCode = 422;
@@ -340,7 +339,6 @@ exports.deletePlace = async (req, res, next) => {
       throw error;
     }
     const imagePublicId = place.imagePublicId;
-    console.log(imagePublicId)
     const deleteResponse = await imageDelete(imagePublicId);
     if (!deleteResponse) {
       const error = new Error("Image delete failed.");

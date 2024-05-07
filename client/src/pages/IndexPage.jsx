@@ -70,7 +70,7 @@ const IndexPage = () => {
                 gap-10
               "
             >
-              {placeData.map((item) => (
+              {data.map((item) => (
                 <ListingCard data={item} key={item._id} />
               ))}
             </div>
