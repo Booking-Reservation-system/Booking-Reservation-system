@@ -1,14 +1,39 @@
 const jwt = require('jsonwebtoken');
+const RefreshToken = require('../models/refresh-token');
+const User = require('../models/user');
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
     let authHeader = req.get('Authorization');
     console.log(req.user);
-    if(!authHeader){
-        const error = new Error('Not authenticated, header not found.');
+    if (!authHeader && !req.user) {
+        const error = new Error('Not authenticated.');
         error.statusCode = 401;
         throw error;
     }
     authHeader = authHeader.split(' ')[1];
+
+    if (req.user) {
+        const checkAccess = req.user.accessToken === authHeader;
+        if (!checkAccess) {
+            const error = new Error('Not authenticated, token mismatch.');
+            error.statusCode = 401;
+            throw error;
+        }
+        const refreshToken = await RefreshToken.findOne({refreshToken: req.user.refreshToken});
+        if (!refreshToken) {
+            const error = new Error('Refresh token not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        const user = await User.findById(refreshToken.userId);
+        if (!user) {
+            const error = new Error('User not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        req.userId = user._id;
+        return next();
+    }
     let decodedToken;
     try {
         decodedToken = jwt.verify(authHeader, process.env.JWT_SECRET_KEY);
@@ -16,7 +41,7 @@ module.exports = (req, res, next) => {
         err.statusCode = 500;
         throw err;
     }
-    if(!decodedToken){
+    if (!decodedToken) {
         const error = new Error('Not authenticated, token not found.');
         error.statusCode = 401;
         throw error;
