@@ -6,7 +6,6 @@ import {useNavigate} from 'react-router-dom';
 import useRegisterModal from '../../hooks/useRegisterModal';
 import useLoginModal from '../../hooks/useLoginModal';
 import useRentModal from '../../hooks/useRentModal';
-import useTokenStore from '../../hooks/storeToken';
 import ROUTES from '../../constants/routes';
 import useTokenStore from "../../hooks/storeToken.js";
 import axios from "axios";

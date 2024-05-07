@@ -10,7 +10,15 @@ module.exports = async (req, res, next) => {
         error.statusCode = 401;
         throw error;
     }
+    authHeader = authHeader.split(' ')[1];
+
     if (req.user) {
+        const checkAccess = req.user.accessToken === authHeader;
+        if (!checkAccess) {
+            const error = new Error('Not authenticated, token mismatch.');
+            error.statusCode = 401;
+            throw error;
+        }
         const refreshToken = await RefreshToken.findOne({refreshToken: req.user.refreshToken});
         if (!refreshToken) {
             const error = new Error('Refresh token not found.');
@@ -26,7 +34,6 @@ module.exports = async (req, res, next) => {
         req.userId = user._id;
         return next();
     }
-    authHeader = authHeader.split(' ')[1];
     let decodedToken;
     try {
         decodedToken = jwt.verify(authHeader, process.env.JWT_SECRET_KEY);
