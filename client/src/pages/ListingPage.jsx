@@ -28,6 +28,7 @@ const initialDateRange = {
 const ListingPage = () => {
   const params = useParams();
   const placeId = params.listingId;
+  localStorage.setItem("placeId", placeId);
   const loginModal = useLoginModal();
   const navigate = useNavigate();
   const { authToken } = useAuth();

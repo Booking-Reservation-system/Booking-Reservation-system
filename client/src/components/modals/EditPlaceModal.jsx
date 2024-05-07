@@ -2,8 +2,6 @@ import React, { Suspense, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { categoriesArray } from "../navbar/Categories";
 import { amenitiesArray } from "../Amenities";
-
-import useEditPlaceModal from "../../hooks/useEditPlaceModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import ImageUpload from "../inputs/ImageUpload";
@@ -12,11 +10,13 @@ import CategoryInput from "../inputs/CategoryInput";
 import CountrySelect from "../inputs/CountrySelect";
 import Counter from "../inputs/Counter";
 import Input from "../inputs/Input";
+
+import useEditPlaceModal from "../../hooks/useEditPlaceModal";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import useTokenStore from "../../hooks/storeToken";
 import ROUTES from "../../constants/routes";
+import useAuth from "../../hooks/useAuth";
 
 const STEPS = {
   CATEGORY: 0,
@@ -29,11 +29,14 @@ const STEPS = {
 };
 
 const EditPlaceModal = () => {
+  const { authToken } = useAuth();
   const editPlaceModal = useEditPlaceModal();
   const navigate = useNavigate();
   const [step, setStep] = useState(STEPS.CATEGORY);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+
 
   const {
     register,
@@ -94,8 +97,6 @@ const EditPlaceModal = () => {
     setStep((value) => value + 1);
   };
 
-  const { token } = useTokenStore();
-
   const onSubmit = async (data) => {
     if (step !== STEPS.PRICE) {
       return onNext();
@@ -127,7 +128,7 @@ const EditPlaceModal = () => {
         updateListingData,
         {
           headers: {
-            Authorization: "Bearer " + token,
+            Authorization: "Bearer " + authToken,
           },
         }
       );
@@ -315,7 +316,6 @@ const EditPlaceModal = () => {
       </div>
     );
   }
-  console.log(editPlaceModal.isOpen)
   return (
     <Modal
       isOpen={editPlaceModal.isOpen}

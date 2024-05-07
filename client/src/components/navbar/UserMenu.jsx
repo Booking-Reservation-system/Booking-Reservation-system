@@ -7,7 +7,6 @@ import useRegisterModal from '../../hooks/useRegisterModal';
 import useLoginModal from '../../hooks/useLoginModal';
 import useRentModal from '../../hooks/useRentModal';
 import useTokenStore from '../../hooks/storeToken';
-import useStoreGoogleToken from '../../hooks/useStoreGoogleToken';
 import ROUTES from '../../constants/routes';
 
 const UserMenu = (props) => {
@@ -36,7 +35,8 @@ const UserMenu = (props) => {
         setExpires(null)
         setAuthName(null)
         setAuth(false)
-
+        localStorage.removeItem('userName')
+        localStorage.removeItem('placeId')
         navigate(ROUTES.HOME)
     }
 
