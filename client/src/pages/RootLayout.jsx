@@ -5,7 +5,7 @@ import LoginModal from "../components/modals/LoginModal.jsx";
 import RegisterModal from "../components/modals/RegisterModal.jsx";
 import EditPlaceModal from "../components/modals/EditPlaceModal.jsx";
 import App from "../App.jsx";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import useTokenStore from "../hooks/storeToken.js";
 import {getTokenDuration} from "../../utils/auth.js";
@@ -13,28 +13,35 @@ import ROUTES from "../constants/routes.js";
 import axios from "axios";
 
 const RootLayout = () => {
+    const {isAuthenticated, setAuth} = useTokenStore();
     const navigate = useNavigate();
-    const {
-        accessToken,
-        setAccess,
-        refreshToken,
-        setRefresh,
-        expiresAt,
-        setExpires,
-        isAuthenticated,
-        setAuth
-    } = useTokenStore();
+    const refreshToken = localStorage.getItem("refreshToken");
     const tokenDuration = getTokenDuration();
     useEffect(() => {
         if (!isAuthenticated) {
             return;
         }
         const refreshInterval = setInterval(() => {
+            if (localStorage.getItem("provider") === "google") {
+                axios.post("http://localhost:8080/auth/google/refresh", {refreshToken}, {withCredentials: true})
+                    .then((response) => {
+                        const {accessToken, expires_in, token_type} = response.data;
+                        console.log('Google refresh');
+                        localStorage.setItem("accessToken", accessToken);
+                        localStorage.setItem("expiresAt", expires_in);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        navigate(ROUTES.HOME);
+                    });
+                return;
+            }
             axios.post("http://localhost:8080/auth/refresh", {refreshToken})
                 .then((response) => {
                     const {accessToken, expires_in, token_type} = response.data;
-                    setAccess(accessToken);
-                    setExpires(expires_in);
+                    console.log(response.data);
+                    localStorage.setItem("accessToken", accessToken);
+                    localStorage.setItem("expiresAt", expires_in);
                 })
                 .catch((error) => {
                     console.log(error);

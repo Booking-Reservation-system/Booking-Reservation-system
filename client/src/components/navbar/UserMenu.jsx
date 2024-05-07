@@ -8,36 +8,44 @@ import useLoginModal from '../../hooks/useLoginModal';
 import useRentModal from '../../hooks/useRentModal';
 import useTokenStore from '../../hooks/storeToken';
 import ROUTES from '../../constants/routes';
+import useTokenStore from "../../hooks/storeToken.js";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const UserMenu = (props) => {
     const navigate = useNavigate()
-
-    const {
-        accessToken,
-        setAccess,
-        refreshToken,
-        setRefresh,
-        expiresAt,
-        setExpires,
-        name,
-        setAuthName,
-        setAuth,
-    } = useTokenStore()
+    const {isAuthenticated, setAuth} = useTokenStore()
 
     let currentUser = false
-    if (accessToken) {
+    if (isAuthenticated) {
         currentUser = true
     }
 
-    const logoutHandler = () => {
-        setAccess(null)
-        setRefresh(null)
-        setExpires(null)
-        setAuthName(null)
-        setAuth(false)
-        localStorage.removeItem('userName')
-        localStorage.removeItem('placeId')
-        navigate(ROUTES.HOME)
+    const logoutHandler = async () => {
+        try {
+            if (localStorage.getItem('provider') === 'google') {
+                const response = await axios.delete("http://localhost:8080/auth/google/logout", {withCredentials: true});
+                if (response.status !== 200) {
+                    toast.error("Something went wrong");
+                }
+            }
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('expiresAt')
+            localStorage.removeItem('authName')
+            localStorage.removeItem('provider')
+            setAuth(false)
+
+            navigate(ROUTES.HOME)
+        } catch (error) {
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('expiresAt')
+            localStorage.removeItem('authName')
+            localStorage.removeItem('provider')
+            setAuth(false)
+            navigate(ROUTES.HOME)
+        }
     }
 
     const registerModal = useRegisterModal()

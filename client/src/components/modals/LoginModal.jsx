@@ -14,22 +14,11 @@ import useTokenStore from "../../hooks/storeToken";
 import ROUTES from "../../constants/routes";
 
 const LoginModal = () => {
-    const {
-        accessToken,
-        setAccess,
-        refreshToken,
-        setRefresh,
-        expiresAt,
-        setExpires,
-        authName,
-        setAuthName,
-        isAuthenticated,
-        setAuth,
-    } = useTokenStore();
     const navigate = useNavigate();
     const registerModal = useRegisterModal();
     const loginModal = useLoginModal();
     const [isLoading, setIsLoading] = useState(false);
+    const {setAuth} = useTokenStore();
 
     const {
         register,
@@ -46,12 +35,15 @@ const LoginModal = () => {
         setIsLoading(true);
         try {
             const response = await axios.post("http://localhost:8080/auth/login", data);
+            if (response.status !== 200) {
+                throw new Error(response.data.message);
+            }
             loginModal.onClose();
             const {accessToken, expires_in, token_type, refreshToken, name} = response.data;
-            setAccess(accessToken);
-            setRefresh(refreshToken);
-            setExpires(expires_in);
-            setAuthName(name);
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+            localStorage.setItem("expiresAt", expires_in);
+            localStorage.setItem("authName", name);
             setAuth(true);
             toast.success("Logged in successfully");
         } catch (error) {
