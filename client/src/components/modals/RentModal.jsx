@@ -15,8 +15,8 @@ import Input from "../inputs/Input";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import useTokenStore from "../../hooks/storeToken";
 import ROUTES from "../../constants/routes";
+import useAuth from "../../hooks/useAuth";
 
 const STEPS = {
   CATEGORY: 0,
@@ -94,7 +94,7 @@ const RentModal = () => {
     setStep((value) => value + 1);
   };
 
-  const { token } = useTokenStore();
+  const {authToken} = useAuth()
 
   const onSubmit = async (data) => {
     if (step !== STEPS.PRICE) {
@@ -127,7 +127,7 @@ const RentModal = () => {
         inputListingData,
         {
           headers: {
-            Authorization: "Bearer " + token,
+            Authorization: "Bearer " + authToken,
           },
           withCredentials: true
         }
