@@ -174,7 +174,6 @@ exports.googleCallback = async (req, res, next) => {
 
 exports.googleSuccess = async (req, res, next) => {
     try {
-        console.log(req.user);
         if (!req.user && req.user.provider !== 'google') {
             const error = new Error('User not authenticated.');
             error.statusCode = 401;
@@ -198,7 +197,6 @@ exports.googleSuccess = async (req, res, next) => {
 
 exports.googleRenew = async (req, res, next) => {
     try {
-        console.log(req.user);
         const token = req.body.refreshToken;
         const refreshTokenDoc = await RefreshToken.findOne({refreshToken: token});
         if (!refreshTokenDoc) {
@@ -250,8 +248,6 @@ exports.googleRenew = async (req, res, next) => {
 
 exports.googleLogout = async (req, res, next) => {
     try {
-        console.log('Google logout');
-        console.log(req.user);
         const refreshTokenDoc = await RefreshToken.findOne({refreshToken: req.user.refreshToken});
         if (!refreshTokenDoc) {
             const error = new Error('Refresh token not found.');
