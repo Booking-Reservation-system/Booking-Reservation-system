@@ -11,7 +11,7 @@ const EmptyState = (props) => {
     } = props
 
     return (
-        <div className="h-[100vh] flex flex-col gap-2 justify-center items-center pt-20 pb-[100px]">
+        <div className="h-[100vh] flex flex-col gap-2 justify-center items-center pt-20 pb-[400px]">
             <Heading center title={title} subtitle={subtitle}/>
             <div className="w-48 mt-4">
                 {showReset && (

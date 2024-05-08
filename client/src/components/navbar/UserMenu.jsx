@@ -33,6 +33,7 @@ const UserMenu = (props) => {
             localStorage.removeItem('expiresAt')
             localStorage.removeItem('authName')
             localStorage.removeItem('provider')
+            localStorage.removeItem('placeId')
             setAuth(false)
 
             toast("You have been logged out", {icon: '👋', style: {borderRadius: '10px'}})
@@ -44,6 +45,7 @@ const UserMenu = (props) => {
             localStorage.removeItem('expiresAt')
             localStorage.removeItem('authName')
             localStorage.removeItem('provider')
+            localStorage.removeItem('placeId')
             setAuth(false)
             toast("You have been logged out", {icon: '👋', style: {borderRadius: '10px'}})
             navigate(ROUTES.HOME)

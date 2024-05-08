@@ -31,7 +31,7 @@ const STEPS = {
 };
 
 const EditPlaceModal = () => {
-  const { authToken } = useAuth();
+  const { authToken, isAuthenticated } = useAuth();
   const editPlaceModal = useEditPlaceModal();
   const navigate = useNavigate();
   const [step, setStep] = useState(STEPS.CATEGORY);
@@ -40,7 +40,7 @@ const EditPlaceModal = () => {
   const [currentPlaceData, setCurrentPlaceData] = useState();
   const placeId = localStorage.getItem("placeId");
 
-  if (placeId) {
+  if (placeId && isAuthenticated) {
     useEffect(() => {
       const fetchPlace = async () => {
         try {
@@ -54,7 +54,6 @@ const EditPlaceModal = () => {
     }, [placeId])
   }
 
-  console.log(currentPlaceData);
 
   const {
     register,

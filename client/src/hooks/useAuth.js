@@ -3,8 +3,9 @@ import useTokenStore from "./storeToken"
 import { jwtDecode } from "jwt-decode";
 const useAuth = () => {
     const accessToken = localStorage.getItem('accessToken')
+    const { isAuthenticated } = useTokenStore()
     if (!accessToken) {
-        return { authToken: null };
+        return { authToken: null, isAuthenticated };
     }
 
     const authToken = accessToken
@@ -30,7 +31,7 @@ const useAuth = () => {
     dòng 51 file LoginModal.jsx
     */
 
-    return { authToken };
+    return { authToken, isAuthenticated };
 }
 
 export default useAuth;

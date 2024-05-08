@@ -6,15 +6,13 @@ import ROUTES from "../constants/routes";
 import useAuth from "./useAuth";
 import useLoginModal from "../hooks/useLoginModal";
 const useFavourite = ({ listingId }) => {
-  const { authToken } = useAuth();
+  const { authToken, isAuthenticated } = useAuth();
   const [hasFavourite, setHasFavourite] = useState(false);
   useEffect(() => {
     const fetchData = () => {
-      if (!authToken) {
+      if (isAuthenticated === false) {
         return;
       }
-      //https://bookingapp-be-on50.onrender.com/
-      //http://localhost:8080/api/favourites
       try {
         axios
           .get(
