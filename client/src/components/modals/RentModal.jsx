@@ -129,6 +129,7 @@ const RentModal = () => {
           headers: {
             Authorization: "Bearer " + token,
           },
+          withCredentials: true
         }
       );
       toast.success("Your place has been added");

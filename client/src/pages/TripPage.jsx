@@ -39,7 +39,8 @@ const TripPage = () => {
             const response = await axios.delete(`http://localhost:8080/api/reservation/${id}`, {
                 headers: {
                     Authorization: "Bearer " + authToken
-                }
+                },
+                withCredentials: true
             })
             toast.success("Reservation has been cancelled")
             navigate(ROUTES.HOME)

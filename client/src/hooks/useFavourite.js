@@ -23,6 +23,7 @@ const useFavourite = ({ listingId }) => {
               headers: {
                 Authorization: "Bearer " + authToken,
               },
+              withCredentials: true,
             }
           )
           .then((response) => {
@@ -54,6 +55,7 @@ const useFavourite = ({ listingId }) => {
             headers: {
               Authorization: "Bearer " + authToken,
             },
+            withCredentials: true,
           });
       } else {
         request = () =>
@@ -64,6 +66,7 @@ const useFavourite = ({ listingId }) => {
               headers: {
                 Authorization: "Bearer " + authToken,
               },
+              withCredentials: true,
             }
           );
       }

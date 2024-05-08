@@ -92,7 +92,8 @@ const ListingPage = () => {
       .post("http://localhost:8080/api/reservation/new", inputReservationData, {
        headers: {
           Authorization: "Bearer " + authToken,
-       }
+       },
+       withCredentials: true
       })
       .then(() => {
         toast.success("Reservation created successfully");

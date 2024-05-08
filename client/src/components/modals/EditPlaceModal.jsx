@@ -143,28 +143,29 @@ const EditPlaceModal = () => {
     inputListingData.amenities = amenities;
 
     console.log(updateListingData);
-    //setIsLoading(true);
-    // try {
-    //   const response = await axios.put(
-    //     "http://localhost:8080/api/place",
-    //     updateListingData,
-    //     {
-    //       headers: {
-    //         Authorization: "Bearer " + authToken,
-    //       },
-    //     }
-    //   );
-    //   toast.success("Your place has been updated");
-    //   setSelectedAmenities([]);
-    //   navigate(ROUTES.HOME); // redirect to the home page
-    //   reset();
-    //   setStep(STEPS.CATEGORY);
-    //   editPlaceModal.onClose();
-    // } catch (error) {
-    //   toast.error("Something went wrong");
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    setIsLoading(true);
+    try {
+      const response = await axios.put(
+        "http://localhost:8080/api/place",
+        updateListingData,
+        {
+          headers: {
+            Authorization: "Bearer " + authToken,
+          },
+          withCredentials: true
+        }
+      );
+      toast.success("Your place has been updated");
+      setSelectedAmenities([]);
+      navigate(ROUTES.HOME); // redirect to the home page
+      reset();
+      setStep(STEPS.CATEGORY);
+      editPlaceModal.onClose();
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const actionLabel = useMemo(() => {
