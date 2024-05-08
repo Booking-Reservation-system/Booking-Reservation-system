@@ -21,6 +21,7 @@ module.exports = {
         return await cloudinary.uploader.destroy(publicId, {
             resource_type: "image",
             type: "upload",
+            timeout: 100000,
         });
     }
 };
