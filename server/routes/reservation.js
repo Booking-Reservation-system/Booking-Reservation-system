@@ -1,5 +1,5 @@
 const express = require('express');
-const { body } = require('express-validator');
+const {body} = require('express-validator');
 
 const reservationController = require('../controllers/reservation');
 const isAuth = require('../utils/isAuth');
@@ -46,5 +46,40 @@ router.post(
 // Delete a reservation by ID
 // /api/v1/reservation/:reservationId => DELETE
 router.delete('/reservation/:reservationId', isAuth, reservationController.deleteReservation);
+
+// Pay for a reservation
+// /api/v1/reservation/payments => POST
+router.post(
+    '/reservation/payments',
+    isAuth,
+    [
+        body('reservationId')
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage('Reservation ID cannot be empty.'),
+        body('striprId')
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage('Strip ID cannot be empty.'),
+        body('paymentMethod')
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage('Payment method cannot be empty.'),
+        body('paymentStatus')
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage('Payment status cannot be empty.'),
+        body('paymentDate')
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage('Payment date cannot be empty.'),
+    ],
+    reservationController.payments
+);
 
 module.exports = router;

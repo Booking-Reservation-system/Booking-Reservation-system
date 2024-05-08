@@ -3,6 +3,8 @@ const Place = require("../models/place");
 const {validationResult} = require("express-validator");
 const ObjectId = require('mongodb').ObjectId;
 const aes256 = require("../utils/aes-crypto");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Payment = require("../models/payment");
 
 
 exports.getReservations = async (req, res, next) => {
@@ -114,6 +116,69 @@ exports.deleteReservation = async (req, res, next) => {
         await place.save();
         await Reservation.findByIdAndDelete(reservationId);
         res.status(200).json({message: 'Deleted reservation.'});
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+exports.payments = async (req, res, next) => {
+    const reservationId = aes256.decryptData(req.body.reservationId);
+    try {
+        const err = validationResult(req);
+        if (!err.isEmpty()) {
+            const errs = new Error('Validation failed, entered data is incorrect!');
+            errs.statusCode = 422;
+            errs.data = err.array();
+            throw errs;
+        }
+        const reservation = await Reservation.findById(reservationId);
+        if (!reservation) {
+            const error = new Error('Could not find reservation.');
+            error.statusCode = 404;
+            throw error;
+        }
+        const stripeId = req.body.striprId;
+        const paymentMethod = req.body.paymentMethod;
+        const paymentStatus = req.body.paymentStatus;
+        const paymentDate = req.body.paymentDate;
+
+        const payment = new Payment({
+            userId: req.userId,
+            reservationId: reservationId,
+            paymentMethod: paymentMethod,
+            paymentStatus: paymentStatus,
+            paymentDate: paymentDate
+        });
+        const response = await payment.save();
+        if (!response) {
+            const error = new Error('Payment failed.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        const paymentId = aes256.encryptData(response._id.toString());
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: reservation.totalPrice * 100,
+            currency: 'usd',
+            payment_method: stripeId,
+            confirm: true,
+            error_on_requires_action: true,
+            automatic_payment_methods: {
+                // payment_method_types: ['card'],
+                enabled: true,
+                allow_redirects: "never"
+            },
+            return_url: process.env.CLIENT_URL + '/payment/success?paymentId=' + paymentId,
+        });
+        if (paymentIntent.status !== 'succeeded') {
+            const error = new Error('Payment failed.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        res.status(201).json({message: 'Payment created.', payment: payment});
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
