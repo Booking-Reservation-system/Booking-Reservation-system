@@ -5,6 +5,7 @@ import ErrorPage from "./pages/ErrorPage";
 import ListingPage from "./pages/ListingPage";
 import TripPage from "./pages/TripPage";
 import FavouritePage from "./pages/FavouritePage";
+import DashboardPage from "./pages/DashboardPage";
 import ROUTES from "./constants/routes";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Route path={ROUTES.LISTING_DETAIL} element={<ListingPage/>} />
       <Route path={ROUTES.TRIPS} element={<TripPage/>} />
       <Route path={ROUTES.FAVOURITES} element={<FavouritePage/>} />
+      <Route path={ROUTES.DASHBOARD} element={<DashboardPage/>} />
     </Routes>
   );
 }

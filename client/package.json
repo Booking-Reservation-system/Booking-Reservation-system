@@ -10,6 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.17",
+    "@mui/material": "^5.15.17",
+    "@nivo/bar": "^0.86.0",
+    "@nivo/line": "^0.86.0",
     "@react-oauth/google": "^0.12.1",
     "autoprefixer": "^10.4.17",
     "axios": "^1.6.7",
