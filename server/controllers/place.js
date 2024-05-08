@@ -253,7 +253,7 @@ exports.updatePlace = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
-    if (place.userId._id.toString() !== req.userId) {
+    if (place.userId._id.toString() !== req.userId.toString()) {
       const error = new Error("Not authorized!");
       error.statusCode = 403;
       throw error;
@@ -331,7 +331,7 @@ exports.deletePlace = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
-    if (place.userId.toString() !== req.userId) {
+    if (place.userId.toString() !== req.userId.toString()) {
       const error = new Error("Not authorized!");
       error.statusCode = 403;
       throw error;

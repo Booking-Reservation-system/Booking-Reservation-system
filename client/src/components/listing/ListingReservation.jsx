@@ -37,6 +37,7 @@ const ListingReservation = (props) => {
         headers: {
           Authorization: "Bearer " + authToken,
         },
+        withCredentials: true
       });
       toast.success(response.data.message);
       navigate(ROUTES.HOME)
