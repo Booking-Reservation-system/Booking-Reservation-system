@@ -10,13 +10,14 @@ module.exports = {
     imageUpload: async (imageSrc, uploadPreset) => {
         const uploadResponse = await cloudinary.uploader.upload(imageSrc, {
             upload_preset: uploadPreset,
+            timeout: 60000,
         });
         return {
             publicId: uploadResponse.public_id,
             secureUrl: uploadResponse.secure_url,
         };
     },
-    
+
     imageDelete: async (publicId) => {
         return await cloudinary.uploader.destroy(publicId, {
             resource_type: "image",
