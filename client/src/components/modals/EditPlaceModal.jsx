@@ -5,7 +5,7 @@ import { amenitiesArray } from "../Amenities";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import ImageUpload from "../inputs/ImageUpload";
-import AmenitiesInput from "../AmenitiesInput";
+import AmenitiesInput from "../inputs/AmenitiesInput";
 import CategoryInput from "../inputs/CategoryInput";
 import CountrySelect from "../inputs/CountrySelect";
 import Counter from "../inputs/Counter";
@@ -54,7 +54,6 @@ const EditPlaceModal = () => {
     }, [placeId])
   }
 
-
   const {
     register,
     handleSubmit,
@@ -66,13 +65,13 @@ const EditPlaceModal = () => {
     defaultValues: {
       category: "",
       location: null,
-      guestCapacity: 1,
-      roomCount: 1,
-      bathroomCount: 1,
+      guestCapacity: 0,
+      roomCount: 0,
+      bathroomCount: 0,
       imageSrc: "",
-      price: 0,
-      title: "",
-      description: "",
+      price: -1,
+      title: "0",
+      description: "0",
     },
   });
 
@@ -82,6 +81,9 @@ const EditPlaceModal = () => {
   const roomCount = watch("roomCount");
   const bathroomCount = watch("bathroomCount");
   const imageSrc = watch("imageSrc");
+  const title = watch("title");
+  const description = watch("description");
+  const price = watch("price")
 
   const handleAmenities = (id) => {
     const isSelected = selectedAmenities.includes(id);
@@ -123,16 +125,18 @@ const EditPlaceModal = () => {
       return onNext();
     }
 
+    console.log(data)
+
     const updateListingData = {
-      title: data.title,
-      description: data.description,
-      category: data.category,
-      roomCount: data.roomCount,
-      bathroomCount: data.bathroomCount,
-      guestCapacity: data.guestCapacity,
-      location: data.location.value,
-      price: data.price,
-      imageSrc: data.imageSrc,
+      title: data.title === '0' ? currentPlaceData?.title : data.title,
+      description: data.description === '0' ? currentPlaceData?.description : data.description,
+      category: data.category === undefined ? currentPlaceData?.category : data.category,
+      roomCount: data.roomCount === 0 ? currentPlaceData?.roomCount : data.roomCount,
+      bathroomCount: data.bathroomCount === 0 ? currentPlaceData?.bathroomCount : data.bathroomCount,
+      guestCapacity: data.guestCapacity === 0 ? currentPlaceData?.guestCapacity : data.guestCapacity,
+      location: data.location === undefined ? currentPlaceData?.locationValue : data.location.value,
+      price: data.price === -1 ? currentPlaceData?.price : data.price,
+      imageSrc: data.imageSrc === "" ? currentPlaceData?.imageSrc : data.imageSrc,
     };
 
     const amenities = {};
@@ -210,7 +214,7 @@ const EditPlaceModal = () => {
           subtitle="Help guests find you"
         />
         <CountrySelect
-          value={location}
+          value={!location ? currentLocation : location}
           onChange={(value) => setCustomValue("location", value)}
         />
         <Suspense fallback={<div>Loading...</div>}>
@@ -230,21 +234,21 @@ const EditPlaceModal = () => {
         <Counter
           title="Guests"
           subtitle="How many guests do you allow?"
-          value={guestCapacity === 1 ? currentPlaceData?.guestCapacity : guestCapacity}
+          value={guestCapacity === 0 ? currentPlaceData?.guestCapacity : guestCapacity}
           onChange={(value) => setCustomValue("guestCapacity", value)}
         />
         <hr />
         <Counter
           title="Rooms"
           subtitle="How many rooms do you have?"
-          value={roomCount === 1 ? currentPlaceData?.roomCount : roomCount}
+          value={roomCount === 0 ? currentPlaceData?.roomCount : roomCount}
           onChange={(value) => setCustomValue("roomCount", value)}
         />
         <hr />
         <Counter
           title="Bathrooms"
           subtitle="How many bathrooms do you bathroom?"
-          value={bathroomCount === 1 ? currentPlaceData?.bathroomCount : bathroomCount}
+          value={bathroomCount === 0 ? currentPlaceData?.bathroomCount : bathroomCount}
           onChange={(value) => setCustomValue("bathroomCount", value)}
         />
       </div>
@@ -279,7 +283,8 @@ const EditPlaceModal = () => {
           disabled={isLoading}
           register={register}
           errors={errors}
-          value={currentPlaceData?.title}
+          value={title === '0' ? currentPlaceData?.title : title}
+          onChange={(value) => setCustomValue("title", value)}
           required
         />
         <hr />
@@ -288,7 +293,8 @@ const EditPlaceModal = () => {
           label="Description"
           disabled={isLoading}
           register={register}
-          value={currentPlaceData?.description}
+          value={description === '0' ? currentPlaceData?.description : description}
+          onChange={(value) => setCustomValue("description", value)}  
           errors={errors}
           required
         />
@@ -309,7 +315,7 @@ const EditPlaceModal = () => {
               <AmenitiesInput
                 id={item.id}
                 onClick={() => handleAmenities(item.id)}
-                selected={!selectedAmenities.includes(item.id) ? currentPlaceData?.amenities[item.id] : selectedAmenities.includes(item.id)}
+                selected={selectedAmenities.length === 0 ? currentPlaceData?.amenities[item.id] : selectedAmenities.includes(item.id)}
                 label={item.label}
                 icon={item.icon}
               />
@@ -334,7 +340,8 @@ const EditPlaceModal = () => {
           type="number"
           disabled={isLoading}
           register={register}
-          value={currentPlaceData?.price}
+          value={price === -1 ? currentPlaceData?.price : price}
+          onChange={(value) => setCustomValue("price", value)}
           errors={errors}
           required
         />

@@ -7,7 +7,7 @@ import useRentModal from "../../hooks/useRentModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import ImageUpload from "../inputs/ImageUpload";
-import AmenitiesInput from "../AmenitiesInput";
+import AmenitiesInput from "../inputs/AmenitiesInput";
 import CategoryInput from "../inputs/CategoryInput";
 import CountrySelect from "../inputs/CountrySelect";
 import Counter from "../inputs/Counter";

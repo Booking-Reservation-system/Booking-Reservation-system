@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { BiDollar } from "react-icons/bi";
 
 const Input = (props) => {
-    const {id, label, type, register, disabled, formatPrice, required, errors, validate, value} = props;  
+    const {id, label, type, register, disabled, formatPrice, required, errors, validate, value, onChange} = props;  
     return (
         <div className="relative w-full">
             {formatPrice && (
@@ -13,6 +13,7 @@ const Input = (props) => {
                 id={id} 
                 value={value}
                 disabled={disabled} 
+                onChange={onChange}
                 {...register(id, {required, validate})} // register the input and check if its not empty
                 placeholder=" "
                 type={type}
