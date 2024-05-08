@@ -4,6 +4,7 @@ import RentModal from "../components/modals/RentModal.jsx";
 import LoginModal from "../components/modals/LoginModal.jsx";
 import RegisterModal from "../components/modals/RegisterModal.jsx";
 import EditPlaceModal from "../components/modals/EditPlaceModal.jsx";
+import SearchModal from "../components/modals/SearchModal.jsx";
 import App from "../App.jsx";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
@@ -61,6 +62,7 @@ const RootLayout = () => {
             <LoginModal/>
             <RegisterModal/>
             <EditPlaceModal/>
+            <SearchModal/>
             <Navbar/>
             <App/>
         </>
