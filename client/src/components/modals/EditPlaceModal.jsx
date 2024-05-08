@@ -140,13 +140,13 @@ const EditPlaceModal = () => {
     selectedAmenities.forEach((item) => {
       amenities[item] = true;
     });
-    inputListingData.amenities = amenities;
+    updateListingData.amenities = amenities;
 
     console.log(updateListingData);
     setIsLoading(true);
     try {
       const response = await axios.put(
-        "http://localhost:8080/api/place",
+        `http://localhost:8080/api/place/${placeId}`,
         updateListingData,
         {
           headers: {

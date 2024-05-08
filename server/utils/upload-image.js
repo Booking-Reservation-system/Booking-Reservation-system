@@ -10,7 +10,7 @@ module.exports = {
     imageUpload: async (imageSrc, uploadPreset) => {
         const uploadResponse = await cloudinary.uploader.upload(imageSrc, {
             upload_preset: uploadPreset,
-            timeout: 60000,
+            timeout: 100000,
         });
         return {
             publicId: uploadResponse.public_id,
