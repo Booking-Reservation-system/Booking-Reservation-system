@@ -13,13 +13,18 @@ const useFavourite = ({ listingId }) => {
       if (!authToken) {
         return;
       }
+      //https://bookingapp-be-on50.onrender.com/
+      //http://localhost:8080/api/favourites
       try {
         axios
-          .get(`http://localhost:8080/api/favourites`, {
-            headers: {
-              Authorization: "Bearer " + authToken,
-            },
-          })
+          .get(
+            ` http://localhost:8080/api/favourites`,
+            {
+              headers: {
+                Authorization: "Bearer " + authToken,
+              },
+            }
+          )
           .then((response) => {
             const favourites = response.data.favouritePlaces.map(
               (place) => place._id
@@ -48,15 +53,19 @@ const useFavourite = ({ listingId }) => {
           axios.delete(`http://localhost:8080/api/favourite/${listingId}`, {
             headers: {
               Authorization: "Bearer " + authToken,
-            }
+            },
           });
       } else {
-        request = () => 
-          axios.post(`http://localhost:8080/api/favourite/new/${listingId}`, null, {
-            headers: {
-              Authorization: "Bearer " + authToken,
+        request = () =>
+          axios.post(
+            `http://localhost:8080/api/favourite/new/${listingId}`,
+            null,
+            {
+              headers: {
+                Authorization: "Bearer " + authToken,
+              },
             }
-          })
+          );
       }
       await request();
       navigate(ROUTES.FAVOURITES);

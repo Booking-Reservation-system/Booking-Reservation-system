@@ -23,7 +23,7 @@ const ListingReservation = (props) => {
 
   const { authToken } = useAuth();
   const editPlaceModal = useEditPlaceModal();
-  const userName = localStorage.getItem("userName");
+  const authName = localStorage.getItem("authName");
   const navigate = useNavigate();
   const formatter =  new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -60,7 +60,7 @@ const ListingReservation = (props) => {
       <hr/>
       <div className="p-4 flex flex-col gap-4">
         <Button label="Reserve" onClick={onSubmit}/>
-        {creatorName === userName && authToken && (
+        {creatorName === authName && authToken && (
           <div className="flex flex-row gap-4">
           <Button label="Delete" onClick={handleDelete}/>
           <Button label="Edit" onClick={editPlaceModal.onOpen}/>

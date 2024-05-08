@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { categoriesArray } from "../navbar/Categories";
 import { amenitiesArray } from "../Amenities";
@@ -11,6 +11,8 @@ import CountrySelect from "../inputs/CountrySelect";
 import Counter from "../inputs/Counter";
 import Input from "../inputs/Input";
 
+import useCountries from "../../hooks/useCountries";
+import getPlaceById from "../../action/getPlaceById";
 import useEditPlaceModal from "../../hooks/useEditPlaceModal";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -35,8 +37,24 @@ const EditPlaceModal = () => {
   const [step, setStep] = useState(STEPS.CATEGORY);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [currentPlaceData, setCurrentPlaceData] = useState();
+  const placeId = localStorage.getItem("placeId");
 
+  if (placeId) {
+    useEffect(() => {
+      const fetchPlace = async () => {
+        try {
+          const response = await getPlaceById(placeId);
+          setCurrentPlaceData(response);
+        } catch (error) {
+          toast.error(error?.response?.data?.message || "Something went wrong");
+        }
+      };
+      fetchPlace();
+    }, [placeId])
+  }
+
+  console.log(currentPlaceData);
 
   const {
     register,
@@ -76,6 +94,8 @@ const EditPlaceModal = () => {
     // Update the selected amenities state
     setSelectedAmenities(updatedAmenities);
   };
+  const {getByValue} = useCountries();
+  const currentLocation = getByValue(currentPlaceData?.locationValue);
 
   const Map = useMemo(() => React.lazy(() => import("../Map")), [location]);
   const setCustomValue = (id, value) => {
@@ -88,6 +108,8 @@ const EditPlaceModal = () => {
       // check if the input has been touched (focused and leaved)
     });
   };
+
+  
 
   const onBack = (value) => {
     setStep((value) => value - 1);
@@ -121,28 +143,28 @@ const EditPlaceModal = () => {
     inputListingData.amenities = amenities;
 
     console.log(updateListingData);
-    setIsLoading(true);
-    try {
-      const response = await axios.put(
-        "http://localhost:8080/api/place",
-        updateListingData,
-        {
-          headers: {
-            Authorization: "Bearer " + authToken,
-          },
-        }
-      );
-      toast.success("Your place has been updated");
-      setSelectedAmenities([]);
-      navigate(ROUTES.HOME); // redirect to the home page
-      reset();
-      setStep(STEPS.CATEGORY);
-      editPlaceModal.onClose();
-    } catch (error) {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    //setIsLoading(true);
+    // try {
+    //   const response = await axios.put(
+    //     "http://localhost:8080/api/place",
+    //     updateListingData,
+    //     {
+    //       headers: {
+    //         Authorization: "Bearer " + authToken,
+    //       },
+    //     }
+    //   );
+    //   toast.success("Your place has been updated");
+    //   setSelectedAmenities([]);
+    //   navigate(ROUTES.HOME); // redirect to the home page
+    //   reset();
+    //   setStep(STEPS.CATEGORY);
+    //   editPlaceModal.onClose();
+    // } catch (error) {
+    //   toast.error("Something went wrong");
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   const actionLabel = useMemo(() => {
@@ -170,7 +192,7 @@ const EditPlaceModal = () => {
           <div key={item.label} className="col-span-1 font-semibold">
             <CategoryInput
               onClick={(category) => setCustomValue("category", category)}
-              selected={category === item.label}
+              selected={!category ? currentPlaceData?.category === item.label : category === item.label}
               label={item.label}
               icon={item.icon}
             />
@@ -192,7 +214,7 @@ const EditPlaceModal = () => {
           onChange={(value) => setCustomValue("location", value)}
         />
         <Suspense fallback={<div>Loading...</div>}>
-          <Map center={location?.lating} />
+          <Map center={!location ? currentLocation?.lating : location?.lating} />
         </Suspense>
       </div>
     );
@@ -208,21 +230,21 @@ const EditPlaceModal = () => {
         <Counter
           title="Guests"
           subtitle="How many guests do you allow?"
-          value={guestCapacity}
+          value={guestCapacity === 1 ? currentPlaceData?.guestCapacity : guestCapacity}
           onChange={(value) => setCustomValue("guestCapacity", value)}
         />
         <hr />
         <Counter
           title="Rooms"
           subtitle="How many rooms do you have?"
-          value={roomCount}
+          value={roomCount === 1 ? currentPlaceData?.roomCount : roomCount}
           onChange={(value) => setCustomValue("roomCount", value)}
         />
         <hr />
         <Counter
           title="Bathrooms"
           subtitle="How many bathrooms do you bathroom?"
-          value={bathroomCount}
+          value={bathroomCount === 1 ? currentPlaceData?.bathroomCount : bathroomCount}
           onChange={(value) => setCustomValue("bathroomCount", value)}
         />
       </div>
@@ -237,7 +259,7 @@ const EditPlaceModal = () => {
           subtitle="Show guests what your place looks like"
         />
         <ImageUpload
-          value={imageSrc}
+          value={!imageSrc ? currentPlaceData?.imageSrc : imageSrc}
           onChange={(value) => setCustomValue("imageSrc", value)}
         />
       </div>
@@ -257,6 +279,7 @@ const EditPlaceModal = () => {
           disabled={isLoading}
           register={register}
           errors={errors}
+          value={currentPlaceData?.title}
           required
         />
         <hr />
@@ -265,6 +288,7 @@ const EditPlaceModal = () => {
           label="Description"
           disabled={isLoading}
           register={register}
+          value={currentPlaceData?.description}
           errors={errors}
           required
         />
@@ -285,7 +309,7 @@ const EditPlaceModal = () => {
               <AmenitiesInput
                 id={item.id}
                 onClick={() => handleAmenities(item.id)}
-                selected={selectedAmenities.includes(item.id)}
+                selected={!selectedAmenities.includes(item.id) ? currentPlaceData?.amenities[item.id] : selectedAmenities.includes(item.id)}
                 label={item.label}
                 icon={item.icon}
               />
@@ -310,6 +334,7 @@ const EditPlaceModal = () => {
           type="number"
           disabled={isLoading}
           register={register}
+          value={currentPlaceData?.price}
           errors={errors}
           required
         />
