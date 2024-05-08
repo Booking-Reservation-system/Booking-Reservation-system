@@ -23,10 +23,15 @@ const userSchema = new Schema({
     hashedPassword: {
         type: String,
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+    },
     favouritePlaces: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Place',
-            required: true,
+        type: Schema.Types.ObjectId,
+        ref: 'Place',
+        required: true,
     }],
     places: [{
         type: Schema.Types.ObjectId,
@@ -38,6 +43,6 @@ const userSchema = new Schema({
         ref: 'Reservation',
         required: true,
     }]
-}, { timestamps: true });
+}, {timestamps: true});
 
 module.exports = mongoose.model('User', userSchema);

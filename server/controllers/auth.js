@@ -174,6 +174,7 @@ exports.googleCallback = async (req, res, next) => {
 
 exports.googleSuccess = async (req, res, next) => {
     try {
+        console.log('success');
         if (!req.user && req.user.provider !== 'google') {
             const error = new Error('User not authenticated.');
             error.statusCode = 401;
