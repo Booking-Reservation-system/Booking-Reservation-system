@@ -44,7 +44,7 @@ const ListingPage = () => {
       try {
         const response = await getPlaceById(placeId);
         setListingData(response);
-        console.log(response)
+        // console.log(response)
       } catch (error) {
         toast.error(error?.response?.data?.message || "Something went wrong");
       }

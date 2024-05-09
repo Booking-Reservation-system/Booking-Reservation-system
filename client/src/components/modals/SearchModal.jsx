@@ -8,6 +8,8 @@ import Map from "../Map";
 import useSearchModal from "../../hooks/useSearchModal";
 import Heading from "../Heading";
 import CountrySelect from "../inputs/CountrySelect";
+import Calender from "../inputs/Calender";
+import Counter from "../inputs/Counter";
 
 const STEPS = {
   LOCATION: 0,
@@ -85,7 +87,7 @@ const SearchModal = () => {
     return "Next";
   }, [step]);
 
-  const secondaryAction = useMemo(() => {
+  const secondaryActionLabel = useMemo(() => {
     if (step === STEPS.LOCATION) {
       return undefined;
     }
@@ -111,12 +113,69 @@ const SearchModal = () => {
     </div>
   )
 
+  if (step === STEPS.DATE) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="When do you plan to go?"
+          subtitle="Make sure everyone is free!"
+        />
+
+        <Calender
+          value={dateRange}
+          onChange={(value) => {
+            setDateRange(value.selection)
+          }}
+        />
+        
+      </div>
+    )
+  }
+
+  if (step === STEPS.INFO) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="More information"
+          subtitle="Find your perfect place"
+        />
+        <Counter
+          title="Guests"
+          subtitle="How many guests are coming?"
+          value={guestCount}
+          onChange={(value) => {
+            setGuestCount(value)
+          }}
+        />
+         <Counter
+          title="Rooms"
+          subtitle="How many rooms do you want to have?"
+          value={roomCount}
+          onChange={(value) => {
+            setRoomCount(value)
+          }}
+        />
+         <Counter
+          title="Bathrooms"
+          subtitle="How many bathrooms do you want to have?"
+          value={bathroomCount}
+          onChange={(value) => {
+            setBathroomCount(value)
+          }}
+        />
+      </div>  
+    )
+  }
+
   return (
     <Modal
       isOpen={searchModal.isOpen}
       onClose={searchModal.onClose}
+      onSubmit={onSubmit}
       title="Filter"
-      actionLabel="Search"
+      actionLabel={actionLabel}
+      secondaryAction={step === STEPS.LOCATION ? undefined : onBack}
+      secondaryActionLabel={secondaryActionLabel}
       body={bodyContent}
     />
   );

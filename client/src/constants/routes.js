@@ -6,7 +6,7 @@ const ROUTES = {
     LISTING_EDIT: "/listing/:listingId/edit",
     TRIPS: "/trips",
     FAVOURITES: "/favourites",
-    PROPERTIES: "/properties",
+    PROFILE: "/profile",
     DASHBOARD: "/dashboard",
 }
 

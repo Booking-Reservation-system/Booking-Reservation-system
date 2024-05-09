@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import ROUTES from "../constants/routes";
+import useLoginModal from "../hooks/useLoginModal";
 
 import EmptyState from "../components/EmptyState";
 import Container from "../components/Container";
@@ -13,22 +14,29 @@ import ListingCard from "../components/listing/ListingCard";
 
 const TripPage = () => {
     const navigate = useNavigate();
+    const loginModal = useLoginModal();
     const [reservations, setReservations] = useState([]);
     const [deleteId, setDeleteId] = useState('')
 
-    const { userId, authToken } = useAuth()
+    const { authToken, isAuthenticated } = useAuth()
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            navigate(ROUTES.HOME)
+            toast.error("Please login to view your trips")
+            loginModal.onOpen()
+            return
+        }
         const fetchData = async () => {
             try {
-                const response = await getReservation(authToken, userId)
+                const response = await getReservation(authToken)
                 setReservations(response.data.reservations)
             } catch (error) {
                 toast.error("Something went wrong")
             }
         }
         fetchData()
-    }, [userId])
+    }, [isAuthenticated])
 
      // TODO: hạn chế dùng promise, dùng try catch với async await đi
     //     // Cái này không cần dùng useCallback vì navigate, token không thay đổi, tốn bộ nhớ cho useCallback
@@ -48,10 +56,6 @@ const TripPage = () => {
             toast.error(error?.response?.data?.message || "Something went wrong")
         }
         setDeleteId('')
-    }
-
-    if (!authToken) {
-        return <EmptyState title="Please login to view your trips" subtitle="You need to login to view your trips" showReset />
     }
 
     return (

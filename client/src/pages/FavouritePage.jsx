@@ -12,9 +12,15 @@ import toast from "react-hot-toast";
 const FavouritePage = () => {
 
     const [favouritePlaces, setFavouritePlaces] = useState([]);
-    const { authToken } = useAuth();
+    const { authToken, isAuthenticated } = useAuth();
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            navigate(ROUTES.HOME)
+            toast.error("Please login to view your trips")
+            loginModal.onOpen()
+            return
+        }
         const fetchData = async () => {
             try {
                 const response = await getFavouriteByUser(authToken);
@@ -25,10 +31,6 @@ const FavouritePage = () => {
         }
         fetchData();
     }, [])
-    
-    if (!authToken) {
-        <EmptyState title="Please login to view your favourites" subtitle="You need to login to view your favourite places" showReset />
-    }
 
     return (
         <Container>

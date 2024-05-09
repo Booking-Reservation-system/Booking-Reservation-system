@@ -6,6 +6,7 @@ import ListingPage from "./pages/ListingPage";
 import TripPage from "./pages/TripPage";
 import FavouritePage from "./pages/FavouritePage";
 import DashboardPage from "./pages/DashboardPage";
+import ProfilePage from "./pages/ProfilePage";
 import ROUTES from "./constants/routes";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Route path={ROUTES.TRIPS} element={<TripPage/>} />
       <Route path={ROUTES.FAVOURITES} element={<FavouritePage/>} />
       <Route path={ROUTES.DASHBOARD} element={<DashboardPage/>} />
+      <Route path={ROUTES.PROFILE} element={<ProfilePage/>} />
     </Routes>
   );
 }
