@@ -1,21 +1,91 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import IndexPage from "./pages/IndexPage";
 import ErrorPage from "./pages/ErrorPage";
 import ListingPage from "./pages/ListingPage";
 import TripPage from "./pages/TripPage";
 import FavouritePage from "./pages/FavouritePage";
 import ROUTES from "./constants/routes";
+import useTokenStore from "./hooks/storeToken.js";
+import {getTokenDuration} from "../utils/auth.js";
+import {useEffect} from "react";
+import axios from "axios";
+import ToasterProvider from "./providers/ToasterProvider.jsx";
+import RentModal from "./components/modals/RentModal.jsx";
+import LoginModal from "./components/modals/LoginModal.jsx";
+import RegisterModal from "./components/modals/RegisterModal.jsx";
+import EditPlaceModal from "./components/modals/EditPlaceModal.jsx";
+import SearchModal from "./components/modals/SearchModal.jsx";
+import Navbar from "./components/navbar/Navbar.jsx";
+import toast from "react-hot-toast";
+import CheckoutSuccessPage from "./pages/CheckoutSuccessPage.jsx";
 
 function App() {
-  return (
-    <Routes>
-      <Route index element={<IndexPage />} errorElement={<ErrorPage />} />
-      <Route path={ROUTES.LISTING_DETAIL} element={<ListingPage/>} />
-      <Route path={ROUTES.TRIPS} element={<TripPage/>} />
-      <Route path={ROUTES.FAVOURITES} element={<FavouritePage/>} />
-    </Routes>
-  );
+    const {isAuthenticated} = useTokenStore();
+    const refreshToken = localStorage.getItem("refreshToken");
+    const tokenDuration = getTokenDuration();
+    useEffect(() => {
+        if (!isAuthenticated) {
+            return;
+        }
+        const refreshInterval = setInterval(() => {
+            if (localStorage.getItem("provider") === "google") {
+                axios.post("http://localhost:8080/auth/google/refresh", {refreshToken}, {withCredentials: true})
+                    .then((response) => {
+                        const {accessToken, expires_in, token_type} = response.data;
+                        console.log('Google refresh');
+                        localStorage.setItem("accessToken", accessToken);
+                        localStorage.setItem("expiresAt", expires_in);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        toast.error("Could not refresh token. Please log in again.");
+                    });
+                return;
+            }
+            axios.post("http://localhost:8080/auth/refresh", {refreshToken})
+                .then((response) => {
+                    const {accessToken, expires_in, token_type} = response.data;
+                    console.log(response.data);
+                    localStorage.setItem("accessToken", accessToken);
+                    localStorage.setItem("expiresAt", expires_in);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    toast.error("Could not refresh token. Please log in again.");
+                });
+        }, tokenDuration); // Refresh every minute
+
+        // Cleanup interval on component unmount
+        return () => {
+            clearInterval(refreshInterval);
+        };
+    }, [isAuthenticated]);
+
+    return (
+        <div className="app">
+            <BrowserRouter>
+                <ToasterProvider/>
+                <RentModal/>
+                <LoginModal/>
+                <RegisterModal/>
+                <EditPlaceModal/>
+                <SearchModal/>
+                <Navbar/>
+                <div className="content-container">
+                    <Routes>
+                        <Route index element={<IndexPage/>}/>
+                        <Route path={ROUTES.LISTING_DETAIL} element={<ListingPage/>}/>
+                        <Route path={ROUTES.CHECKOUT} element={<CheckoutSuccessPage/>}/>
+                        <Route path={ROUTES.TRIPS} element={<TripPage/>}/>
+                        <Route path={ROUTES.FAVOURITES} element={<FavouritePage/>}/>
+                        <Route path={ROUTES.DASHBOARD} element={<DashboardPage/>}/>
+                        <Route path="*" element={<ErrorPage/>}/>
+                    </Routes>
+                </div>
+            </BrowserRouter>
+        </div>
+    );
 }
 
 export default App;

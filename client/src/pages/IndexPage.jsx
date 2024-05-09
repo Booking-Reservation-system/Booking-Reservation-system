@@ -7,11 +7,13 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import {useLocation} from "react-router-dom";
 import useTokenStore from "../hooks/storeToken.js";
+import useAuth from "../hooks/useAuth.js";
 
 const IndexPage = () => {
     const [data, setData] = useState([]);
     const location = useLocation();
     const query = new URLSearchParams(location.search);
+    const {authToken} = useAuth();
     const {
         isAuthenticated,
         setAuth
@@ -64,6 +66,26 @@ const IndexPage = () => {
             }
         }
         ggLg();
+
+        const cancelReservation = async () => {
+            try {
+                if (query.get("cancel") === null) return;
+                const placeId = query.get("placeId");
+                const response = await axios.delete(`http://localhost:8080/api/reservation/cancel_payment?placeId=${placeId}`, {
+                    headers: {
+                        Authorization: "Bearer " + authToken,
+                    },
+                    withCredentials: true,
+                });
+                toast.success(response.data.message);
+                // window.history.replaceState({}, document.title, "/");
+            } catch (error) {
+                toast.error(error?.response?.data?.message || "Something went wrong");
+            }
+        }
+        if (isAuthenticated) {
+            cancelReservation();
+        }
 
     }, []);
 

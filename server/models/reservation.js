@@ -24,6 +24,10 @@ const reservationSchema = new Schema({
         type: Number,
         required: true,
     },
-}, { timestamps: true });
+    isPayed: {
+        type: Boolean,
+        default: false,
+    },
+}, {timestamps: true});
 
 module.exports = mongoose.model('Reservation', reservationSchema);

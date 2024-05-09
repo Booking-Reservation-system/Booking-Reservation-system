@@ -1,15 +1,13 @@
-import { useMemo } from "react";
 import useTokenStore from "./storeToken"
-import { jwtDecode } from "jwt-decode";
+
 const useAuth = () => {
-    const { accessToken } = useTokenStore();
+    const accessToken = localStorage.getItem('accessToken')
+    const {isAuthenticated} = useTokenStore()
     if (!accessToken) {
-        return {userId: null, authToken: null};
+        return {authToken: null, isAuthenticated};
     }
 
     const authToken = accessToken
-    const decodedToken = jwtDecode(accessToken)
-    const userId = useMemo(() => decodedToken.userId, [decodedToken]);
 
 
     // muốn return thêm gì thì thêm vào đây, biến thì dùng useMemo, hàm thì dùng useCallback
@@ -30,7 +28,7 @@ const useAuth = () => {
     dòng 51 file LoginModal.jsx
     */
 
-    return { userId, authToken};
+    return {authToken, isAuthenticated};
 }
 
 export default useAuth;

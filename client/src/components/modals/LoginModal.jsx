@@ -8,7 +8,7 @@ import useLoginModal from "../../hooks/useLoginModal";
 import useRegisterModal from "../../hooks/useRegisterModal";
 import Heading from "../Heading";
 import Input from "../inputs/Input";
-import Button from "../Button";
+import Button from "../button/Button.jsx";
 import Modal from "./Modal";
 import useTokenStore from "../../hooks/storeToken";
 import ROUTES from "../../constants/routes";
