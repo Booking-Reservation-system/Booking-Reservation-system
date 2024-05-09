@@ -14,7 +14,8 @@ exports.getPlaces = async (req, res, next) => {
     startDate,
     endDate,
     category,
-  } = req.params;
+  } = req.query;
+  console.log(req.query)
   let query = {};
   if (userId) query.userId = userId;
   if (roomCount) query.roomCount = roomCount;
@@ -41,6 +42,7 @@ exports.getPlaces = async (req, res, next) => {
       },
     };
   }
+  console.log(query)
   try {
     const places = await Place.find(query, null, { sort: { createdAt: -1 } });
     // encrypt placeId for security and save the original id in _id

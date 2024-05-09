@@ -1,8 +1,10 @@
 import qs from 'query-string'
 import { useNavigate } from 'react-router-dom';
 import { useCallback} from 'react';
+import useSearchUrl from '../hooks/useSearchUrl';
 const CategoryBox = (props) => {
     const { label, selected, icon: Icon } = props;
+    const { setSearchUrl } = useSearchUrl();
     const navigate = useNavigate();
     
     const urlParams = new URLSearchParams(window.location.search);
@@ -26,7 +28,7 @@ const CategoryBox = (props) => {
           url: '/',
           query: updatedQuery
         }, { skipNull: true });
-    
+        setSearchUrl(url);
         navigate(url);
       }, [label, navigate, urlParams]);
 

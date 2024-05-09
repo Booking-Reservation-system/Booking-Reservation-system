@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import Map from "../Map";
 import useSearchModal from "../../hooks/useSearchModal";
+import useSearchUrl from "../../hooks/useSearchUrl";
 import Heading from "../Heading";
 import CountrySelect from "../inputs/CountrySelect";
 import Calender from "../inputs/Calender";
@@ -19,6 +20,7 @@ const STEPS = {
 
 const SearchModal = () => {
   const searchModal = useSearchModal();
+  const { searchUrl, setSearchUrl } = useSearchUrl();
   const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
 
@@ -44,6 +46,7 @@ const SearchModal = () => {
   }, []);
 
   const onSubmit = useCallback( async () => {
+    setSearchUrl("")
     if (step !== STEPS.INFO) {
         return onNext();
       }
@@ -66,14 +69,15 @@ const SearchModal = () => {
         updatedQuery.endDate = formatISO(dateRange.endDate);
       }
   
-      const url = qs.stringify(
+      const url = qs.stringifyUrl(
         {
           url: "/",
           query: updatedQuery,
         },
         { skipNull: true }
       );
-  
+      setSearchUrl(url)
+      console.log(searchUrl); 
       setStep(STEPS.LOCATION);
       searchModal.onClose();
   
