@@ -92,11 +92,9 @@ const IndexPage = () => {
 
     }, [searchUrl]);
 
-    const isEmpty = false;
-
     return (
         <>
-            {(isEmpty && <EmptyState showReset/>) || (
+            {(data.length === 0 && <EmptyState showReset/>) || (
                 <div className="pb-20 pt-40">
                     <Container>
                         <div
