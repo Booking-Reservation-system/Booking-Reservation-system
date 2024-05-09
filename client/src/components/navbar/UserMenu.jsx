@@ -33,6 +33,7 @@ const UserMenu = (props) => {
             localStorage.removeItem('expiresAt')
             localStorage.removeItem('authName')
             localStorage.removeItem('provider')
+            localStorage.removeItem('placeId')
             setAuth(false)
 
             toast("You have been logged out", {icon: '👋', style: {borderRadius: '10px'}})
@@ -44,6 +45,7 @@ const UserMenu = (props) => {
             localStorage.removeItem('expiresAt')
             localStorage.removeItem('authName')
             localStorage.removeItem('provider')
+            localStorage.removeItem('placeId')
             setAuth(false)
             toast("You have been logged out", {icon: '👋', style: {borderRadius: '10px'}})
             navigate(ROUTES.HOME)
@@ -94,7 +96,7 @@ const UserMenu = (props) => {
                             <>
                                 <MenuItem label="My trips" onClick={() => navigate(ROUTES.TRIPS)}/>
                                 <MenuItem label="My favorites" onClick={() => navigate(ROUTES.FAVOURITES)}/>
-                                <MenuItem label="My properties" onClick={() => navigate(ROUTES.PROPERTIES)}/>
+                                <MenuItem label="My profile" onClick={() => navigate(ROUTES.PROFILE)}/>
                                 <MenuItem label="Add your home" onClick={rentModal.onOpen}/>
                                 <hr/>
                                 <MenuItem label="Logout" onClick={logoutHandler}/>

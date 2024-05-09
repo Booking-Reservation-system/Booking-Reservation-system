@@ -5,7 +5,8 @@ const getFavouritesByUser = async (token) => {
         const response = await axios.get(`http://localhost:8080/api/favourites`, {
             headers: {
                 Authorization: "Bearer " + token,
-            }
+            },
+            withCredentials: true
         });
         return response;
     } catch (error) {

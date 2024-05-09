@@ -7,7 +7,8 @@ const ROUTES = {
     CHECKOUT: "checkout_success",
     TRIPS: "/trips",
     FAVOURITES: "/favourites",
-    PROPERTIES: "/properties",
+    PROFILE: "/profile",
+    DASHBOARD: "/dashboard",
 }
 
 

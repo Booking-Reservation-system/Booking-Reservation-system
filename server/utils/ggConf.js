@@ -12,6 +12,7 @@ const strategy = new GoogleStrategy(
     },
     async (accessToken, refreshToken, params, profile, callback) => {
         try {
+            console.log(profile)
             let user = await User.findOne({email: profile.emails[0].value});
             if (!user) {
                 user = new User({

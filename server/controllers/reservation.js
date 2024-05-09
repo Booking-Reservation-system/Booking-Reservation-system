@@ -24,14 +24,14 @@ exports.getReservations = async (req, res, next) => {
                 placeReservationParams: aes256.encryptData(reservation.placeId._id.toString())
             }
         });
-       
+
         res.status(200).json({
             message: 'Fetched reservations successfully.',
             reservations: encryptReservation,
-            
+
         });
-    } catch(err){
-        if(!err.statusCode) err.statusCode = 500;
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
 }
@@ -41,7 +41,7 @@ exports.getReservation = async (req, res, next) => {
     const reservationId = aes256.decryptData(req.params.reservationId);
     try {
         const place = await Place.findById(placeId).populate('reservations');
-        if(!place){
+        if (!place) {
             const error = new Error('Could not find place.');
             error.statusCode = 404;
             throw error;
@@ -54,10 +54,9 @@ exports.getReservation = async (req, res, next) => {
             reservation.placeId = aes256.encryptData(reservation.placeId.toString());
             return reservation;
         });
-        res.status(200).json({ message: 'Place fetched.', reservation: reservation });
-    }
-    catch(err){
-        if(!err.statusCode) err.statusCode = 500;
+        res.status(200).json({message: 'Place fetched.', reservation: reservation});
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
 }
@@ -65,13 +64,13 @@ exports.getReservation = async (req, res, next) => {
 exports.createReservation = async (req, res, next) => {
     const err = validationResult(req);
     try {
-        if(!err.isEmpty()){
+        if (!err.isEmpty()) {
             const errs = new Error('Validation failed, entered data is incorrect!');
             errs.statusCode = 422;
             errs.data = err.array();
             throw errs;
         }
-        
+
         const placeId = new ObjectId(aes256.decryptData(req.body.placeId));
         const startDate = req.body.startDate;
         const endDate = req.body.endDate;
@@ -97,8 +96,8 @@ exports.createReservation = async (req, res, next) => {
         reservation.userId = aes256.encryptData(reservation.userId.toString());
         reservation.placeId = aes256.encryptData(reservation.placeId.toString());
         res.status(201).json({message: 'Reservation created.', reservation: reservation});
-    } catch(err){
-        if(!err.statusCode) err.statusCode = 500;
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
 }
@@ -118,8 +117,8 @@ exports.deleteReservation = async (req, res, next) => {
         await place.save();
         await Reservation.findByIdAndDelete(reservationId);
         res.status(200).json({message: 'Deleted reservation.'});
-    } catch(err){
-        if(!err.statusCode) err.statusCode = 500;
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
 }

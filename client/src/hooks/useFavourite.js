@@ -6,20 +6,24 @@ import ROUTES from "../constants/routes";
 import useAuth from "./useAuth";
 import useLoginModal from "../hooks/useLoginModal";
 const useFavourite = ({ listingId }) => {
-  const { authToken } = useAuth();
+  const { authToken, isAuthenticated } = useAuth();
   const [hasFavourite, setHasFavourite] = useState(false);
   useEffect(() => {
     const fetchData = () => {
-      if (!authToken) {
+      if (isAuthenticated === false) {
         return;
       }
       try {
         axios
-          .get(`http://localhost:8080/api/favourites`, {
-            headers: {
-              Authorization: "Bearer " + authToken,
-            },
-          })
+          .get(
+            ` http://localhost:8080/api/favourites`,
+            {
+              headers: {
+                Authorization: "Bearer " + authToken,
+              },
+              withCredentials: true,
+            }
+          )
           .then((response) => {
             const favourites = response.data.favouritePlaces.map(
               (place) => place._id
@@ -48,15 +52,21 @@ const useFavourite = ({ listingId }) => {
           axios.delete(`http://localhost:8080/api/favourite/${listingId}`, {
             headers: {
               Authorization: "Bearer " + authToken,
-            }
+            },
+            withCredentials: true,
           });
       } else {
-        request = () => 
-          axios.post(`http://localhost:8080/api/favourite/new/${listingId}`, null, {
-            headers: {
-              Authorization: "Bearer " + authToken,
+        request = () =>
+          axios.post(
+            `http://localhost:8080/api/favourite/new/${listingId}`,
+            null,
+            {
+              headers: {
+                Authorization: "Bearer " + authToken,
+              },
+              withCredentials: true,
             }
-          })
+          );
       }
       await request();
       navigate(ROUTES.FAVOURITES);

@@ -28,7 +28,7 @@ const useAuth = () => {
     dòng 51 file LoginModal.jsx
     */
 
-    return {authToken, isAuthenticated};
+    return { authToken, isAuthenticated };
 }
 
 export default useAuth;
