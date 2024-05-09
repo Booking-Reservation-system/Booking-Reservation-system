@@ -14,6 +14,7 @@ const authRoutes = require('./routes/auth');
 const placeRoutes = require('./routes/place');
 const reservationRoutes = require('./routes/reservation');
 const favouriteRoutes = require('./routes/favourite');
+const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/auth', authRoutes);
 app.use('/api', placeRoutes);
 app.use('/api', reservationRoutes);
 app.use('/api', favouriteRoutes);
+app.use('/api', dashboardRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
