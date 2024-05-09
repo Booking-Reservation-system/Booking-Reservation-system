@@ -53,16 +53,16 @@ router.post(
     '/reservation/payments',
     isAuth,
     [
-        body('reservationId')
+        body('placeId')
             .trim()
             .not()
             .isEmpty()
-            .withMessage('Reservation ID cannot be empty.'),
-        body('striprId')
+            .withMessage('Place ID cannot be empty.'),
+        body('stripeId')
             .trim()
             .not()
             .isEmpty()
-            .withMessage('Strip ID cannot be empty.'),
+            .withMessage('Stripe ID cannot be empty.'),
         body('paymentMethod')
             .trim()
             .not()
@@ -81,5 +81,33 @@ router.post(
     ],
     reservationController.payments
 );
+
+// Test payment
+// /api/v1/reservation/test-payment => POST
+router.post('/reservation/test-payment', isAuth,
+    [
+        // check fields: placeId, startDate, endDate, totalPrice
+        body('placeId')
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage('Place ID cannot be empty.'),
+        body('startDate')
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage('Start date cannot be empty.'),
+        body('endDate')
+            .trim()
+            .not()
+            .isEmpty()
+            .withMessage('End date cannot be empty.'),
+        body('totalPrice')
+            .isNumeric()
+            .withMessage('Total price must be a number.'),
+    ],
+    reservationController.testPayment);
+
+router.delete('/reservation/cancel_payment', isAuth, reservationController.cancelPayment);
 
 module.exports = router;

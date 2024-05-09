@@ -1,16 +1,13 @@
-import { useMemo } from "react";
 import useTokenStore from "./storeToken"
-import { jwtDecode } from "jwt-decode";
+
 const useAuth = () => {
     const accessToken = localStorage.getItem('accessToken')
-    const { isAuthenticated } = useTokenStore()
+    const {isAuthenticated} = useTokenStore()
     if (!accessToken) {
-        return { authToken: null, isAuthenticated };
+        return {authToken: null, isAuthenticated};
     }
 
     const authToken = accessToken
-    // const decodedToken = jwtDecode(accessToken)
-    // const userId = useMemo(() => decodedToken.userId, [decodedToken]);
 
 
     // muốn return thêm gì thì thêm vào đây, biến thì dùng useMemo, hàm thì dùng useCallback
