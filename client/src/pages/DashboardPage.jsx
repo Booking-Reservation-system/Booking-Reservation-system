@@ -1,5 +1,6 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../src/theme";
+import { useState, useEffect } from "react";
 // import { mockTransactions } from "../../src/data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
@@ -11,13 +12,32 @@ import LineChart from "../../src/components/dashboards/LineChart"
 import BarChart from "../../src/components/dashboards/BarChart";
 import StatBox from "../../src/components/dashboards/StatBox";
 import ProgressCircle from "../../src/components/dashboards/ProgressCircle";
+import useAuth from "../../src/hooks/useAuth";
+
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  const [totalCustomer, setTotalCustomer] = useState("");
+  const [totalReservation, setTotalReservation] = useState("");
+  const { authToken } = useAuth()
+  useEffect(() => {
+    // Fetch data from backend API
+    fetch("http://localhost:8080/api/dashboard/total-data", {
+      headers: {
+        Authorization: "Bearer " + authToken,
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setTotalCustomer(data.totalCustomer);
+        setTotalReservation(data.totalReservation);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+  
   return (
-    <div className="pt-[120px]">
+    <div className="pt-[180px] px-40">
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -44,8 +64,8 @@ const Dashboard = () => {
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
         gridAutoRows="140px"
-        gap="40px"
-        mt="20px"
+        gap="50px"
+        mt="40px"
       >
         {/* ROW 1 */}
         <Box
@@ -56,12 +76,12 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="12,361"
-            subtitle="Emails Sent"
+            title={totalCustomer}
+            subtitle="Total Customer"
             progress="0.75"
             increase="+14%"
             icon={
-              <EmailIcon
+              <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -75,8 +95,8 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="431,225"
-            subtitle="Sales Obtained"
+            title={totalReservation}
+            subtitle="Total Reservation"
             progress="0.50"
             increase="+21%"
             icon={
@@ -127,7 +147,7 @@ const Dashboard = () => {
 
         {/* ROW 2 */}
         <Box
-          gridColumn="span 10"
+          gridColumn="span 7"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
         >
@@ -154,46 +174,12 @@ const Dashboard = () => {
                 $59,342.32
               </Typography>
             </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
           </Box>
           <Box height="250px" m="-20px 0 0 0">
             <LineChart isDashboard={true} />
           </Box>
         </Box>
-
-        {/* ROW 3 */}
-        <Box
-          gridColumn="span 5"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
-        >
-          <Typography variant="h5" fontWeight="600">
-            Campaign
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            mt="25px"
-          >
-            <ProgressCircle size="125" />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
-            >
-              $48,352 revenue generated
-            </Typography>
-            <Typography>Includes extra misc expenditures and costs</Typography>
-          </Box>
-        </Box>
+        {/* */}
         <Box
           gridColumn="span 5"
           gridRow="span 2"
