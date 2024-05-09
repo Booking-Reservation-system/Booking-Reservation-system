@@ -1,15 +1,33 @@
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
+import Header from "../../components/Heading";
+import { useEffect, useState } from "react";
 import { mockLineData as data } from "../../data/mockData";
+import useAuth from "../../hooks/useAuth";
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [LineChartData , setLineChartData] = useState([]);
+  const { authToken } = useAuth()
+  useEffect(() => {
+    // Fetch data from backend API
+    fetch("http://localhost:8080/api/dashboard/line-chart", {
+      headers: {
+        Authorization: "Bearer " + authToken,
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setLineChartData(data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   return (
     <ResponsiveLine
-      data={data}
+      data={LineChartData}
       theme={{
         axis: {
           domain: {
@@ -48,7 +66,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
       xScale={{ type: "point" }}
       yScale={{
         type: "linear",
-        min: "auto",
+        min: 0,
         max: "auto",
         stacked: true,
         reverse: false,

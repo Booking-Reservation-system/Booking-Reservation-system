@@ -3,11 +3,11 @@ import { tokens } from "../../src/theme";
 import { useState, useEffect } from "react";
 // import { mockTransactions } from "../../src/data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import AddHomeIcon from '@mui/icons-material/AddHome';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TrafficIcon from "@mui/icons-material/Traffic";
-import Header from "../../src/components/Heading";
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import Header from "../../src/components/Heading"
 import LineChart from "../../src/components/dashboards/LineChart"
 import BarChart from "../../src/components/dashboards/BarChart";
 import StatBox from "../../src/components/dashboards/StatBox";
@@ -20,6 +20,7 @@ const Dashboard = () => {
   const colors = tokens(theme.palette.mode);
   const [totalCustomer, setTotalCustomer] = useState("");
   const [totalReservation, setTotalReservation] = useState("");
+  const [totalPayment, setTotalPayment] = useState("");
   const { authToken } = useAuth()
   useEffect(() => {
     // Fetch data from backend API
@@ -32,12 +33,13 @@ const Dashboard = () => {
       .then((data) => {
         setTotalCustomer(data.totalCustomer);
         setTotalReservation(data.totalReservation);
+        setTotalPayment(data.totalPayment);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
   
   return (
-    <div className="pt-[180px] px-40">
+    <div className="pt-[200px] px-80">
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -69,7 +71,7 @@ const Dashboard = () => {
       >
         {/* ROW 1 */}
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
@@ -88,7 +90,7 @@ const Dashboard = () => {
           />
         </Box>
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
@@ -100,45 +102,26 @@ const Dashboard = () => {
             progress="0.50"
             increase="+21%"
             icon={
-              <PointOfSaleIcon
+              <AddHomeIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
           />
         </Box>
         <Box
-          gridColumn="span 3"
+          gridColumn="span 4"
           backgroundColor={colors.primary[400]}
           display="flex"
           alignItems="center"
           justifyContent="center"
         >
           <StatBox
-            title="32,441"
-            subtitle="New Clients"
+            title={totalPayment}
+            subtitle="Total Booking Amount"
             progress="0.30"
             increase="+5%"
             icon={
-              <PersonAddIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress="0.80"
-            increase="+43%"
-            icon={
-              <TrafficIcon
+              <LocalAtmIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -147,7 +130,7 @@ const Dashboard = () => {
 
         {/* ROW 2 */}
         <Box
-          gridColumn="span 7"
+          gridColumn="span 12"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
         >
@@ -164,14 +147,14 @@ const Dashboard = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                Revenue Generated
+                House in Each Category
               </Typography>
               <Typography
                 variant="h3"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                $59,342.32
+                Line Chart View
               </Typography>
             </Box>
           </Box>
@@ -179,8 +162,10 @@ const Dashboard = () => {
             <LineChart isDashboard={true} />
           </Box>
         </Box>
+
         {/* */}
-        <Box
+
+        {/* <Box
           gridColumn="span 5"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
@@ -195,7 +180,7 @@ const Dashboard = () => {
           <Box height="250px" mt="-20px">
             <BarChart isDashboard={true} />
           </Box>
-        </Box>
+        </Box> */}
       </Box>
     </Box>
     </div>
