@@ -20,7 +20,7 @@ const IndexPage = () => {
         isAuthenticated,
         setAuth
     } = useTokenStore();
-    console.log(searchUrl);
+    // console.log(searchUrl);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -72,23 +72,28 @@ const IndexPage = () => {
 
         const cancelReservation = async () => {
             try {
+                if (!isAuthenticated) return;
                 if (query.get("cancel") === null) return;
-                const placeId = query.get("placeId");
-                const response = await axios.delete(`http://localhost:8080/api/reservation/cancel_payment?placeId=${placeId}`, {
+                const reservationId = query.get("reservationId");
+                console.log(reservationId);
+                const response = await axios.delete(`http://localhost:8080/api/reservation/cancel_payment/${reservationId}`, {
                     headers: {
                         Authorization: "Bearer " + authToken,
                     },
                     withCredentials: true,
                 });
+                if (response.status !== 200) {
+                    toast.error("Something went wrong");
+                    return;
+                }
+                // console.log(response.data);
                 toast.success(response.data.message);
-                // window.history.replaceState({}, document.title, "/");
+                window.history.replaceState({}, document.title, "/");
             } catch (error) {
                 toast.error(error?.response?.data?.message || "Something went wrong");
             }
         }
-        if (isAuthenticated) {
-            cancelReservation();
-        }
+        cancelReservation();
 
     }, [searchUrl]);
 

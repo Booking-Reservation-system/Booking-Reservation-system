@@ -99,6 +99,7 @@ const ListingPage = () => {
                     startDate: dateRange.startDate,
                     endDate: dateRange.endDate,
                     placeId,
+                    totalDays,
                 },
                 {
                     headers: {
@@ -113,7 +114,7 @@ const ListingPage = () => {
             })
             .catch((err) => console.log(err.message));
         return;
-        
+
         axios
             .post("http://localhost:8080/api/reservation/new", inputReservationData, {
                 headers: {

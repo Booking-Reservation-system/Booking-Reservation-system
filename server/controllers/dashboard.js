@@ -1,6 +1,5 @@
 const User = require("../models/user");
 const Place = require("../models/place");
-const Payment = require("../models/payment");
 const Reservation = require("../models/reservation");
 const {validationResult} = require('express-validator');
 
@@ -28,15 +27,17 @@ exports.getTotalData = async (req, res, next) => {
     }
 }
 
-exports.getLineChartDate = async(req, res, next) => {
+exports.getLineChartDate = async (req, res, next) => {
     try {
         const places = await Place.aggregate([
-            { $group: {
-                _id: "$category",
-                count: { $sum: 1 }
-            }}
+            {
+                $group: {
+                    _id: "$category",
+                    count: {$sum: 1}
+                }
+            }
         ]).exec();
-       
+
         const placeData = places.map((place) => ({
             x: place._id,
             y: place.count

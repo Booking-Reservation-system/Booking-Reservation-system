@@ -24,9 +24,9 @@ const reservationSchema = new Schema({
         type: Number,
         required: true,
     },
-    isPayed: {
-        type: Boolean,
-        default: false,
+    payment_method_types: {
+        type: String,
+        required: true,
     },
 }, {timestamps: true});
 

@@ -2,7 +2,11 @@ const express = require('express');
 const {body} = require('express-validator');
 
 const reservationController = require('../controllers/reservation');
-const isAuth = require('../utils/isAuth');
+const {isAuth} = require('../utils/isAuth');
+const aes256 = require("../utils/aes-crypto");
+const Reservation = require("../models/reservation");
+const Place = require("../models/place");
+const User = require("../models/user");
 
 const router = express.Router();
 
@@ -105,9 +109,12 @@ router.post('/reservation/test-payment', isAuth,
         body('totalPrice')
             .isNumeric()
             .withMessage('Total price must be a number.'),
+        body('totalDays')
+            .isNumeric()
+            .withMessage('Total days must be a number.'),
     ],
     reservationController.testPayment);
 
-router.delete('/reservation/cancel_payment', isAuth, reservationController.cancelPayment);
+router.delete('/reservation/cancel_payment/:reservationId', isAuth, reservationController.cancelPayment);
 
 module.exports = router;
