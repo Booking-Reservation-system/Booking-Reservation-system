@@ -22,12 +22,14 @@ const Dashboard = () => {
   const [totalReservation, setTotalReservation] = useState("");
   const [totalPayment, setTotalPayment] = useState("");
   const { authToken } = useAuth()
+  
   useEffect(() => {
     // Fetch data from backend API
     fetch("http://localhost:8080/api/dashboard/total-data", {
       headers: {
         Authorization: "Bearer " + authToken,
-      }
+      },
+      withCredentials: true
     })
       .then((response) => response.json())
       .then((data) => {
