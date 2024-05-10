@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const {validationResult} = require('express-validator');
 const refresh = require('passport-oauth2-refresh');
 const axios = require('axios');
+const aes256 = require("../utils/aes-crypto");
 const ggPassport = require('../utils/ggConf');
 const User = require('../models/user');
 const RefreshToken = require('../models/refresh-token');
@@ -275,5 +276,4 @@ exports.googleLogout = async (req, res, next) => {
         if (!err.statusCode) err.statusCode = 500
         next(err);
     }
-
 }

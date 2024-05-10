@@ -16,7 +16,8 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
     fetch("http://localhost:8080/api/dashboard/line-chart", {
       headers: {
         Authorization: "Bearer " + authToken,
-      }
+      },
+      withCredentials: true
     })
       .then((response) => response.json())
       .then((data) => {
