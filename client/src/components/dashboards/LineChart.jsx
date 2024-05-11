@@ -25,7 +25,6 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
-
   return (
     <ResponsiveLine
       data={LineChartData}
@@ -62,6 +61,9 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
           },
         },
       }}
+      enableArea={true} // added
+      enableSlices="x" // added
+      enableCrosshair={true} // added
       colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
       margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
       xScale={{ type: "point" }}
