@@ -123,7 +123,7 @@ const Dashboard = () => {
           <StatBox
             title={totalCustomer}
             subtitle="Total User"
-            progress="0"
+            progress="0.25"
             icon1={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
@@ -169,7 +169,7 @@ const Dashboard = () => {
           <StatBox
             title={totalPayment}
             subtitle="Booking Amount"
-            progress="0"
+            progress="0.75"
             icon1={
               <LocalAtmIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "40px" }}

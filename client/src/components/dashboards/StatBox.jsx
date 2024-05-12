@@ -19,7 +19,7 @@ const StatBox = ({ title, subtitle, icon1, progress, icon2 }) => {
             {title}
           </Typography>
         </Box>
-        <Box>
+        <Box mt={1}>
           <ProgressCircle progress={progress} />
         </Box>
       </Box>
