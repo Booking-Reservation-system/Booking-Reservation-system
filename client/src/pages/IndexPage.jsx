@@ -43,8 +43,7 @@ const IndexPage = () => {
                 });
                 console.log(response.data);
                 if (response.status !== 200) {
-                    toast.error("Something went wrong");
-                    return;
+                    throw new Error("Something went wrong");
                 }
                 const accessToken = localStorage.getItem("accessToken");
                 const expiresAt = localStorage.getItem("expiresAt");
@@ -70,8 +69,9 @@ const IndexPage = () => {
         const cancelReservation = async () => {
             try {
                 if (query.get("cancel") === null) return;
-                const placeId = query.get("placeId");
-                const response = await axios.delete(`http://localhost:8080/api/reservation/cancel_payment?placeId=${placeId}`, {
+                const reservationId = query.get("reservationId");
+                console.log(reservationId);
+                const response = await axios.delete(`http://localhost:8080/api/checkout/cancel_payment/${reservationId}`, {
                     headers: {
                         Authorization: "Bearer " + authToken,
                     },

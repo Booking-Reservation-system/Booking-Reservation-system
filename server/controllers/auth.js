@@ -28,7 +28,6 @@ exports.signup = async (req, res, next) => {
         const result = await user.save();
         res.status(201).json({
             message: 'User created.',
-            userId: result._id
         });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500
@@ -162,6 +161,7 @@ exports.googleCallback = async (req, res, next) => {
                 if (err) {
                     return next(err);
                 }
+                // console.log(user);
                 res.redirect(process.env.CLIENT_URL + '?auth=true');
             });
         })(req, res, next);
@@ -174,14 +174,14 @@ exports.googleCallback = async (req, res, next) => {
 
 exports.googleSuccess = async (req, res, next) => {
     try {
-        console.log('success');
+        // console.log('success');
         if (!req.user && req.user.provider !== 'google') {
             const error = new Error('User not authenticated.');
             error.statusCode = 401;
             throw error;
         }
 
-        res.status(200).json({
+        const data = {
             message: 'Google authentication successful.',
             accessToken: req.user.accessToken,
             expires_in: req.user.expires_in,
@@ -189,7 +189,11 @@ exports.googleSuccess = async (req, res, next) => {
             refreshToken: req.user.refreshToken,
             name: req.user.name,
             image: req.user.image,
-        });
+        }
+
+        // console.log(data);
+
+        res.status(200).json(data);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500
         next(err);
@@ -234,12 +238,15 @@ exports.googleRenew = async (req, res, next) => {
                     return next(err);
                 }
             });
-            res.status(200).json({
+
+            const data = {
                 message: 'Access token renewed.',
                 accessToken: accessToken,
                 expires_in: params.expires_in,
                 token_type: params.token_type,
-            });
+            }
+            console.log(data);
+            res.status(200).json(data);
         });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500

@@ -28,6 +28,12 @@ const reservationSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    invoice: {
+        type: String,
+    },
+    paymentId: {
+        type: String,
+    }
 }, {timestamps: true});
 
 module.exports = mongoose.model('Reservation', reservationSchema);
