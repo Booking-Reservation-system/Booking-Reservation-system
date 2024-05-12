@@ -31,6 +31,7 @@ const TripPage = () => {
       try {
         const response = await getReservation(authToken);
         setReservations(response.data.reservations);
+        // console.log(response.data.reservations);
       } catch (error) {
         toast.error("Something went wrong");
       }

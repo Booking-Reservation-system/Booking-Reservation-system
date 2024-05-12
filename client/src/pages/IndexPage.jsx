@@ -52,12 +52,14 @@ const IndexPage = () => {
                 const expiresAt = localStorage.getItem("expiresAt");
                 const refreshToken = localStorage.getItem("refreshToken");
                 const authName = localStorage.getItem("authName");
+                const authImage = localStorage.getItem("authImage");
 
-                if (!accessToken || !expiresAt || !refreshToken || !authName || !isAuthenticated) {
+                if (!accessToken || !expiresAt || !refreshToken || !authName || !isAuthenticated || !authImage) {
                     localStorage.setItem("accessToken", response.data.accessToken);
                     localStorage.setItem("expiresAt", response.data.expires_in);
                     localStorage.setItem("refreshToken", response.data.refreshToken);
                     localStorage.setItem("authName", response.data.name);
+                    localStorage.setItem("authImage", response.data.image);
                     localStorage.setItem("provider", "google");
                     setAuth(true);
                 }
