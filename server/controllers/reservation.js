@@ -186,7 +186,7 @@ exports.payment = async (req, res, next) => {
                 },
                 line_items: line_items,
                 mode: 'payment',
-                customer_email: customer_email,
+                customer: customer.id,
                 success_url: link,
                 cancel_url: cancel_link,
             });
@@ -196,45 +196,6 @@ exports.payment = async (req, res, next) => {
 
             req.session.checkoutId = result.id;
 
-
-            // create invoice for reservation
-            const invoice = await stripe.invoices.create({
-                customer: customer.id,
-                collection_method: 'send_invoice',
-                days_until_due: 30,
-                metadata: {
-                    reservation_id: reservation._id.toString(),
-                    place_id: place._id.toString(),
-                    user_id: req.userId.toString(),
-                },
-                description: 'Reservation for ' + place.title,
-                custom_fields: [
-                    {
-                        name: 'Reservation ID',
-                        value: reservation._id.toString(),
-                    },
-                    {
-                        name: 'Place',
-                        value: place.title,
-                    },
-                    {
-                        name: 'email',
-                        value: customer_email,
-                    }
-                ],
-                footer: 'Thank you for booking with us.',
-                rendering_options: {
-                    amount_tax_display: 'exclude_tax',
-                }
-            });
-
-            // send invoice to customer
-            const invoice_pdf = await stripe.invoices.finalizeInvoice(invoice.id);
-
-            // send email to customer
-            await stripe.invoices.sendInvoice(invoice.id);
-
-            
             await reservation.save();
             place.reservations.push(reservation);
             await place.save();
@@ -268,6 +229,11 @@ exports.checkoutSuccess = async (req, res, next) => {
         if (!place) {
             const error = new Error('Place not found.');
             error.statusCode = 404;
+            throw error;
+        }
+        if (!session.customer) {
+            const error = new Error('Payment failed.');
+            error.statusCode = 500;
             throw error;
         }
         if (session.payment_status === 'paid') {
