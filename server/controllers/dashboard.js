@@ -58,7 +58,7 @@ exports.getLineChartData = async (req, res, next) => {
 exports.checkRole = async (req, res, next) => {
     try {
         const user = await User.findById(req.userId);
-
+        
         res.status(200).json({
             message: 'Role fetched.',
             role: user.role
