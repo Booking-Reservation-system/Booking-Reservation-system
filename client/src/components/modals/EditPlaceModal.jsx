@@ -75,6 +75,7 @@ const EditPlaceModal = () => {
     },
   });
 
+
   const category = watch("category");
   const location = watch("location");
   const guestCapacity = watch("guestCapacity");
@@ -130,11 +131,11 @@ const EditPlaceModal = () => {
     const updateListingData = {
       title: data.title === '0' ? currentPlaceData?.title : data.title,
       description: data.description === '0' ? currentPlaceData?.description : data.description,
-      category: data.category === undefined ? currentPlaceData?.category : data.category,
+      category: data.category === "" ? currentPlaceData?.category : data.category,
       roomCount: data.roomCount === 0 ? currentPlaceData?.roomCount : data.roomCount,
       bathroomCount: data.bathroomCount === 0 ? currentPlaceData?.bathroomCount : data.bathroomCount,
       guestCapacity: data.guestCapacity === 0 ? currentPlaceData?.guestCapacity : data.guestCapacity,
-      location: data.location === undefined ? currentPlaceData?.locationValue : data.location.value,
+      location: data.location === null ? currentPlaceData?.locationValue : data.location.value,
       price: data.price === -1 ? currentPlaceData?.price : data.price,
       imageSrc: data.imageSrc === "" ? currentPlaceData?.imageSrc : data.imageSrc,
     };

@@ -76,6 +76,7 @@ const SearchModal = () => {
         },
         { skipNull: true }
       );
+      console.log(url)
       setSearchUrl(url)
       console.log(searchUrl); 
       setStep(STEPS.LOCATION);
