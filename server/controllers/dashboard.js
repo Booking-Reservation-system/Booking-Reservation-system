@@ -27,12 +27,12 @@ exports.getTotalData = async (req, res, next) => {
     }
 }
 
-exports.getLineChartDate = async (req, res, next) => {
+exports.getLineChartData = async (req, res, next) => {
     try {
         const places = await Place.aggregate([
             {
                 $group: {
-                    _id: "$category",
+                    _id: "$locationValue",
                     count: {$sum: 1}
                 }
             }
