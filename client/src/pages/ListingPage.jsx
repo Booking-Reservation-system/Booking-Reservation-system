@@ -93,7 +93,7 @@ const ListingPage = () => {
             placeId,
         }
         axios
-            .post(`http://localhost:8080/api/reservation/test-payment`,
+            .post(`http://localhost:8080/api/checkout/payment`,
                 {
                     totalPrice,
                     startDate: dateRange.startDate,
@@ -112,27 +112,8 @@ const ListingPage = () => {
                     window.location.href = response.data.url;
                 }
             })
-            .catch((err) => console.log(err.message));
-        return;
-
-        axios
-            .post("http://localhost:8080/api/reservation/new", inputReservationData, {
-                headers: {
-                    Authorization: "Bearer " + authToken,
-                },
-                withCredentials: true
-            })
-            .then(() => {
-                toast.success("Reservation created successfully");
-                navigate(ROUTES.TRIPS);
-                setDateRange(initialDateRange);
-            })
-            .catch(() => {
-                toast.error(error?.response?.data?.message || "Something went wrong");
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
+            .catch((err) => toast.error(error?.response?.data?.message || "Something went wrong"))
+            .finally(() => setIsLoading(false));
     }, [totalPrice, dateRange, placeId, authToken, loginModal]);
 
     useEffect(() => {

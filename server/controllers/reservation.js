@@ -14,13 +14,20 @@ exports.getReservations = async (req, res, next) => {
     query.userId = req.userId;
     if (placeId) query.placeId = aes256.decryptData(placeId);
     try {
-        const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate('placeId');
+        const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate({
+            path: 'placeId',
+            select: 'category location price imageSrc',
+        }).select('placeId startDate endDate totalPrice');
+        if (!reservations || reservations.length === 0) {
+            const err = new Error('Can not find reservation')
+            err.statusCode = 404;
+            throw err;
+        }
         // encrypt all id
         const encryptReservation = reservations.map(reservation => {
             return {
                 ...reservation,
                 _id: aes256.encryptData(reservation._id.toString()),
-                userId: aes256.encryptData(reservation.userId.toString()),
                 placeReservationParams: aes256.encryptData(reservation.placeId._id.toString())
             }
         });
@@ -37,65 +44,33 @@ exports.getReservations = async (req, res, next) => {
 }
 
 exports.getReservation = async (req, res, next) => {
-    const placeId = aes256.decryptData(req.params.placeId);
     const reservationId = aes256.decryptData(req.params.reservationId);
     try {
-        const place = await Place.findById(placeId).populate('reservations');
-        if (!place) {
-            const error = new Error('Could not find place.');
+        const reservation = await Reservation.findById(reservationId).populate('placeId').select('startDate endDate totalPrice invoice');
+        if (!reservation) {
+            const error = new Error('Could not find reservation.');
             error.statusCode = 404;
             throw error;
         }
-        let reservation = place.reservations.filter(reservation => reservation._id.toString() === reservationId);
-        // encrypt all id
-        reservation = reservation.map(reservation => {
-            reservation._id = aes256.encryptData(reservation._id.toString());
-            reservation.userId = aes256.encryptData(reservation.userId.toString());
-            reservation.placeId = aes256.encryptData(reservation.placeId.toString());
-            return reservation;
-        });
-        res.status(200).json({message: 'Place fetched.', reservation: reservation});
-    } catch (err) {
-        if (!err.statusCode) err.statusCode = 500;
-        next(err);
-    }
-}
-
-exports.createReservation = async (req, res, next) => {
-    const err = validationResult(req);
-    try {
-        if (!err.isEmpty()) {
-            const errs = new Error('Validation failed, entered data is incorrect!');
-            errs.statusCode = 422;
-            errs.data = err.array();
-            throw errs;
+        const formatData = {
+            placeId: aes256.encryptData(reservation.placeId._id.toString()),
+            reservationId: aes256.encryptData(reservation._id.toString()),
+            startDate: reservation.startDate,
+            endDate: reservation.endDate,
+            totalPrice: reservation.totalPrice,
+            invoice: reservation.invoice,
+            category: reservation.placeId.category,
+            location: reservation.placeId.locationValue,
+            price: reservation.placeId.price,
+            imageSrc: reservation.placeId.imageSrc,
+            title: reservation.placeId.title,
+            description: reservation.placeId.description,
+            roomCount: reservation.placeId.roomCount,
+            bathroomCount: reservation.placeId.bathroomCount,
+            guestCapacity: reservation.placeId.guestCapacity,
+            amenities: reservation.placeId.amenities,
         }
-
-        const placeId = new ObjectId(aes256.decryptData(req.body.placeId));
-        const startDate = req.body.startDate;
-        const endDate = req.body.endDate;
-        const totalPrice = req.body.totalPrice;
-        const place = await Place.findById(placeId);
-        if (!place) {
-            const error = new Error('Could not find place.');
-            error.statusCode = 404;
-            throw error;
-        }
-        const reservation = new Reservation({
-            userId: req.userId,
-            placeId: placeId,
-            startDate: startDate,
-            endDate: endDate,
-            totalPrice: totalPrice
-        });
-        await reservation.save();
-        place.reservations.push(reservation);
-        await place.save();
-        // encrypt all id
-        reservation._id = aes256.encryptData(reservation._id.toString());
-        reservation.userId = aes256.encryptData(reservation.userId.toString());
-        reservation.placeId = aes256.encryptData(reservation.placeId.toString());
-        res.status(201).json({message: 'Reservation created.', reservation: reservation});
+        res.status(200).json({message: 'Place fetched.', reservation: formatData});
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -103,91 +78,42 @@ exports.createReservation = async (req, res, next) => {
 }
 
 exports.deleteReservation = async (req, res, next) => {
-    // const reservationId = aes256.decryptData(req.params.reservationId);
-    // // remove encripted id
-    // try {
-    //     const reservation = await Reservation.findById(reservationId);
-    //     if (!reservation) {
-    //         const error = new Error('Could not find reservation.');
-    //         error.statusCode = 404;
-    //         throw error;
-    //     }
-    //     const place = await Place.findById(reservation.placeId);
-    //     place.reservations.pull(reservationId);
-    //     await place.save();
-    //     await Reservation.findByIdAndDelete(reservationId);
-    //     res.status(200).json({message: 'Deleted reservation.'});
-    // } catch (err) {
-    //     if (!err.statusCode) err.statusCode = 500;
-    //     next(err);
-    // }
+    const reservationId = aes256.decryptData(req.params.reservationId);
+    // remove encripted id
+    try {
+        const reservation = await Reservation.findById(reservationId);
+        if (!reservation) {
+            const error = new Error('Could not find reservation.');
+            error.statusCode = 404;
+            throw error;
+        }
+        const session = await stripe.checkout.sessions.retrieve(reservation.paymentId);
+        // refund payment
+        const refund = await stripe.refunds.create({
+            payment_intent: session.payment_intent,
+            reason: 'requested_by_customer',
+            refund_application_fee: true,
+            reverse_transfer: true,
+        });
+        const place = await Place.findById(reservation.placeId);
+        if (place && place.reservations.length > 0 && place.reservations.includes(reservationId)) {
+            place.reservations.pull(reservationId);
+            await place.save();
+        }
+        const user = await User.findById(req.userId);
+        if (user && user.reservations.length > 0 && user.reservations.includes(reservationId)) {
+            user.reservations.pull(reservationId);
+            await user.save();
+        }
+        await Reservation.findByIdAndDelete(reservationId);
+        res.status(200).json({message: 'Reservation deleted.'});
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
 }
 
-exports.payments = async (req, res, next) => {
-    // const reservationId = aes256.decryptData(req.body.reservationId);
-    // try {
-    //     const err = validationResult(req);
-    //     if (!err.isEmpty()) {
-    //         const errs = new Error('Validation failed, entered data is incorrect!');
-    //         errs.statusCode = 422;
-    //         errs.data = err.array();
-    //         throw errs;
-    //     }
-    //     const reservation = await Reservation.findById(reservationId);
-    //     if (!reservation) {
-    //         const error = new Error('Could not find reservation.');
-    //         error.statusCode = 404;
-    //         throw error;
-    //     }
-    //     const stripeId = req.body.striprId;
-    //     const paymentMethod = req.body.paymentMethod;
-    //     const paymentStatus = req.body.paymentStatus;
-    //     const paymentDate = req.body.paymentDate;
-    //
-    //     const payment = new Payment({
-    //         userId: req.userId,
-    //         reservationId: reservationId,
-    //         paymentMethod: paymentMethod,
-    //         paymentStatus: paymentStatus,
-    //         paymentDate: paymentDate
-    //     });
-    //     const response = await payment.save();
-    //     if (!response) {
-    //         const error = new Error('Payment failed.');
-    //         error.statusCode = 500;
-    //         throw error;
-    //     }
-    //
-    //     const paymentId = aes256.encryptData(response._id.toString());
-    //
-    //     const paymentIntent = await stripe.paymentIntents.create({
-    //         amount: reservation.totalPrice * 100,
-    //         currency: 'usd',
-    //         payment_method: stripeId,
-    //         confirm: true,
-    //         error_on_requires_action: true,
-    //         automatic_payment_methods: {
-    //             // payment_method_types: ['card'],
-    //             enabled: true,
-    //             allow_redirects: "never"
-    //         },
-    //         return_url: process.env.CLIENT_URL + '/payment/success?paymentId=' + paymentId,
-    //     });
-    //     if (paymentIntent.status !== 'succeeded') {
-    //         const error = new Error('Payment failed.');
-    //         error.statusCode = 500;
-    //         throw error;
-    //     }
-    //
-    //     res.status(201).json({message: 'Payment created.', payment: payment});
-    // } catch (err) {
-    //     if (!err.statusCode) err.statusCode = 500;
-    //     next(err);
-    // }
-}
-
-
-exports.testPayment = async (req, res, next) => {
+exports.payment = async (req, res, next) => {
     const err = validationResult(req);
     try {
         if (!err.isEmpty()) {
@@ -219,17 +145,8 @@ exports.testPayment = async (req, res, next) => {
         const user = await User.findById(req.userId);
         const customer_email = user.email;
 
-        const customer = await stripe.customers.create({
-            email: customer_email,
-            metadata: {
-                userId: req.userId.toString(),
-            }
-        });
-
-
         const link = process.env.CLIENT_URL + 'checkout_success?paymentId=' + aes256.encryptData(reservation._id.toString());
         const cancel_link = process.env.CLIENT_URL + '?cancel=true&reservationId=' + aes256.encryptData(reservation._id.toString());
-        // const cancel_link = 'http://localhost:8080/api/reservation/cancel?reservationId=' + aes256.encryptData(reservation._id.toString());
 
         const line_items = [
             {
@@ -254,6 +171,14 @@ exports.testPayment = async (req, res, next) => {
         let result;
 
         try {
+
+            const customer = await stripe.customers.create({
+                email: customer_email,
+                metadata: {
+                    userId: req.userId.toString(),
+                }
+            });
+
             result = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 phone_number_collection: {
@@ -265,6 +190,12 @@ exports.testPayment = async (req, res, next) => {
                 success_url: link,
                 cancel_url: cancel_link,
             });
+
+            // console.log(result);
+            reservation.paymentId = result.id;
+
+            req.session.checkoutId = result.id;
+
 
             // create invoice for reservation
             const invoice = await stripe.invoices.create({
@@ -321,26 +252,108 @@ exports.testPayment = async (req, res, next) => {
     }
 }
 
+exports.checkoutSuccess = async (req, res, next) => {
+    try {
+        const paymentId = aes256.decryptData(req.query.paymentId);
+        const {checkoutId} = req.session;
+        const session = await stripe.checkout.sessions.retrieve(checkoutId);
+        // console.log(session);
+        const reservation = await Reservation.findById(paymentId);
+        if (!reservation) {
+            const error = new Error('Reservation not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        const place = await Place.findById(reservation.placeId);
+        if (!place) {
+            const error = new Error('Place not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        if (session.payment_status === 'paid') {
+            const invoice = await stripe.invoices.create({
+                customer: session.customer,
+                collection_method: 'send_invoice',
+                days_until_due: 30,
+                metadata: {
+                    reservation_id: paymentId,
+                    place_id: place._id.toString(),
+                    user_id: session.metadata.user_id,
+                },
+                description: 'Reservation for ' + session.metadata.place_id,
+                custom_fields: [
+                    {
+                        name: 'Reservation ID',
+                        value: paymentId,
+                    },
+                    {
+                        name: 'Place',
+                        value: place.title,
+                    }
+                ],
+                footer: 'Thank you for booking with us.',
+                rendering_options: {
+                    amount_tax_display: 'exclude_tax',
+                },
+            });
+            const invoiceItem = await stripe.invoiceItems.create({
+                customer: session.customer,
+                currency: 'usd',
+                unit_amount: place.price * 100,
+                description: 'Reservation for ' + place.title,
+                quantity: reservation.totalDays,
+                metadata: {
+                    reservation_id: paymentId,
+                    place_id: place._id.toString(),
+                    user_id: session.metadata.user_id,
+                },
+                invoice: invoice.id,
+            });
+
+            const invoice_pdf = await stripe.invoices.finalizeInvoice(invoice.id);
+            reservation.invoice = invoice_pdf.hosted_invoice_url;
+            await reservation.save();
+            await stripe.invoices.sendInvoice(invoice_pdf.id);
+            // console.log(invoice_pdf);
+            res.status(200).json({message: 'Payment successful.', invoice: invoice_pdf.hosted_invoice_url});
+        } else {
+            const user = await User.findById(req.userId);
+            user.reservations.pull(paymentId);
+            await user.save();
+            place.reservations.pull(paymentId);
+            await place.save();
+            await Reservation.findByIdAndDelete(paymentId);
+
+            const error = new Error('Payment failed.');
+            error.statusCode = 500;
+            throw error;
+        }
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+
+    }
+}
+
 exports.cancelPayment = async (req, res, next) => {
     try {
-        // const reservationId = aes256.decryptData(req.params.reservationId);
-        // const reservation = await Reservation.findById(reservationId);
-        // if (!reservation) {
-        //     return res.status(200).json({message: 'Reservation cancelled.'});
-        // }
-        // const place = await Place.findById(reservation.placeId);
-        // if (place && place.reservations.length > 0 && place.reservations.includes(reservationId)) {
-        //     place.reservations.pull(reservationId);
-        //     await place.save();
-        // }
-        // const user = await User.findById(req.userId);
-        // if (user && user.reservations.length > 0 && user.reservations.includes(reservationId)) {
-        //     user.reservations.pull(reservationId);
-        //     await user.save();
-        // }
-        // await Reservation.findByIdAndDelete(reservationId);
+        const reservationId = aes256.decryptData(req.params.reservationId);
+        const reservation = await Reservation.findById(reservationId);
+        if (!reservation) {
+            return res.status(200).json({message: 'Reservation cancelled.'});
+        }
+        const place = await Place.findById(reservation.placeId);
+        if (place && place.reservations.length > 0 && place.reservations.includes(reservationId)) {
+            place.reservations.pull(reservationId);
+            await place.save();
+        }
+        const user = await User.findById(req.userId);
+        if (user && user.reservations.length > 0 && user.reservations.includes(reservationId)) {
+            user.reservations.pull(reservationId);
+            await user.save();
+        }
+        await Reservation.findByIdAndDelete(reservationId);
 
-        res.status(200).json({message: 'Reservation cancelled.'});
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);

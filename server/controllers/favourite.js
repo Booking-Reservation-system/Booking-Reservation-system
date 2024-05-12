@@ -18,8 +18,8 @@ exports.getFavourites = async (req, res, next) => {
             }
         });
         res.status(200).json({message: 'Favourites fetched.', favouritePlaces: user.favouritePlaces});
-    } catch(err){
-        if(!err.statusCode) err.statusCode = 500;
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
 }
@@ -27,7 +27,7 @@ exports.getFavourites = async (req, res, next) => {
 exports.newFavouriteId = async (req, res, next) => {
     try {
         const placeId = aes256.decryptData(req.params.placeId);
-        if(!placeId){
+        if (!placeId) {
             const error = new Error('Place ID is required.');
             error.statusCode = 400;
             throw error;
@@ -41,8 +41,8 @@ exports.newFavouriteId = async (req, res, next) => {
         user.favouritePlaces.push(placeId);
         await user.save();
         res.status(200).json({message: 'Favourite added.'});
-    } catch(err){
-        if(!err.statusCode) err.statusCode = 500;
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
 }
@@ -59,8 +59,8 @@ exports.deleteFavouriteId = async (req, res, next) => {
         user.favouritePlaces.pull(placeId);
         await user.save();
         res.status(200).json({message: 'Favourite removed.'});
-    } catch(err){
-        if(!err.statusCode) err.statusCode = 500;
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
 }

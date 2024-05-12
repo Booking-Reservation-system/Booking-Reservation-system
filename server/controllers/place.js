@@ -6,7 +6,6 @@ const {imageUpload, imageDelete} = require("../utils/upload-image");
 
 exports.getPlaces = async (req, res, next) => {
     const {
-        userId,
         roomCount,
         bathroomCount,
         guestCount,
@@ -17,7 +16,6 @@ exports.getPlaces = async (req, res, next) => {
     } = req.query;
     // console.log(req.query)
     let query = {};
-    if (userId) query.userId = userId;
     if (roomCount) query.roomCount = roomCount;
     if (bathroomCount) query.bathroomCount = bathroomCount;
     if (guestCount) query.guestCapacity = {$gte: guestCount};
@@ -40,9 +38,8 @@ exports.getPlaces = async (req, res, next) => {
                     ],
                 },
             },
-        };
+        }
     }
-    // console.log(query)
     try {
         const places = await Place.find(query, null, {sort: {createdAt: -1}});
         // encrypt placeId for security and save the original id in _id
@@ -219,10 +216,41 @@ exports.createPlace = async (req, res, next) => {
         const user = await User.findById(req.userId);
         user.places.push(place);
         await user.save();
-        place._id = aes256.encryptData(place._id.toString());
+        const placeFormatted = {
+            _id: aes256.encryptData(place._id.toString()),
+            title: place.title,
+            description: place.description,
+            imageSrc: place.imageSrc,
+            category: place.category,
+            roomCount: place.roomCount,
+            bathroomCount: place.bathroomCount,
+            guestCapacity: place.guestCapacity,
+            locationValue: place.locationValue,
+            price: place.price,
+            amenities: {
+                wifi: place.amenities.wifi,
+                tv: place.amenities.tv,
+                kitchen: place.amenities.kitchen,
+                washer: place.amenities.washer,
+                parking: place.amenities.parking,
+                ac: place.amenities.ac,
+                pool: place.amenities.pool,
+                hotTub: place.amenities.hotTub,
+                workspace: place.amenities.workspace,
+                balcony: place.amenities.balcony,
+                grill: place.amenities.grill,
+                campFire: place.amenities.campFire,
+                billiards: place.amenities.billiards,
+                gym: place.amenities.gym,
+                piano: place.amenities.piano,
+                shower: place.amenities.shower,
+                firstAid: place.amenities.firstAid,
+                fireExtinguisher: place.amenities.fireExtinguisher,
+            },
+        };
         res.status(201).json({
             message: "Post created successfully!",
-            place: place,
+            place: placeFormatted,
         });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
@@ -249,6 +277,7 @@ exports.updatePlace = async (req, res, next) => {
         const guestCapacity = req.body.guestCapacity;
         const location = req.body.location;
         const price = req.body.price;
+        const amenities = req.body.amenities;
         const place = await Place.findById(placeId).populate("userId");
         if (!place) {
             const error = new Error("Could not find place.");
@@ -272,14 +301,36 @@ exports.updatePlace = async (req, res, next) => {
             place.imageSrc = uploadResponse.secureUrl;
             place.imagePublicId = uploadResponse.publicId;
         }
-        place.title = title;
-        place.description = description;
-        place.category = category;
-        place.roomCount = roomCount;
-        place.bathroomCount = bathroomCount;
-        place.guestCapacity = guestCapacity;
-        place.locationValue = location;
-        place.price = parseInt(price, 10);
+        if (title) place.title = title;
+        if (description) place.description = description;
+        if (category) place.category = category;
+        if (roomCount) place.roomCount = roomCount;
+        if (bathroomCount) place.bathroomCount = bathroomCount;
+        if (guestCapacity) place.guestCapacity = guestCapacity;
+        if (location) place.locationValue = location;
+        if (price) place.price = parseInt(price, 10);
+        if (amenities) {
+            place.amenities = {
+                wifi: amenities.wifi,
+                tv: amenities.tv,
+                kitchen: amenities.kitchen,
+                washer: amenities.washer,
+                parking: amenities.parking,
+                ac: amenities.ac,
+                pool: amenities.pool,
+                hotTub: amenities.hotTub,
+                workspace: amenities.workspace,
+                balcony: amenities.balcony,
+                grill: amenities.grill,
+                campFire: amenities.campFire,
+                billiards: amenities.billiards,
+                gym: amenities.gym,
+                piano: amenities.piano,
+                shower: amenities.shower,
+                firstAid: amenities.firstAid,
+                fireExtinguisher: amenities.fireExtinguisher,
+            };
+        }
         const result = await place.save();
 
         const placeFormatted = {
@@ -356,3 +407,4 @@ exports.deletePlace = async (req, res, next) => {
         next(err);
     }
 };
+

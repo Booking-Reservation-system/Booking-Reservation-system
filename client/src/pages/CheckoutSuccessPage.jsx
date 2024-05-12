@@ -1,9 +1,36 @@
 import ROUTES from "../constants/routes.js";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import Button from "../components/button/Button.jsx";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import useAuth from "../hooks/useAuth.js";
 
 const CheckoutSuccessPage = () => {
+    const {authToken} = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const [invoice, setInvoice] = useState(null);
+
+    useEffect(() => {
+        const checkoutSuccess = async () => {
+            // console.log(query.get('paymentId'));
+            if (!query.get('paymentId')) return;
+            const response = await axios.get(`http://localhost:8080/api/checkout/success_payment?paymentId=${query.get('paymentId')}`, {
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                },
+                withCredentials: true
+            });
+            console.log(response);
+            if (response.status !== 200) {
+                console.log('Error checking out');
+                return;
+            }
+            setInvoice(response.data.invoice);
+        }
+        checkoutSuccess();
+    }, []);
     const backToHome = () => {
         navigate(ROUTES.HOME);
     }
@@ -19,12 +46,16 @@ const CheckoutSuccessPage = () => {
                     <strong>support@onlineshop.com</strong>
                 </p>
             </div>
-            <div>
+            <div className="flex flex-col gap-3">
                 <Button onClick={() => backToHome()} label="Go to Home"/>
+                {invoice &&
+                    <a href={invoice} target="_blank" className="hover:text-rose-500 cursor-pointer">Click here to
+                        download
+                        invoice</a>
+                }
             </div>
         </div>
     );
 };
 
 export default CheckoutSuccessPage;
-

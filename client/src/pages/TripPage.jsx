@@ -1,8 +1,8 @@
 import getReservation from "../action/getReservation";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import ROUTES from "../constants/routes";
 import useLoginModal from "../hooks/useLoginModal";
