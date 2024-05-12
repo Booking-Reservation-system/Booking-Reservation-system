@@ -26,9 +26,9 @@ const SearchModal = () => {
 
   const [location, setLocation] = useState();
   const [step, setStep] = useState(STEPS.LOCATION);
-  const [guestCount, setGuestCount] = useState(1);
-  const [roomCount, setRoomCount] = useState(1);
-  const [bathroomCount, setBathroomCount] = useState(1);
+  const [guestCount, setGuestCount] = useState(0);
+  const [roomCount, setRoomCount] = useState(0);
+  const [bathroomCount, setBathroomCount] = useState(0);
   const [dateRange, setDateRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -55,18 +55,34 @@ const SearchModal = () => {
       if (params) {
         currentQuery = qs.parse(params.toString());
       }
+
       const updatedQuery = {
         ...currentQuery,
         locationValue: location?.value,
-        guestCount,
-        roomCount,
-        bathroomCount,
       };
       if (dateRange.startDate) {
         updatedQuery.startDate = formatISO(dateRange.startDate);
       }
       if (dateRange.endDate) {
         updatedQuery.endDate = formatISO(dateRange.endDate);
+      }
+
+      if (guestCount === 0) {
+        updatedQuery.guestCount = null
+      } else {
+        updatedQuery.guestCount = guestCount
+      }
+
+      if (roomCount === 0) {
+        updatedQuery.roomCount = null
+      } else {
+        updatedQuery.roomCount = roomCount
+      }
+
+      if (bathroomCount === 0) {
+        updatedQuery.bathroomCount = null
+      } else {
+        updatedQuery.bathroomCount = bathroomCount
       }
   
       const url = qs.stringifyUrl(
@@ -77,6 +93,7 @@ const SearchModal = () => {
         { skipNull: true }
       );
       console.log(url)
+      console.log(dateRange.endDate, dateRange.startDate)
       setSearchUrl(url)
       console.log(searchUrl); 
       setStep(STEPS.LOCATION);
