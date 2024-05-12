@@ -89,7 +89,7 @@ const ListingCard = (props) => {
                     </div>
                     <div className="text-md text-neutral-500">
                         <div>
-                            {location?.region}, {location?.label}
+                            {location?.region} {location?.label}
                         </div>
                         <div>{revervationDate || data.category}</div>
                     </div>

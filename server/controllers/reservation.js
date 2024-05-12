@@ -16,7 +16,7 @@ exports.getReservations = async (req, res, next) => {
     try {
         const reservations = await Reservation.find(query, null, {sort: {createdAt: -1}}).populate({
             path: 'placeId',
-            select: 'category location price imageSrc',
+            select: 'category location title price imageSrc',
         }).select('placeId startDate endDate totalPrice');
         if (!reservations || reservations.length === 0) {
             const err = new Error('Can not find reservation')
