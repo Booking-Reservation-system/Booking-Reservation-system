@@ -123,10 +123,10 @@ const Dashboard = () => {
           <StatBox
             title={totalCustomer}
             subtitle="Total User"
-            progress="0.25"
+            progress="0"
             icon1={
               <PersonAddIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
             icon2={
@@ -149,7 +149,7 @@ const Dashboard = () => {
             progress="0.50"
             icon1={
               <AddHomeIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
             icon2={
@@ -168,11 +168,11 @@ const Dashboard = () => {
         >
           <StatBox
             title={totalPayment}
-            subtitle="Total Booking Amount"
-            progress="0.75"
+            subtitle="Booking Amount"
+            progress="0"
             icon1={
               <LocalAtmIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
             icon2={
@@ -205,7 +205,7 @@ const Dashboard = () => {
                 House in Each Country
               </Typography>
               <Typography
-                variant="h3"
+                variant="h5"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
