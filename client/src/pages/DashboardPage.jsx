@@ -1,6 +1,7 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../src/theme";
 import { useState, useEffect } from "react";
+import axios from "axios";
 // import { mockTransactions } from "../../src/data/mockData";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
@@ -8,6 +9,7 @@ import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
 import AddHomeIcon from '@mui/icons-material/AddHome';
+import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import Header from "../../src/components/Heading"
@@ -64,17 +66,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     // Fetch data from backend API
-    fetch("http://localhost:8080/api/dashboard/total-data", {
+    axios.get("http://localhost:8080/api/dashboard/total-data", {
       headers: {
         Authorization: "Bearer " + authToken,
       },
       withCredentials: true
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setTotalCustomer(data.totalCustomer);
-        setTotalReservation(data.totalReservation);
-        setTotalPayment(data.totalPayment);
+      .then((response) => {
+        setTotalCustomer(response.data.totalCustomer);
+        setTotalReservation(response.data.totalReservation);
+        setTotalPayment(response.data.totalPayment);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
@@ -122,11 +123,15 @@ const Dashboard = () => {
           <StatBox
             title={totalCustomer}
             subtitle="Total User"
-            progress="0.24"
-            increase="+24%"
-            icon={
+            progress="0.25"
+            icon1={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+            icon2={
+              <AspectRatioIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
           />
@@ -142,10 +147,14 @@ const Dashboard = () => {
             title={totalReservation}
             subtitle="Total Reservation"
             progress="0.50"
-            increase="+50%"
-            icon={
+            icon1={
               <AddHomeIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+            icon2={
+              <AspectRatioIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
           />
@@ -160,11 +169,15 @@ const Dashboard = () => {
           <StatBox
             title={totalPayment}
             subtitle="Total Booking Amount"
-            progress="0.15"
-            increase="+15%"
-            icon={
+            progress="0.75"
+            icon1={
               <LocalAtmIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+            icon2={
+              <AspectRatioIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
           />
@@ -189,7 +202,7 @@ const Dashboard = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                House in Each Category
+                House in Each Country
               </Typography>
               <Typography
                 variant="h3"
