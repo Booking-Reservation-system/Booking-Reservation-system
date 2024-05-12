@@ -2,10 +2,10 @@ const jwt = require('jsonwebtoken');
 const RefreshToken = require('../models/refresh-token');
 const User = require('../models/user');
 
-module.exports = async (req, res, next) => {
+exports.isAuth = async (req, res, next) => {
     try {
         let authHeader = req.get('Authorization');
-        console.log(req.user);
+        // console.log(req.user);
         if (!authHeader && !req.user) {
             const error = new Error('Not authenticated.');
             error.statusCode = 401;
@@ -52,5 +52,28 @@ module.exports = async (req, res, next) => {
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
+    }
+}
+
+exports.isAdmin = async (req, res, next) => {
+    const userId = req.userId;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            const error = new Error('User not found');
+            error.statusCode = 404;
+            throw error;
+        }
+        if (user.role !== 'admin') {
+            const error = new Error('Require admin role!');
+            error.statusCode = 403;
+            throw error;
+        }
+        next();
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
     }
 }

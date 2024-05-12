@@ -99,6 +99,7 @@ const ListingPage = () => {
                     startDate: dateRange.startDate,
                     endDate: dateRange.endDate,
                     placeId,
+                    totalDays,
                 },
                 {
                     headers: {

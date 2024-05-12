@@ -2,11 +2,12 @@ import Container from "../components/Container";
 import EmptyState from "../components/EmptyState";
 import ListingCard from "../components/listing/ListingCard";
 import getAllPlaces from "../action/getAllPlaces";
-import {useEffect, useState, Component, Fragment} from "react";
+import {useEffect, useState} from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import {useLocation} from "react-router-dom";
 import useTokenStore from "../hooks/storeToken.js";
+import useSearchUrl from "../hooks/useSearchUrl.js";
 import useAuth from "../hooks/useAuth.js";
 
 const IndexPage = () => {
@@ -14,14 +15,16 @@ const IndexPage = () => {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const {authToken} = useAuth();
+    const {searchUrl} = useSearchUrl();
     const {
         isAuthenticated,
         setAuth
     } = useTokenStore();
+    // console.log(searchUrl);
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getAllPlaces()
+                const response = await getAllPlaces(searchUrl)
                 setData(response)
             } catch (error) {
                 toast.error(error?.response?.data?.message || "Something went wrong")
@@ -68,6 +71,7 @@ const IndexPage = () => {
 
         const cancelReservation = async () => {
             try {
+                if (!isAuthenticated) return;
                 if (query.get("cancel") === null) return;
                 const reservationId = query.get("reservationId");
                 console.log(reservationId);
@@ -77,23 +81,24 @@ const IndexPage = () => {
                     },
                     withCredentials: true,
                 });
+                if (response.status !== 200) {
+                    toast.error("Something went wrong");
+                    return;
+                }
+                // console.log(response.data);
                 toast.success(response.data.message);
-                // window.history.replaceState({}, document.title, "/");
+                window.history.replaceState({}, document.title, "/");
             } catch (error) {
                 toast.error(error?.response?.data?.message || "Something went wrong");
             }
         }
-        if (isAuthenticated) {
-            cancelReservation();
-        }
+        cancelReservation();
 
-    }, []);
-
-    const isEmpty = false;
+    }, [searchUrl]);
 
     return (
         <>
-            {(isEmpty && <EmptyState showReset/>) || (
+            {(data.length === 0 && <EmptyState showReset/>) || (
                 <div className="pb-20 pt-40">
                     <Container>
                         <div

@@ -61,7 +61,7 @@ exports.getPlaces = async (req, res, next) => {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
-}
+};
 
 exports.getPlace = async (req, res, next) => {
     const placeId = aes256.decryptData(req.params.placeId.toString());
@@ -289,7 +289,6 @@ exports.updatePlace = async (req, res, next) => {
             error.statusCode = 403;
             throw error;
         }
-        console.log(imageSrc);
         if (imageSrc) {
             const uploadResponse = await imageUpload(imageSrc, "reservationPlace");
             console.log(uploadResponse);

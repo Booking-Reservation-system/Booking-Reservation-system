@@ -6,7 +6,7 @@ const Logo = () => {
 
   return (
     <img
-      onClick={() => navigate(ROUTES.HOME)}
+      onClick={() => {navigate(ROUTES.HOME); window.location.reload()}}
       alt="Logo"
       height={60}
       width={60}

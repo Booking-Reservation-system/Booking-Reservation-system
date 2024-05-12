@@ -7,7 +7,7 @@ const useTokenStore = create(persist(
         setAuth: (newAuth) => set({isAuthenticated: newAuth}),
     }),
     {
-        name: 'token-storage',
+        name: 'isAuthenticated',
         storage: createJSONStorage(() => localStorage)
     }
 ))

@@ -52,6 +52,7 @@ const LoginModal = () => {
             setIsLoading(false);
         }
         navigate(ROUTES.HOME);
+        window.location.reload(); //Reload de hien dashboard khi dang nhap role = admin
     }
 
     const emailValidation = {

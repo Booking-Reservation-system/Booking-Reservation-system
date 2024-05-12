@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import Map from "../Map";
 import useSearchModal from "../../hooks/useSearchModal";
+import useSearchUrl from "../../hooks/useSearchUrl";
 import Heading from "../Heading";
 import CountrySelect from "../inputs/CountrySelect";
 import Calender from "../inputs/Calender";
@@ -19,14 +20,15 @@ const STEPS = {
 
 const SearchModal = () => {
   const searchModal = useSearchModal();
+  const { searchUrl, setSearchUrl } = useSearchUrl();
   const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
 
   const [location, setLocation] = useState();
   const [step, setStep] = useState(STEPS.LOCATION);
-  const [guestCount, setGuestCount] = useState(1);
-  const [roomCount, setRoomCount] = useState(1);
-  const [bathroomCount, setBathroomCount] = useState(1);
+  const [guestCount, setGuestCount] = useState(0);
+  const [roomCount, setRoomCount] = useState(0);
+  const [bathroomCount, setBathroomCount] = useState(0);
   const [dateRange, setDateRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -44,6 +46,7 @@ const SearchModal = () => {
   }, []);
 
   const onSubmit = useCallback( async () => {
+    setSearchUrl("")
     if (step !== STEPS.INFO) {
         return onNext();
       }
@@ -52,12 +55,10 @@ const SearchModal = () => {
       if (params) {
         currentQuery = qs.parse(params.toString());
       }
+
       const updatedQuery = {
         ...currentQuery,
         locationValue: location?.value,
-        guestCount,
-        roomCount,
-        bathroomCount,
       };
       if (dateRange.startDate) {
         updatedQuery.startDate = formatISO(dateRange.startDate);
@@ -65,15 +66,36 @@ const SearchModal = () => {
       if (dateRange.endDate) {
         updatedQuery.endDate = formatISO(dateRange.endDate);
       }
+
+      if (guestCount === 0) {
+        updatedQuery.guestCount = null
+      } else {
+        updatedQuery.guestCount = guestCount
+      }
+
+      if (roomCount === 0) {
+        updatedQuery.roomCount = null
+      } else {
+        updatedQuery.roomCount = roomCount
+      }
+
+      if (bathroomCount === 0) {
+        updatedQuery.bathroomCount = null
+      } else {
+        updatedQuery.bathroomCount = bathroomCount
+      }
   
-      const url = qs.stringify(
+      const url = qs.stringifyUrl(
         {
           url: "/",
           query: updatedQuery,
         },
         { skipNull: true }
       );
-  
+      console.log(url)
+      console.log(dateRange.endDate, dateRange.startDate)
+      setSearchUrl(url)
+      console.log(searchUrl); 
       setStep(STEPS.LOCATION);
       searchModal.onClose();
   

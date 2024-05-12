@@ -1,11 +1,16 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../src/theme";
 import { useState, useEffect } from "react";
+import axios from "axios";
 // import { mockTransactions } from "../../src/data/mockData";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 import AddHomeIcon from '@mui/icons-material/AddHome';
+import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import Header from "../../src/components/Heading"
 import LineChart from "../../src/components/dashboards/LineChart"
@@ -22,24 +27,61 @@ const Dashboard = () => {
   const [totalReservation, setTotalReservation] = useState("");
   const [totalPayment, setTotalPayment] = useState("");
   const { authToken } = useAuth()
+  
+  const downloadReports = () => {
+    confirmAlert({
+      title: 'Confirm to save',
+      message: 'Are you sure you want to save this dashboard?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => {
+            const dashboardElement = document.getElementById('dashboard');
+            html2canvas(dashboardElement).then(canvas => {
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF('l', 'mm', 'a4'); // create A4 pdf in landscape orientation
+              const imgProps = pdf.getImageProperties(imgData);
+              const pdfWidth = pdf.internal.pageSize.getWidth();
+              const pdfHeight = pdf.internal.pageSize.getHeight();
+              const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+              const height = Math.min(pdfHeight, imgHeight);
+              pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height);
+  
+              // Get current date and time
+              const now = new Date();
+              const dateTimeString = now.toLocaleString();
+  
+              pdf.text(`Date and Time: ${dateTimeString}`, 10, 10);
+              pdf.save("dashboard.pdf");
+            });
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => {}
+        },
+      ]
+    });
+  };
+
   useEffect(() => {
     // Fetch data from backend API
-    fetch("http://localhost:8080/api/dashboard/total-data", {
+    axios.get("http://localhost:8080/api/dashboard/total-data", {
       headers: {
         Authorization: "Bearer " + authToken,
-      }
+      },
+      withCredentials: true
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setTotalCustomer(data.totalCustomer);
-        setTotalReservation(data.totalReservation);
-        setTotalPayment(data.totalPayment);
+      .then((response) => {
+        setTotalCustomer(response.data.totalCustomer);
+        setTotalReservation(response.data.totalReservation);
+        setTotalPayment(response.data.totalPayment);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
   
   return (
-    <div className="pt-[200px] px-80">
+    <div className="pt-[200px] px-80" id="dashboard">
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -47,6 +89,7 @@ const Dashboard = () => {
 
         <Box>
           <Button
+            onClick = {downloadReports}
             sx={{
               backgroundColor: colors.blueAccent[700],
               color: colors.grey[100],
@@ -79,12 +122,16 @@ const Dashboard = () => {
         >
           <StatBox
             title={totalCustomer}
-            subtitle="Total Customer"
-            progress="0.75"
-            increase="+14%"
-            icon={
+            subtitle="Total User"
+            progress="0.25"
+            icon1={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+            icon2={
+              <AspectRatioIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
           />
@@ -100,10 +147,14 @@ const Dashboard = () => {
             title={totalReservation}
             subtitle="Total Reservation"
             progress="0.50"
-            increase="+21%"
-            icon={
+            icon1={
               <AddHomeIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+            icon2={
+              <AspectRatioIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
           />
@@ -118,11 +169,15 @@ const Dashboard = () => {
           <StatBox
             title={totalPayment}
             subtitle="Total Booking Amount"
-            progress="0.30"
-            increase="+5%"
-            icon={
+            progress="0.75"
+            icon1={
               <LocalAtmIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+              />
+            }
+            icon2={
+              <AspectRatioIcon
+                sx={{ color: colors.greenAccent[600], fontSize: "40px" }}
               />
             }
           />
@@ -147,7 +202,7 @@ const Dashboard = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                House in Each Category
+                House in Each Country
               </Typography>
               <Typography
                 variant="h3"

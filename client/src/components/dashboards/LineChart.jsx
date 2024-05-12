@@ -1,8 +1,9 @@
+import axios from "axios";
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import Header from "../../components/Heading";
 import { useEffect, useState } from "react";
+import useCountries from "../../hooks/useCountries";
 import { mockLineData as data } from "../../data/mockData";
 import useAuth from "../../hooks/useAuth";
 
@@ -11,16 +12,26 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
   const colors = tokens(theme.palette.mode);
   const [LineChartData , setLineChartData] = useState([]);
   const { authToken } = useAuth()
+  const { getByValue } = useCountries(); // call useCountries
+  
   useEffect(() => {
-    // Fetch data from backend API
-    fetch("http://localhost:8080/api/dashboard/line-chart", {
+    axios.get("http://localhost:8080/api/dashboard/line-chart", {
       headers: {
         Authorization: "Bearer " + authToken,
-      }
+      },
+      withCredentials: true
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setLineChartData(data);
+      .then((response) => {
+        // Map over the data array and replace each "x" value with the corresponding country name
+        const updatedData = response.data.map(item => ({
+          ...item,
+          data: item.data.map(point => ({
+            ...point,
+            x: getByValue(point.x)?.label || point.x, // replace "x" with country name
+          })),
+        }));
+        
+        setLineChartData(updatedData);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
@@ -61,6 +72,9 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
           },
         },
       }}
+      enableArea={true} // added
+      enableSlices="x" // added
+      enableCrosshair={true} // added
       colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
       margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
       xScale={{ type: "point" }}
