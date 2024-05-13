@@ -86,6 +86,7 @@ exports.login = async (req, res, next) => {
             token_type: 'Bearer',
             refreshToken: refreshToken,
             name: user.name,
+            role: user.role,
         })
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500
@@ -190,6 +191,7 @@ exports.googleSuccess = async (req, res, next) => {
             refreshToken: req.user.refreshToken,
             name: req.user.name,
             image: req.user.image,
+            role: req.user.role,
         }
 
         // console.log(data);
