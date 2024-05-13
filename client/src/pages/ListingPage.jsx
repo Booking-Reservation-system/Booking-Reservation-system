@@ -164,6 +164,7 @@ const ListingPage = () => {
                             <div className="pt-[50px]">
                                 <ListingInfo
                                     user={listingData?.creator?.name}
+                                    imageSrc={listingData?.creator?.image}
                                     roomCount={listingData?.roomCount}
                                     category={category}
                                     description={listingData?.description}
