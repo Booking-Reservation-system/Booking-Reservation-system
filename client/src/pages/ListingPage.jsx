@@ -175,7 +175,7 @@ const ListingPage = () => {
                                 />
                             </div>
                         </div>
-                        <div className=" max-lg:grid-cols-1 top-[75px] max-[1000px]:top-0 relative max">
+                        <div className=" max-lg:grid-cols-1 top-[75px] max-[1000px]:top-0 relative">
                             <ListingReservation
                                 price={listingData?.price}
                                 totalPrice={totalPrice}

@@ -3,53 +3,56 @@ import { FaFacebookSquare } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
 
-const ListingFooter = () => {
+const ListingFooter = (props) => {
+  const { isUser } = props;
   return (
     <>
-      <div className="max-w-screen-lg mx-auto pb-[40px] pt-[20px] max-lg:px-[20px]">
-        <div className="border-t-2 pt-[20px]"></div>
-        <div className="font-semibold text-xl pb-[20px] max-md:hidden">
-          Things to know
-        </div>
-        <div className="grid grid-cols-3 gap-4 max-md:grid-cols-1 max-md:px-[20px]">
-          <div className="flex flex-col gap-3 max-md:border-b-2 max-md:pb-[15px]">
-            <div className="font-semibold text-sm max-md:text-2xl">
-              House rules
-            </div>
-            <div className="font-light text-sm flex flex-col gap-2">
-              <div>Check-in: 1:00 PM - 2:00 PM</div>
-              <div>Checkout before 11:00 AM</div>
-            </div>
+      {isUser !== null && (
+        <div className="max-w-screen-lg mx-auto pb-[40px] pt-[20px] max-lg:px-[20px]">
+          <div className="border-t-2 pt-[20px]"></div>
+          <div className="font-semibold text-xl pb-[20px] max-md:hidden">
+            Things to know
           </div>
+          <div className="grid grid-cols-3 gap-4 max-md:grid-cols-1 max-md:px-[20px]">
+            <div className="flex flex-col gap-3 max-md:border-b-2 max-md:pb-[15px]">
+              <div className="font-semibold text-sm max-md:text-2xl">
+                House rules
+              </div>
+              <div className="font-light text-sm flex flex-col gap-2">
+                <div>Check-in: 1:00 PM - 2:00 PM</div>
+                <div>Checkout before 11:00 AM</div>
+              </div>
+            </div>
 
-          <div className="flex flex-col gap-3 max-md:border-b-2 max-md:pb-[15px]">
-            <div className="font-semibold text-sm max-md:text-2xl">
-              Safety & property
+            <div className="flex flex-col gap-3 max-md:border-b-2 max-md:pb-[15px]">
+              <div className="font-semibold text-sm max-md:text-2xl">
+                Safety & property
+              </div>
+              <div className="font-light text-sm flex flex-col gap-2">
+                <div>No carbon monoxide alarm</div>
+                <div>Security camera/recording device</div>
+                <div>Smoke alarm</div>
+              </div>
             </div>
-            <div className="font-light text-sm flex flex-col gap-2">
-              <div>No carbon monoxide alarm</div>
-              <div>Security camera/recording device</div>
-              <div>Smoke alarm</div>
-            </div>
-          </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="font-semibold text-sm max-md:text-2xl">
-              Cancellation policy
-            </div>
-            <div className="font-light text-sm flex flex-col gap-2">
-              <div>This reservation is non-refundable.</div>
-              <div>
-                Review the Host’s full cancellation policy which applies even if
-                you cancel for illness or disruptions caused by COVID-19.
+            <div className="flex flex-col gap-3">
+              <div className="font-semibold text-sm max-md:text-2xl">
+                Cancellation policy
+              </div>
+              <div className="font-light text-sm flex flex-col gap-2">
+                <div>This reservation is non-refundable.</div>
+                <div>
+                  Review the Host’s full cancellation policy which applies even
+                  if you cancel for illness or disruptions caused by COVID-19.
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="pt-[40px] pb-[40px] bg-[#f7f7f7] border-t-2 max-lg:px-[20px]">
-        <div className="max-w-screen-lg mx-auto">
+        <div className={`${isUser !== null ? "max-w-screen-lg" : "max-w-[1380px]"} mx-auto`} >
           <div className="grid grid-cols-3 gap-4 max-md:grid-cols-1 max-md:px-[20px]">
             <div className="flex flex-col gap-3 max-md:border-b-2 max-md:pb-[15px]">
               <div className="font-semibold text-sm">Support</div>
@@ -89,7 +92,7 @@ const ListingFooter = () => {
           </div>
         </div>
 
-        <div className="max-w-screen-lg mx-auto pt-[40px]">
+        <div className={`${isUser ? "max-w-screen-lg" : "max-w-[1380px]"} mx-auto pt-[40px]`}>
           <div className="border-t-2"></div>
           <div className="pt-[20px] items-center flex flex-row justify-between max-md:flex-col max-md:gap-2">
             <div className="flex flex-row gap-2">
