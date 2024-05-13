@@ -36,4 +36,17 @@ const reservationSchema = new Schema({
     }
 }, {timestamps: true});
 
+reservationSchema.pre('deleteOne', async function (next) {
+    const Place = require('./place');
+    const placeId = this.getQuery()["_id"];
+    const place = await Place.findById(placeId);
+    place.reservations.pull(this);
+    await place.save();
+    const User = require('./user');
+    const user = await User.findById(this.userId);
+    user.reservations.pull(this);
+    await user.save();
+    next();
+})
+
 module.exports = mongoose.model('Reservation', reservationSchema);

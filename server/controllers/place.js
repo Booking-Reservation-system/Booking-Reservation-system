@@ -396,11 +396,7 @@ exports.deletePlace = async (req, res, next) => {
             error.statusCode = 422;
             throw error;
         }
-
-        await Place.findByIdAndDelete(placeId);
-        const user = await User.findById(req.userId);
-        user.places.pull(placeId);
-        await user.save();
+        await place.deleteOne();
         res.status(200).json({message: "Deleted place."});
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;

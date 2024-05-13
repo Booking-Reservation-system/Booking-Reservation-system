@@ -35,12 +35,21 @@ exports.updateProfile = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
+        if (profile.provider === "google") {
+            const error = new Error("Google profile cannot be updated.");
+            error.statusCode = 400;
+            throw error;
+        }
         if (name) profile.name = name;
         if (email) profile.email = email;
         await profile.save();
+        const formattedProfile = {
+            name: profile.name,
+            email: profile.email,
+        }
         res.status(200).json({
             message: "Profile updated.",
-            profile,
+            profile: formattedProfile,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -57,6 +66,11 @@ exports.changePassword = async (req, res, next) => {
         if (!profile) {
             const error = new Error("Profile not found.");
             error.statusCode = 404;
+            throw error;
+        }
+        if (profile.provider === "google") {
+            const error = new Error("Google profile cannot change password.");
+            error.statusCode = 400;
             throw error;
         }
         if (!oldPassword || !newPassword) {

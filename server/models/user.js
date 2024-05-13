@@ -45,4 +45,13 @@ const userSchema = new Schema({
     }]
 }, {timestamps: true});
 
+userSchema.pre('deleteOne', async function (next) {
+    const Place = require('./place');
+    const Reservation = require('./reservation');
+    const userId = this.getQuery()["_id"];
+    await Place.deleteMany({userId: userId});
+    await Reservation.deleteMany({userId: userId});
+    next();
+})
+
 module.exports = mongoose.model('User', userSchema);
