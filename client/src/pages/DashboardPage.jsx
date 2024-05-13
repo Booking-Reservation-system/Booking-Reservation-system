@@ -82,7 +82,7 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div className="pt-[200px] px-80" id="dashboard">
+        <div className="pt-[200px] px-20" id="dashboard">
             <Box m="20px">
                 {/* HEADER */}
                 <Box display="flex" justifyContent="space-between" alignItems="center">
