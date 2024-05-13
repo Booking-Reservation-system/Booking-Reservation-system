@@ -39,12 +39,13 @@ const LoginModal = () => {
                 throw new Error(response.data.message);
             }
             loginModal.onClose();
-            const {accessToken, expires_in, token_type, refreshToken, name, image} = response.data;
+            const {accessToken, expires_in, token_type, refreshToken, name, image, role} = response.data;
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", refreshToken);
             localStorage.setItem("expiresAt", expires_in);
             localStorage.setItem("authName", name);
             localStorage.setItem("authImage", image);
+            localStorage.setItem("role", role);
 
             setAuth(true);
             toast.success("Logged in successfully");
