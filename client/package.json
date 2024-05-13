@@ -28,6 +28,10 @@
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.22.0",
     "react-select": "^5.8.0",
+<<<<<<< Updated upstream
+=======
+    "styled-components": "^6.1.11",
+>>>>>>> Stashed changes
     "tailwindcss": "^3.4.1",
     "tailwindcss-animated": "^1.0.1",
     "world-countries": "^5.0.0",
