@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 
 
 const getAllPlaces = async (searchUrl) => {
+    // console.log(searchUrl);
     if (searchUrl === undefined || searchUrl === "") {
         try {
             const response = await axios.get(`http://localhost:8080/api/places`);
@@ -12,7 +13,7 @@ const getAllPlaces = async (searchUrl) => {
         }
     } else {
         try {
-            const response = await axios.get(`http://localhost:8080/api/places${searchUrl}`);
+            const response = await axios.get(`http://localhost:8080/api/places?${searchUrl}`);
             return response.data.places;
         } catch (error) {
             toast.error("Something went wrong");

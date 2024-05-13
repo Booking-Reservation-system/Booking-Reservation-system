@@ -24,7 +24,8 @@ const IndexPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getAllPlaces(searchUrl)
+                if (query.get("auth") || query.get("authError") || query.get("cancel")) return;
+                const response = await getAllPlaces(query)
                 setData(response)
             } catch (error) {
                 toast.error(error?.response?.data?.message || "Something went wrong")

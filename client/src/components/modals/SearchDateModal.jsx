@@ -4,15 +4,15 @@ import Calendar from "../inputs/Calender";
 
 import useSearchModal from "../../hooks/useSearchModal";
 import useSearchUrl from "../../hooks/useSearchUrl";
-import React, { useCallback, useMemo, useState } from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import qs from "query-string";
-import { useNavigate } from "react-router-dom";
-import { formatISO } from "date-fns";
+import {useNavigate} from "react-router-dom";
+import {formatISO} from "date-fns";
 import ROUTES from "../../constants/routes";
 
 const SearchDateModal = () => {
     const searchModal = useSearchModal();
-    const { searchUrl, setSearchUrl } = useSearchUrl();
+    const {searchUrl, setSearchUrl} = useSearchUrl();
     const navigate = useNavigate();
     const [dateRange, setDateRange] = useState({
         startDate: new Date(),
@@ -36,17 +36,40 @@ const SearchDateModal = () => {
         }
 
         if (dateRange.endDate) {
-            query.endDate = formatISO(dateRange.endDate)    
+            query.endDate = formatISO(dateRange.endDate)
         }
 
         const url = qs.stringifyUrl({
             url: "/",
             query,
-        }, { skipEmptyString: true, skipNull: true });
+        }, {skipEmptyString: true, skipNull: true});
         console.log(url);
         setSearchUrl(url);
         navigate(url);
         searchModal.onCloseDate();
+    }
+
+    const clearFilter = () => {
+        let currentQuery = {};
+        if (params) {
+            currentQuery = qs.parse(params.toString());
+        }
+        delete currentQuery.startDate;
+        delete currentQuery.endDate;
+        const url = qs.stringifyUrl({
+            url: "/",
+            query: currentQuery,
+        }, {skipEmptyString: true, skipNull: true});
+        console.log(url);
+        setSearchUrl(url);
+        navigate(url);
+        searchModal.onCloseDate();
+        // clear date range
+        setDateRange({
+            startDate: new Date(),
+            endDate: new Date(),
+            key: "selection",
+        });
     }
 
     let bodyContent = (
@@ -73,11 +96,7 @@ const SearchDateModal = () => {
             body={bodyContent}
             actionLabel="Search"
             secondaryActionLabel="Clear filter"
-            secondaryAction={() => {
-                setSearchUrl("");
-                navigate(ROUTES.HOME);
-                searchModal.onCloseDate();
-            }}
+            secondaryAction={clearFilter}
         />
     )
 }
