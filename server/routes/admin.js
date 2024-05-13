@@ -1,0 +1,11 @@
+const express = require('express');
+const {body} = require('express-validator');
+const adminController = require('../controllers/admin');
+const {isAuth, isAdmin} = require("../utils/isAuth");
+const router = express.Router();
+
+router.get('/dashboard/total-data', [isAuth, isAdmin], adminController.getTotalData);
+router.get('/dashboard/line-chart', [isAuth, isAdmin], adminController.getLineChartData);
+router.get('/check-role', isAuth, adminController.checkRole);
+
+module.exports = router;

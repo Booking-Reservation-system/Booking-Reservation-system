@@ -14,7 +14,8 @@ const authRoutes = require('./routes/auth');
 const placeRoutes = require('./routes/place');
 const reservationRoutes = require('./routes/reservation');
 const favouriteRoutes = require('./routes/favourite');
-const dashboardRoutes = require('./routes/dashboard');
+const adminRoutes = require('./routes/admin');
+const profileRoutes = require('./routes/profile');
 
 const app = express();
 
@@ -43,8 +44,9 @@ app.use(cors({
 app.use('/auth', authRoutes);
 app.use('/api', placeRoutes);
 app.use('/api', reservationRoutes);
-app.use('/api', favouriteRoutes);
-app.use('/api', dashboardRoutes);
+app.use('/api', favouriteRoutes)
+app.use('/api', profileRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);

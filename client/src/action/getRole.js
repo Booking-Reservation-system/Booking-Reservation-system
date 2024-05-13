@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const checkRole = async(token) => {
+const checkRole = async (token) => {
     try {
-        const response = await axios.get("http://localhost:8080/api/dashboard/check-role", {
+        const response = await axios.get("http://localhost:8080/api/admin/check-role", {
             headers: {
                 Authorization: "Bearer " + token,
             },
@@ -10,7 +10,7 @@ const checkRole = async(token) => {
         });
         return response
     } catch (error) {
-        throw error;  
+        throw error;
     }
 }
 
