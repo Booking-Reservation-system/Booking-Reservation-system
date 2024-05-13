@@ -54,14 +54,16 @@ const IndexPage = () => {
                 const refreshToken = localStorage.getItem("refreshToken");
                 const authName = localStorage.getItem("authName");
                 const authImage = localStorage.getItem("authImage");
+                const role = localStorage.getItem("role");
 
-                if (!accessToken || !expiresAt || !refreshToken || !authName || !isAuthenticated || !authImage) {
+                if (!accessToken || !expiresAt || !refreshToken || !authName || !isAuthenticated || !authImage || !role) {
                     localStorage.setItem("accessToken", response.data.accessToken);
                     localStorage.setItem("expiresAt", response.data.expires_in);
                     localStorage.setItem("refreshToken", response.data.refreshToken);
                     localStorage.setItem("authName", response.data.name);
                     localStorage.setItem("authImage", response.data.image);
                     localStorage.setItem("provider", "google");
+                    localStorage.setItem("role", response.data.role);
                     setAuth(true);
                 }
                 // remove query params

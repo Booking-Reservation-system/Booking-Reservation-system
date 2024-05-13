@@ -1,8 +1,8 @@
-import { AiOutlineMenu } from "react-icons/ai";
+import {AiOutlineMenu} from "react-icons/ai";
 import Avatar from "../Avatar";
-import { useState, useCallback, useEffect } from "react";
+import {useState, useCallback, useEffect} from "react";
 import MenuItem from "./MenuItem";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import useRegisterModal from "../../hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
 import useRentModal from "../../hooks/useRentModal";
@@ -14,146 +14,149 @@ import toast from "react-hot-toast";
 import checkRole from "../../action/getRole.js";
 
 const UserMenu = (props) => {
-  const navigate = useNavigate();
-  const { isAuthenticated, setAuth } = useTokenStore();
+    const navigate = useNavigate();
+    const {isAuthenticated, setAuth} = useTokenStore();
 
-  let currentUser = false;
-  if (isAuthenticated) {
-    currentUser = true;
-  }
+    let currentUser = false;
+    if (isAuthenticated) {
+        currentUser = true;
+    }
 
-  const { authToken } = useAuth();
-  const [role, setRole] = useState();
+    const {authToken} = useAuth();
+    const [role, setRole] = useState();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await checkRole(authToken);
-        setRole(response.data.role);
-      } catch (error) {
-        // toast.error("Something went wrong");
-      }
-    };
-    fetchData();
-  }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await checkRole(authToken);
+                setRole(response.data.role);
+            } catch (error) {
+                // toast.error("Something went wrong");
+            }
+        };
+        fetchData();
+    }, []);
 
-  const logoutHandler = async () => {
-    try {
-      if (localStorage.getItem("provider") === "google") {
-        const response = await axios.delete(
-          "http://localhost:8080/auth/google/logout",
-          { withCredentials: true }
-        );
-        if (response.status !== 200) {
-          toast.error("Something went wrong");
+    const logoutHandler = async () => {
+        try {
+            if (localStorage.getItem("provider") === "google") {
+                const response = await axios.delete(
+                    "http://localhost:8080/auth/google/logout",
+                    {withCredentials: true}
+                );
+                if (response.status !== 200) {
+                    toast.error("Something went wrong");
+                }
+            }
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("expiresAt");
+            localStorage.removeItem("authName");
+            localStorage.removeItem("provider");
+            localStorage.removeItem("placeId");
+            localStorage.removeItem("authImage");
+            localStorage.removeItem("role");
+            setAuth(false);
+
+            toast("You have been logged out", {
+                icon: "👋",
+                style: {borderRadius: "10px"},
+            });
+
+            navigate(ROUTES.HOME);
+        } catch (error) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("expiresAt");
+            localStorage.removeItem("authName");
+            localStorage.removeItem("provider");
+            localStorage.removeItem("placeId");
+            localStorage.removeItem("authImage");
+            localStorage.removeItem("role");
+            setAuth(false);
+            toast("You have been logged out", {
+                icon: "👋",
+                style: {borderRadius: "10px"},
+            });
+            navigate(ROUTES.HOME);
         }
-      }
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("expiresAt");
-      localStorage.removeItem("authName");
-      localStorage.removeItem("provider");
-      localStorage.removeItem("placeId");
-      localStorage.removeItem("authImage");
-      setAuth(false);
+    };
 
-      toast("You have been logged out", {
-        icon: "👋",
-        style: { borderRadius: "10px" },
-      });
+    const registerModal = useRegisterModal();
+    const loginModal = useLoginModal();
+    const rentModal = useRentModal();
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleOpen = useCallback(() => {
+        setIsOpen((value) => !value);
+    }, []);
 
-      navigate(ROUTES.HOME);
-    } catch (error) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("expiresAt");
-      localStorage.removeItem("authName");
-      localStorage.removeItem("provider");
-      localStorage.removeItem("placeId");
-      localStorage.removeItem("authImage");
-      setAuth(false);
-      toast("You have been logged out", {
-        icon: "👋",
-        style: { borderRadius: "10px" },
-      });
-      navigate(ROUTES.HOME);
-    }
-  };
+    const onRent = useCallback(() => {
+        if (!currentUser) {
+            return loginModal.onOpen();
+        }
 
-  const registerModal = useRegisterModal();
-  const loginModal = useLoginModal();
-  const rentModal = useRentModal();
-  const [isOpen, setIsOpen] = useState(false);
-  const toggleOpen = useCallback(() => {
-    setIsOpen((value) => !value);
-  }, []);
+        // open rent modal
+        rentModal.onOpen();
+    }, [currentUser, loginModal, rentModal]);
 
-  const onRent = useCallback(() => {
-    if (!currentUser) {
-      return loginModal.onOpen();
-    }
-
-    // open rent modal
-    rentModal.onOpen();
-  }, [currentUser, loginModal, rentModal]);
-
-  return (
-    <div className="relative">
-      <div className="flex flex-row items-center gap-3">
-        <div
-          onClick={onRent}
-          className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer"
-        >
-          Add your home
-        </div>
-        <div
-          onClick={toggleOpen}
-          className="p-4 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition"
-        >
-          <AiOutlineMenu />
-          <div className="hidden md:block">
-            <Avatar />
-          </div>
-        </div>
-      </div>
-      {isOpen && (
-        <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
-          <div className="flex flex-col cursor-pointer">
-            {currentUser ? (
-              <>
-                <MenuItem
-                  label="My trips"
-                  onClick={() => navigate(ROUTES.TRIPS)}
-                />
-                <MenuItem
-                  label="My favorites"
-                  onClick={() => navigate(ROUTES.FAVOURITES)}
-                />
-                <MenuItem
-                  label="My profile"
-                  onClick={() => navigate(ROUTES.PROFILE)}
-                />
-                {role === "admin" && (
-                  <MenuItem
-                    label="Dashboard"
-                    onClick={() => navigate(ROUTES.DASHBOARD)}
-                  />
-                )}
-                <MenuItem label="Add your home" onClick={rentModal.onOpen} />
-                <hr />
-                <MenuItem label="Logout" onClick={logoutHandler} />
-              </>
-            ) : (
-              <>
-                <MenuItem onClick={loginModal.onOpen} label="Login" />
-                <MenuItem onClick={registerModal.onOpen} label="Sign up" />
-              </>
+    return (
+        <div className="relative">
+            <div className="flex flex-row items-center gap-3">
+                <div
+                    onClick={onRent}
+                    className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer"
+                >
+                    Add your home
+                </div>
+                <div
+                    onClick={toggleOpen}
+                    className="p-4 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition"
+                >
+                    <AiOutlineMenu/>
+                    <div className="hidden md:block">
+                        <Avatar/>
+                    </div>
+                </div>
+            </div>
+            {isOpen && (
+                <div
+                    className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
+                    <div className="flex flex-col cursor-pointer">
+                        {currentUser ? (
+                            <>
+                                <MenuItem
+                                    label="My trips"
+                                    onClick={() => navigate(ROUTES.TRIPS)}
+                                />
+                                <MenuItem
+                                    label="My favorites"
+                                    onClick={() => navigate(ROUTES.FAVOURITES)}
+                                />
+                                <MenuItem
+                                    label="My profile"
+                                    onClick={() => navigate(ROUTES.PROFILE)}
+                                />
+                                {role === "admin" && (
+                                    <MenuItem
+                                        label="Dashboard"
+                                        onClick={() => navigate(ROUTES.DASHBOARD)}
+                                    />
+                                )}
+                                <MenuItem label="Add your home" onClick={rentModal.onOpen}/>
+                                <hr/>
+                                <MenuItem label="Logout" onClick={logoutHandler}/>
+                            </>
+                        ) : (
+                            <>
+                                <MenuItem onClick={loginModal.onOpen} label="Login"/>
+                                <MenuItem onClick={registerModal.onOpen} label="Sign up"/>
+                            </>
+                        )}
+                    </div>
+                </div>
             )}
-          </div>
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default UserMenu;
