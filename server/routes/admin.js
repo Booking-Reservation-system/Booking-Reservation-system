@@ -8,4 +8,6 @@ router.get('/dashboard/total-data', [isAuth, isAdmin], adminController.getTotalD
 router.get('/dashboard/line-chart', [isAuth, isAdmin], adminController.getLineChartData);
 router.get('/check-role', isAuth, adminController.checkRole);
 
+router.get('/reservations', [isAuth, isAdmin], adminController.getAllReservations);
+
 module.exports = router;

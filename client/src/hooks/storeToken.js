@@ -5,6 +5,8 @@ const useTokenStore = create(persist(
     (set) => ({
         isAuthenticated: false,
         setAuth: (newAuth) => set({isAuthenticated: newAuth}),
+        role: '',
+        setRole: (newRole) => set({role: newRole}),
     }),
     {
         name: 'isAuthenticated',

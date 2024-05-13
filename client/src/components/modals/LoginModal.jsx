@@ -18,7 +18,7 @@ const LoginModal = () => {
     const registerModal = useRegisterModal();
     const loginModal = useLoginModal();
     const [isLoading, setIsLoading] = useState(false);
-    const {setAuth} = useTokenStore();
+    const {setAuth, setRole} = useTokenStore();
 
     const {
         register,
@@ -45,8 +45,7 @@ const LoginModal = () => {
             localStorage.setItem("expiresAt", expires_in);
             localStorage.setItem("authName", name);
             localStorage.setItem("authImage", image);
-            localStorage.setItem("role", role);
-
+            setRole(role);
             setAuth(true);
             toast.success("Logged in successfully");
         } catch (error) {

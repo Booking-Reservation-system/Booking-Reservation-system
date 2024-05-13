@@ -18,20 +18,20 @@ const IndexPage = () => {
     const {searchUrl} = useSearchUrl();
     const {
         isAuthenticated,
-        setAuth
+        setAuth,
+        role,
+        setRole,
     } = useTokenStore();
     // console.log(searchUrl);
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (query.get("auth") || query.get("authError") || query.get("cancel")) return;
                 const response = await getAllPlaces(query)
                 setData(response)
             } catch (error) {
                 toast.error(error?.response?.data?.message || "Something went wrong")
             }
         }
-        fetchData();
 
         // check login with google success
         const ggLg = async () => {
@@ -54,7 +54,6 @@ const IndexPage = () => {
                 const refreshToken = localStorage.getItem("refreshToken");
                 const authName = localStorage.getItem("authName");
                 const authImage = localStorage.getItem("authImage");
-                const role = localStorage.getItem("role");
 
                 if (!accessToken || !expiresAt || !refreshToken || !authName || !isAuthenticated || !authImage || !role) {
                     localStorage.setItem("accessToken", response.data.accessToken);
@@ -63,7 +62,7 @@ const IndexPage = () => {
                     localStorage.setItem("authName", response.data.name);
                     localStorage.setItem("authImage", response.data.image);
                     localStorage.setItem("provider", "google");
-                    localStorage.setItem("role", response.data.role);
+                    setRole(response.data.role);
                     setAuth(true);
                 }
                 // remove query params
@@ -72,7 +71,6 @@ const IndexPage = () => {
                 toast.error("Something went wrong");
             }
         }
-        ggLg();
 
         const cancelReservation = async () => {
             try {
@@ -97,7 +95,13 @@ const IndexPage = () => {
                 toast.error(error?.response?.data?.message || "Something went wrong");
             }
         }
-        cancelReservation();
+
+        if (query.get("auth") || query.get("authError") || query.get("cancel")) {
+            ggLg();
+            cancelReservation();
+        }
+        fetchData();
+
 
     }, [searchUrl]);
 

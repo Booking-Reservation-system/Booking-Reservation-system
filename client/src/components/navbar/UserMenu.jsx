@@ -15,27 +15,12 @@ import checkRole from "../../action/getRole.js";
 
 const UserMenu = (props) => {
     const navigate = useNavigate();
-    const {isAuthenticated, setAuth} = useTokenStore();
+    const {isAuthenticated, setAuth, role, setRole} = useTokenStore();
 
     let currentUser = false;
     if (isAuthenticated) {
         currentUser = true;
     }
-
-    const {authToken} = useAuth();
-    const [role, setRole] = useState();
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await checkRole(authToken);
-                setRole(response.data.role);
-            } catch (error) {
-                // toast.error("Something went wrong");
-            }
-        };
-        fetchData();
-    }, []);
 
     const logoutHandler = async () => {
         try {
@@ -55,7 +40,7 @@ const UserMenu = (props) => {
             localStorage.removeItem("provider");
             localStorage.removeItem("placeId");
             localStorage.removeItem("authImage");
-            localStorage.removeItem("role");
+            setRole(null);
             setAuth(false);
 
             toast("You have been logged out", {
@@ -72,7 +57,7 @@ const UserMenu = (props) => {
             localStorage.removeItem("provider");
             localStorage.removeItem("placeId");
             localStorage.removeItem("authImage");
-            localStorage.removeItem("role");
+            setRole(null);
             setAuth(false);
             toast("You have been logged out", {
                 icon: "👋",
@@ -124,27 +109,49 @@ const UserMenu = (props) => {
                     <div className="flex flex-col cursor-pointer">
                         {currentUser ? (
                             <>
-                                <MenuItem
-                                    label="My trips"
-                                    onClick={() => navigate(ROUTES.TRIPS)}
-                                />
-                                <MenuItem
-                                    label="My favorites"
-                                    onClick={() => navigate(ROUTES.FAVOURITES)}
-                                />
-                                <MenuItem
-                                    label="My profile"
-                                    onClick={() => navigate(ROUTES.PROFILE)}
-                                />
-                                {role === "admin" && (
-                                    <MenuItem
-                                        label="Dashboard"
-                                        onClick={() => navigate(ROUTES.DASHBOARD)}
-                                    />
+                                {role === "admin" ? (
+                                    <>
+                                        <MenuItem
+                                            label="Dashboard"
+                                            onClick={() => navigate(ROUTES.DASHBOARD)}
+                                        />
+                                        <MenuItem
+                                            label="All users"
+                                            onClick={() => navigate(ROUTES.USERS)}
+                                        />
+                                        <MenuItem
+                                            label="All places"
+                                            onClick={() => navigate(ROUTES.HOME)}
+                                        />
+                                        <MenuItem
+                                            label="All reservations"
+                                            onClick={() => navigate(ROUTES.TRIPS)}
+                                        />
+                                        <hr/>
+                                        <MenuItem
+                                            label="Logout"
+                                            onClick={logoutHandler}
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        <MenuItem
+                                            label="My trips"
+                                            onClick={() => navigate(ROUTES.TRIPS)}
+                                        />
+                                        <MenuItem
+                                            label="My favorites"
+                                            onClick={() => navigate(ROUTES.FAVOURITES)}
+                                        />
+                                        <MenuItem
+                                            label="My profile"
+                                            onClick={() => navigate(ROUTES.PROFILE)}
+                                        />
+                                        <MenuItem label="Add your home" onClick={rentModal.onOpen}/>
+                                        <hr/>
+                                        <MenuItem label="Logout" onClick={logoutHandler}/>
+                                    </>
                                 )}
-                                <MenuItem label="Add your home" onClick={rentModal.onOpen}/>
-                                <hr/>
-                                <MenuItem label="Logout" onClick={logoutHandler}/>
                             </>
                         ) : (
                             <>
