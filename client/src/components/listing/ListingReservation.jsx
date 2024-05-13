@@ -19,7 +19,8 @@ const ListingReservation = (props) => {
         disabled,
         disabledDate,
         placeId,
-        creatorName
+        creatorName,
+        isTrip
     } = props;
 
     const {authToken} = useAuth();
@@ -47,6 +48,10 @@ const ListingReservation = (props) => {
         }
     }
 
+    const viewInvoice = () => {
+        window.open(isTrip, "_blank");
+    }   
+
     return (
         <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden sticky top-[100px]">
             <div className="flex flex-row items-center gap-1 p-4">
@@ -61,7 +66,8 @@ const ListingReservation = (props) => {
             />
             <hr/>
             <div className="p-4 flex flex-col gap-4">
-                <Button label="Reserve" onClick={onSubmit}/>
+                {isTrip && <Button label="View invoice" onClick={viewInvoice}/>}
+                {!isTrip && <Button label="Reserve" onClick={onSubmit}/>}
                 {creatorName === authName && authToken && (
                     <div className="flex flex-row gap-4">
                         <Button label="Delete" onClick={handleDelete}/>

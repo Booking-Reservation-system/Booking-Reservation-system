@@ -7,6 +7,7 @@ import TripPage from "./pages/TripPage";
 import FavouritePage from "./pages/FavouritePage";
 import DashboardPage from "./pages/DashboardPage";
 import ProfilePage from "./pages/ProfilePage";
+import TripDetailPage from "./pages/TripDetailPage.jsx";
 import ROUTES from "./constants/routes";
 import useTokenStore from "./hooks/storeToken.js";
 import {getTokenDuration} from "../utils/auth.js";
@@ -86,6 +87,7 @@ function App() {
                         <Route path={ROUTES.LISTING_DETAIL} element={<ListingPage/>}/>
                         <Route path={ROUTES.CHECKOUT} element={<CheckoutSuccessPage/>}/>
                         <Route path={ROUTES.TRIPS} element={<TripPage/>}/>
+                        <Route path={ROUTES.TRIPS_DETAIL} element={<TripDetailPage/>}/>
                         <Route path={ROUTES.FAVOURITES} element={<FavouritePage/>}/>
                         <Route path={ROUTES.DASHBOARD} element={<DashboardPage/>}/>
                         <Route path={ROUTES.PROFILE} element={<ProfilePage/>} />

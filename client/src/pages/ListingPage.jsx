@@ -171,7 +171,6 @@ const ListingPage = () => {
                                     bathroomCount={listingData?.bathroomCount}
                                     locationValue={listingData?.locationValue}
                                     amenities={amenity}
-                                    reservedDate={listingData?.reservedDate}
                                 />
                             </div>
                         </div>

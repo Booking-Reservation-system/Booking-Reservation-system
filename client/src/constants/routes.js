@@ -6,9 +6,11 @@ const ROUTES = {
     LISTING_EDIT: "/listing/:listingId/edit",
     CHECKOUT: "checkout_success",
     TRIPS: "/trips",
+    TRIPS_DETAIL: "/trips/:tripId",
     FAVOURITES: "/favourites",
     PROFILE: "/profile",
     DASHBOARD: "/dashboard",
+    
 }
 
 

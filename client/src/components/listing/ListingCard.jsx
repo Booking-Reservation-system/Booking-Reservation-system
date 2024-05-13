@@ -57,7 +57,7 @@ const ListingCard = (props) => {
             navigate(ROUTES.LISTING_DETAIL.replace(":listingId", favouriteParams), {replace: true})
 
         } else if (reservation) {
-            navigate(ROUTES.LISTING_DETAIL.replace(":listingId", reservationParams), {replace: true})
+            navigate(ROUTES.TRIPS_DETAIL.replace(":tripId", actionId), {replace: true})
         } else {
             navigate(ROUTES.LISTING_DETAIL.replace(":listingId", data._id), {replace: true})
 
