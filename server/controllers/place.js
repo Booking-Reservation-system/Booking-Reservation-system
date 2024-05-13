@@ -119,6 +119,7 @@ exports.getPlace = async (req, res, next) => {
             reservedDate: bookedDate,
             creator: {
                 name: place.userId.name,
+                image: place.userId.image,
             },
         };
         res.status(200).json({message: "Place fetched.", place: placeFormatted});
