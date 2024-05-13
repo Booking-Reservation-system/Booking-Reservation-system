@@ -65,7 +65,8 @@ const TripDetailPage = () => {
       dayCount++;
       setTotalDays(dayCount);
     }
-  }, []);
+  }, [tripData?.startDate, tripData?.endDate]);
+
 
   const category = useMemo(() => {
     return categoriesArray.find(
@@ -80,8 +81,6 @@ const TripDetailPage = () => {
   if (!tripData) {
     return <EmptyState showReset />;
   }
-
-  console.log(tripData);
 
   return (
     <>
@@ -107,7 +106,7 @@ const TripDetailPage = () => {
                   roomCount={tripData?.roomCount}
                   isTrip={tripData?.invoice}
                   startDate={tripData?.startDate}
-                    endDate={tripData?.endDate}
+                  endDate={tripData?.endDate}
                 />
               </div>
             </div>
