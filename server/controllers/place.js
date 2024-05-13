@@ -107,7 +107,7 @@ exports.getPlace = async (req, res, next) => {
                 workspace: place.amenities.workspace,
                 balcony: place.amenities.balcony,
                 grill: place.amenities.grill,
-                campFire: place.amenities.campFire,
+                campfire: place.amenities.campFire,
                 billiards: place.amenities.billiards,
                 gym: place.amenities.gym,
                 piano: place.amenities.piano,
@@ -284,7 +284,8 @@ exports.updatePlace = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
-        if (place.userId._id.toString() !== req.userId.toString()) {
+        const user = await User.findById(req.userId);
+        if (place.userId._id.toString() !== req.userId.toString() && user.role !== "admin") {
             const error = new Error("Not authorized!");
             error.statusCode = 403;
             throw error;
@@ -310,6 +311,7 @@ exports.updatePlace = async (req, res, next) => {
         if (location) place.locationValue = location;
         if (price) place.price = parseInt(price, 10);
         if (amenities) {
+            console.log(amenities.campfire);
             place.amenities = {
                 wifi: amenities.wifi,
                 tv: amenities.tv,
@@ -322,7 +324,7 @@ exports.updatePlace = async (req, res, next) => {
                 workspace: amenities.workspace,
                 balcony: amenities.balcony,
                 grill: amenities.grill,
-                campFire: amenities.campFire,
+                campFire: amenities.campfire,
                 billiards: amenities.billiards,
                 gym: amenities.gym,
                 piano: amenities.piano,
@@ -384,7 +386,8 @@ exports.deletePlace = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
-        if (place.userId.toString() !== req.userId.toString()) {
+        const user = await User.findById(req.userId);
+        if (place.userId.toString() !== req.userId.toString() && user.role !== "admin") {
             const error = new Error("Not authorized!");
             error.statusCode = 403;
             throw error;

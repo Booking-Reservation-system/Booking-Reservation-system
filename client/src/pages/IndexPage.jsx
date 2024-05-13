@@ -5,10 +5,11 @@ import getAllPlaces from "../action/getAllPlaces";
 import {useEffect, useState} from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import useTokenStore from "../hooks/storeToken.js";
 import useSearchUrl from "../hooks/useSearchUrl.js";
 import useAuth from "../hooks/useAuth.js";
+import ROUTES from "../constants/routes.js";
 
 const IndexPage = () => {
     const [data, setData] = useState([]);
@@ -22,6 +23,7 @@ const IndexPage = () => {
         role,
         setRole,
     } = useTokenStore();
+    const navigate = useNavigate();
     // console.log(searchUrl);
     useEffect(() => {
         const fetchData = async () => {

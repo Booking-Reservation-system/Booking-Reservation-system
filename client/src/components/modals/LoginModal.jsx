@@ -47,14 +47,18 @@ const LoginModal = () => {
             localStorage.setItem("authImage", image);
             setRole(role);
             setAuth(true);
+            if (role === "admin") {
+                navigate(ROUTES.DASHBOARD);
+            } else {
+                navigate(ROUTES.HOME);
+            }
             toast.success("Logged in successfully");
         } catch (error) {
             toast.error(error.response ? error.response.data.message : 'Something went wrong!');
         } finally {
             setIsLoading(false);
         }
-        navigate(ROUTES.HOME);
-        window.location.reload(); //Reload de hien dashboard khi dang nhap role = admin
+        // window.location.reload(); //Reload de hien dashboard khi dang nhap role = admin
     }
 
     const emailValidation = {

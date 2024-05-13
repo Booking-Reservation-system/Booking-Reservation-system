@@ -7,6 +7,7 @@ import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import {toast} from "react-hot-toast";
 import ROUTES from "../../constants/routes";
+import storeToken from "../../hooks/storeToken.js";
 
 const ListingReservation = (props) => {
     const {
@@ -32,6 +33,7 @@ const ListingReservation = (props) => {
         currency: 'USD',
         maximumSignificantDigits: 3
     })
+    const {role} = storeToken();
 
     const handleDelete = async () => {
         try {
@@ -89,8 +91,8 @@ const ListingReservation = (props) => {
                         <Button label="Cancel reservation" onClick={cancelReservation}/>
                     </>
                 }
-                {!isTrip && <Button label="Reserve" onClick={onSubmit}/>}
-                {creatorName === authName && authToken && (
+                {(!isTrip && role !== 'admin') && <Button label="Reserve" onClick={onSubmit}/>}
+                {(creatorName === authName || role === 'admin') && authToken && (
                     <div className="flex flex-row gap-4">
                         <Button label="Delete" onClick={handleDelete}/>
                         <Button label="Edit" onClick={editPlaceModal.onOpen}/>
