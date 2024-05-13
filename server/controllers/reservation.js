@@ -78,29 +78,27 @@ exports.getReservation = async (req, res, next) => {
 }
 
 exports.deleteReservation = async (req, res, next) => {
-    const reservationId = aes256.decryptData(req.params.reservationId);
-    // remove encripted id
     try {
+        const reservationId = aes256.decryptData(req.params.reservationId);
         const reservation = await Reservation.findById(reservationId);
         if (!reservation) {
             const error = new Error('Could not find reservation.');
             error.statusCode = 404;
             throw error;
         }
-        const session = await stripe.checkout.sessions.retrieve(reservation.paymentId);
         // refund payment
         const refund = await stripe.refunds.create({
-            payment_intent: session.payment_intent,
+            payment_intent: reservation.payment_intent,
             reason: 'requested_by_customer',
-            refund_application_fee: true,
-            reverse_transfer: true,
+            // refund_application_fee: true,
+            // reverse_transfer: true,
         });
         const place = await Place.findById(reservation.placeId);
         if (place && place.reservations.length > 0 && place.reservations.includes(reservationId)) {
             place.reservations.pull(reservationId);
             await place.save();
         }
-        const user = await User.findById(req.userId);
+        const user = await User.findById(reservation.userId);
         if (user && user.reservations.length > 0 && user.reservations.includes(reservationId)) {
             user.reservations.pull(reservationId);
             await user.save();
@@ -236,6 +234,7 @@ exports.checkoutSuccess = async (req, res, next) => {
             error.statusCode = 500;
             throw error;
         }
+        reservation.payment_intent = session.payment_intent;
         if (session.payment_status === 'paid') {
             const invoice = await stripe.invoices.create({
                 customer: session.customer,

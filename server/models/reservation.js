@@ -33,7 +33,10 @@ const reservationSchema = new Schema({
     },
     paymentId: {
         type: String,
-    }
+    },
+    payment_intent: {
+        type: String,
+    },
 }, {timestamps: true});
 
 reservationSchema.pre('deleteOne', async function (next) {

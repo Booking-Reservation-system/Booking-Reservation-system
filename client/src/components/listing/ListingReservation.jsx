@@ -1,4 +1,4 @@
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import Calendar from "../inputs/Calender";
 import Button from "../button/Button.jsx";
 
@@ -20,7 +20,7 @@ const ListingReservation = (props) => {
         disabledDate,
         placeId,
         creatorName,
-        isTrip
+        isTrip,
     } = props;
 
     const {authToken} = useAuth();
@@ -48,9 +48,26 @@ const ListingReservation = (props) => {
         }
     }
 
+    const cancelReservation = async () => {
+        try {
+            const location = window.location.href;
+            const reservationId = location.split("/").pop();
+            const response = await axios.delete(`http://localhost:8080/api/reservation/${reservationId}`, {
+                headers: {
+                    Authorization: "Bearer " + authToken,
+                },
+                withCredentials: true
+            });
+            toast.success(response.data.message);
+            navigate(ROUTES.TRIPS);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Something went wrong");
+        }
+    }
+
     const viewInvoice = () => {
         window.open(isTrip, "_blank");
-    }   
+    }
 
     return (
         <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden sticky top-[100px]">
@@ -66,7 +83,12 @@ const ListingReservation = (props) => {
             />
             <hr/>
             <div className="p-4 flex flex-col gap-4">
-                {isTrip && <Button label="View invoice" onClick={viewInvoice}/>}
+                {isTrip &&
+                    <>
+                        <Button label="View invoice" onClick={viewInvoice}/>
+                        <Button label="Cancel reservation" onClick={cancelReservation}/>
+                    </>
+                }
                 {!isTrip && <Button label="Reserve" onClick={onSubmit}/>}
                 {creatorName === authName && authToken && (
                     <div className="flex flex-row gap-4">
