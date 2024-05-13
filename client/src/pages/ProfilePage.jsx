@@ -48,7 +48,7 @@ const ProfilePage = () => {
         <div className="grid grid-cols-3 gap-20">
           <div className="flex flex-col gap-10 col-span-1 relative">
             <div className="flex flex-col gap-8 sticky top-[100px]">
-              <div className="flex flex-row w-[380px] h-[280px] justify-around items-center shadow-2xl rounded-[20px] px-6 py-6">
+              <div className="flex flex-row w-[380px] h-[280px] justify-around items-center shadow-2xl rounded-[20px] gap-6 px-6 py-6">
                 <div className="flex flex-col justify-center items-center text-center gap-4">
                   <img
                     className="rounded-full"
