@@ -8,7 +8,6 @@ import {useState, useCallback} from "react"
 import qs from "query-string"
 import {useNavigate} from "react-router-dom"
 import ROUTES from "../../constants/routes"
-import {gu} from "date-fns/locale"
 
 
 const SearchCountModal = () => {

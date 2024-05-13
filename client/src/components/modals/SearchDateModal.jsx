@@ -4,7 +4,7 @@ import Calendar from "../inputs/Calender";
 
 import useSearchModal from "../../hooks/useSearchModal";
 import useSearchUrl from "../../hooks/useSearchUrl";
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useState} from "react";
 import qs from "query-string";
 import {useNavigate} from "react-router-dom";
 import {formatISO} from "date-fns";

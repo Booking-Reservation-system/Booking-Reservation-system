@@ -11,7 +11,7 @@ const Avatar = (props) => {
     }
     
     return (
-        <img className="rounded-full" height={30} width={30} alt="Avatar" src={avatar} ></img>
+        <img className="rounded-full" height={30} width={30} alt="Avatar" src={avatar ? avatar : "/placeholder.jpg"} ></img>
     )
 }
 
