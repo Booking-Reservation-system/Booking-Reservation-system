@@ -262,12 +262,16 @@ exports.checkoutSuccess = async (req, res, next) => {
                     amount_tax_display: 'exclude_tax',
                 },
             });
+            // caculate total days
+            const startDate = new Date(reservation.startDate);
+            const endDate = new Date(reservation.endDate);
+            const totalDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
             const invoiceItem = await stripe.invoiceItems.create({
                 customer: session.customer,
                 currency: 'usd',
                 unit_amount: place.price * 100,
                 description: 'Reservation for ' + place.title,
-                quantity: reservation.totalDays,
+                quantity: totalDays,
                 metadata: {
                     reservation_id: paymentId,
                     place_id: place._id.toString(),
