@@ -3,6 +3,7 @@ const aes256 = require("../utils/aes-crypto");
 const {validationResult} = require("express-validator");
 const User = require("../models/user");
 const {imageUpload, imageDelete} = require("../utils/upload-image");
+const Reservation = require("../models/reservation");
 
 exports.getPlaces = async (req, res, next) => {
     const {
@@ -23,23 +24,21 @@ exports.getPlaces = async (req, res, next) => {
     if (category) query.category = category;
     // check place that is not reserved in the date range of startDate and endDate
     if (startDate && endDate) {
-        query.reservations = {
-            $not: {
-                $elemMatch: {
-                    $or: [
-                        {
-                            endDate: {$gte: new Date(startDate)},
-                            startDate: {$lte: new Date(startDate)},
-                        },
-                        {
-                            startDate: {$lte: new Date(endDate)},
-                            endDate: {$gte: new Date(endDate)},
-                        },
-                    ],
+        // search for places that are not reserved in the date range
+        const reservations = await Reservation.find({
+            $or: [
+                {
+                    startDate: {$gte: startDate, $lte: endDate},
                 },
-            },
-        }
+                {
+                    endDate: {$gte: startDate, $lte: endDate},
+                },
+            ],
+        });
+        const placeIds = reservations.map((reservation) => reservation.placeId);
+        query._id = {$nin: placeIds};
     }
+    // console.log(query);
     try {
         const places = await Place.find(query, null, {sort: {createdAt: -1}});
         // encrypt placeId for security and save the original id in _id
