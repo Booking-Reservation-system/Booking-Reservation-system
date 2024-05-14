@@ -4,7 +4,28 @@ const aes256 = require("../utils/aes-crypto");
 
 exports.getProfile = async (req, res, next) => {
     try {
-        const profile = await User.findById(req.userId)
+        const user = await User.findById(req.userId);
+        if (!user) {
+            const error = new Error("User not found.");
+            error.statusCode = 404;
+            throw error;
+        }
+        let userId = req.userId;
+        if (user.role === "admin") {
+            if (!req.query.userId) {
+                const error = new Error("User ID is required.");
+                error.statusCode = 400;
+                throw error;
+            }
+            userId = aes256.decryptData(req.query.userId);
+            if (!ObjectId.isValid(userId)) {
+                const error = new Error("Invalid user ID.");
+                error.statusCode = 400;
+                throw error;
+            }
+        }
+
+        const profile = await User.findById(userId)
             .populate({
                 path: "places",
                 select: "title imageSrc category",

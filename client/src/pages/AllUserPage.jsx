@@ -17,20 +17,55 @@ const AllUserPage = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(true);
     const {role} = storeToken();
     const loginModal = useLoginModal();
+    const [isDeleted, setIsDeleted] = useState(false);
+
+
+    const handleDelete = async (id) => {
+        try {
+            console.log(id);
+            const response = await axios.delete(`http://localhost:8080/api/admin/user/${id}`, {
+                headers: {
+                    Authorization: "Bearer " + authToken,
+                },
+                withCredentials: true,
+            });
+            console.log(response.data);
+            setIsDeleted(!isDeleted);
+            toast.success("User deleted successfully");
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong");
+        }
+    }
 
     const customStyles = {
-        header: {
+        headCells: {
             style: {
-                fontWeight: 'bold',
+                fontSize: "18px",
+                fontWeight: "bold",
+                color: "#000",
+                backgroundColor: "#f3f4f6",
+                padding: "8px",
+                textAlign: "center",
+            },
+        },
+        rows: {
+            style: {
+                highlightOnHoverStyle: {
+                    backgroundColor: "#f43f5e",
+                    color: "#000",
+                }
             },
         },
     };
+
+    const classDisable = "font-bold px-2 py-1 mr-2 opacity-50 cursor-not-allowed bg-gray-300 rounded-md w-20";
+    const classEnable = "font-bold px-2 py-1 mr-2 bg-rose-500 hover:bg-rose-600 text-white rounded-md cursor-pointer w-20";
 
     const columns = [
         {
             name: 'Name',
             selector: row => row.name,
-            // sort by alphabet
             sortable: true,
         },
         {
@@ -39,7 +74,7 @@ const AllUserPage = () => {
             sortable: true
         },
         {
-            name: 'role',
+            name: 'Role',
             selector: row => row.role,
             sortable: true
         },
@@ -50,8 +85,8 @@ const AllUserPage = () => {
         {
             name: 'View',
             cell: row => <button
-                onClick={() => navigate(`/view/${row.id}`)}
-                className="font-bold border-2 border-gray-500 px-2 py-1 mr-2"
+                onClick={() => navigate(`/profile?userId=${row._id}`)}
+                className={classEnable}
             >
                 View
             </button>
@@ -59,8 +94,8 @@ const AllUserPage = () => {
         {
             name: 'Edit',
             cell: row => <button
-                onClick={() => navigate(`/edit/${row.id}`)}
-                className="font-bold border-2 border-gray-500 px-2 py-1 mr-2 "
+                onClick={() => navigate(`/edit/${row._id}`)}
+                className={(row.role === "admin" || row.provider === 'google') ? classDisable : classEnable}
             >
                 Edit
             </button>
@@ -68,8 +103,8 @@ const AllUserPage = () => {
         {
             name: 'Delete',
             cell: row => <button
-                onClick={() => navigate(`/delete/${row.id}`)}
-                className="font-bold border-2 border-gray-500 px-2 py-1"
+                onClick={() => handleDelete(row._id)}
+                className={(row.role === "admin") ? classDisable : classEnable}
             >
                 Delete
             </button>
@@ -105,7 +140,7 @@ const AllUserPage = () => {
             return;
         }
         fetchData();
-    }, []);
+    }, [isDeleted]);
 
     function handleFilter(e) {
         const value = e.target.value.toLowerCase();
@@ -127,7 +162,8 @@ const AllUserPage = () => {
                     columns={columns}
                     data={records}
                     customStyles={customStyles}
-                    selectableRows
+                    // selectableRows
+                    rdt_TableHeader="text-center"
                     fixedHeader
                     pagination
                     className="w-full"

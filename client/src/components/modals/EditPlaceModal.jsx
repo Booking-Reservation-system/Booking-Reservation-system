@@ -40,19 +40,19 @@ const EditPlaceModal = () => {
     const [currentPlaceData, setCurrentPlaceData] = useState();
     const placeId = localStorage.getItem("placeId");
 
-    if (placeId && isAuthenticated) {
-        useEffect(() => {
-            const fetchPlace = async () => {
-                try {
+    useEffect(() => {
+        const fetchPlace = async () => {
+            try {
+                if (placeId && isAuthenticated) {
                     const response = await getPlaceById(placeId);
                     setCurrentPlaceData(response);
-                } catch (error) {
-                    toast.error(error?.response?.data?.message || "Something went wrong");
                 }
-            };
-            fetchPlace();
-        }, [placeId])
-    }
+            } catch (error) {
+                toast.error(error?.response?.data?.message || "Something went wrong");
+            }
+        };
+        fetchPlace();
+    }, [placeId]);
 
     const {
         register,

@@ -129,3 +129,26 @@ exports.getAllUsers = async (req, res, next) => {
     }
 }
 
+exports.deleteUser = async (req, res, next) => {
+    try {
+        const userId = aes256.decryptData(req.params.userId);
+        const user = await User.findById(userId);
+        if (!user) {
+            const error = new Error('User not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        if (user.role === 'admin') {
+            const error = new Error('Cannot delete admin.');
+            error.statusCode = 400;
+            throw error;
+        }
+        await user.deleteOne();
+        res.status(200).json({
+            message: 'User deleted successfully.'
+        });
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
