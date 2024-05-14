@@ -42,13 +42,13 @@ const UserMenu = (props) => {
             localStorage.removeItem("authImage");
             setRole(null);
             setAuth(false);
+            navigate(ROUTES.HOME);
 
             toast("You have been logged out", {
                 icon: "👋",
                 style: {borderRadius: "10px"},
             });
 
-            navigate(ROUTES.HOME);
         } catch (error) {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
@@ -59,11 +59,11 @@ const UserMenu = (props) => {
             localStorage.removeItem("authImage");
             setRole(null);
             setAuth(false);
+            navigate(ROUTES.HOME);
             toast("You have been logged out", {
                 icon: "👋",
                 style: {borderRadius: "10px"},
             });
-            navigate(ROUTES.HOME);
         }
     };
 

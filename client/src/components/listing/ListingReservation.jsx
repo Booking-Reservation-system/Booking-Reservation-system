@@ -92,7 +92,7 @@ const ListingReservation = (props) => {
                     </>
                 }
                 {(!isTrip && role !== 'admin') && <Button label="Reserve" onClick={onSubmit}/>}
-                {(creatorName === authName || role === 'admin') && authToken && (
+                {(creatorName === authName || role === 'admin') && !isTrip && authToken && (
                     <div className="flex flex-row gap-4">
                         <Button label="Delete" onClick={handleDelete}/>
                         <Button label="Edit" onClick={editPlaceModal.onOpen}/>

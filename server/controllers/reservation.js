@@ -46,12 +46,13 @@ exports.getReservations = async (req, res, next) => {
 exports.getReservation = async (req, res, next) => {
     const reservationId = aes256.decryptData(req.params.reservationId);
     try {
-        const reservation = await Reservation.findById(reservationId).populate('placeId').select('startDate endDate totalPrice invoice');
+        const reservation = await Reservation.findById(reservationId).populate('placeId').select('startDate endDate totalPrice invoice userId');
         if (!reservation) {
             const error = new Error('Could not find reservation.');
             error.statusCode = 404;
             throw error;
         }
+        const user = await User.findById(reservation.userId);
         const formatData = {
             placeId: aes256.encryptData(reservation.placeId._id.toString()),
             reservationId: aes256.encryptData(reservation._id.toString()),
@@ -69,6 +70,10 @@ exports.getReservation = async (req, res, next) => {
             bathroomCount: reservation.placeId.bathroomCount,
             guestCapacity: reservation.placeId.guestCapacity,
             amenities: reservation.placeId.amenities,
+            user: {
+                name: user.name,
+                email: user.email,
+            }
         }
         res.status(200).json({message: 'Place fetched.', reservation: formatData});
     } catch (err) {

@@ -92,10 +92,36 @@ exports.getAllReservations = async (req, res, next) => {
                 placeReservationParams: aes256.encryptData(reservation._id.toString())
             }
         });
-        console.log(encodedData);
+        // console.log(encodedData);
         res.status(200).json({
             message: 'Fetched all reservations successfully.',
             reservations: encodedData
+        });
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+exports.getAllUsers = async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const query = name ? {name: {$regex: name, $options: 'i'}} : {};
+        const users = await User.find(query).select('name email role provider').exec();
+        if (users.length === 0) {
+            const error = new Error('No user found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        const formattedUsers = users.map((user) => {
+            return {
+                ...user._doc,
+                _id: aes256.encryptData(user._id.toString())
+            }
+        });
+        res.status(200).json({
+            message: 'Fetched all users successfully.',
+            users: formattedUsers
         });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;

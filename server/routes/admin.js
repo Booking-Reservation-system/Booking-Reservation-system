@@ -10,4 +10,5 @@ router.get('/check-role', isAuth, adminController.checkRole);
 
 router.get('/reservations', [isAuth, isAdmin], adminController.getAllReservations);
 
+router.get('/users', [isAuth, isAdmin], adminController.getAllUsers);
 module.exports = router;

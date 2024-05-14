@@ -63,8 +63,8 @@ exports.getPlaces = async (req, res, next) => {
 };
 
 exports.getPlace = async (req, res, next) => {
-    const placeId = aes256.decryptData(req.params.placeId.toString());
     try {
+        const placeId = aes256.decryptData(req.params.placeId.toString());
         if (!placeId) {
             const error = new Error("Place ID is missing or invalid.");
             error.statusCode = 404;

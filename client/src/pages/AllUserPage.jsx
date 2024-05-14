@@ -6,24 +6,17 @@ import ROUTES from "../constants/routes.js";
 import toast from "react-hot-toast";
 import storeToken from "../hooks/storeToken.js";
 import useLoginModal from "../hooks/useLoginModal.js";
+import useAuth from "../hooks/useAuth.js";
 // import { useAuth } from "../hooks/useAuth";
 
 
 const AllUserPage = () => {
-    // const { authToken } = useAuth();
+    const [records, setRecords] = useState([]);
+    const {authToken} = useAuth();
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(true);
     const {role} = storeToken();
     const loginModal = useLoginModal();
-
-    useEffect(() => {
-        if (!isAuthenticated && role !== "admin") {
-            navigate(ROUTES.HOME);
-            toast.error("Please login to view your trips");
-            loginModal.onOpen();
-            return;
-        }
-    }, []);
 
     const customStyles = {
         header: {
@@ -37,7 +30,8 @@ const AllUserPage = () => {
         {
             name: 'Name',
             selector: row => row.name,
-            sortable: true
+            // sort by alphabet
+            sortable: true,
         },
         {
             name: 'Email',
@@ -51,8 +45,7 @@ const AllUserPage = () => {
         },
         {
             name: 'Provider',
-            selector: row => row.provider,
-            sortable: true
+            selector: row => row.provider ? row.provider : "local",
         },
         {
             name: 'View',
@@ -83,35 +76,40 @@ const AllUserPage = () => {
         }
     ]
 
-    const data = [
-        {
-            id: 1,
-            name: 'John Doe',
-            email: 'john@gmail.com',
-            role: 'user'
-        },
-        {
-            id: 2,
-            name: 'Jane Doe',
-            email: 'jane@gmail.com',
-            role: 'user'
-        },
-        {
-            id: 3,
-            name: 'Admin Doe',
-            email: 'admin@gmail.com',
-            role: 'admin'
+    const fetchData = async (query) => {
+        try {
+            let url = "http://localhost:8080/api/admin/users";
+            if (query) {
+                url += `?name=${query}`
+            }
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: "Bearer " + authToken,
+                },
+                withCredentials: true,
+            });
+            console.log(response.data);
+            setRecords(response.data.users);
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong");
         }
-    ]
+    };
 
-    const [records, setRecords] = useState(data);
+
+    useEffect(() => {
+        if (!isAuthenticated && role !== "admin") {
+            navigate(ROUTES.HOME);
+            toast.error("Please login to view your trips");
+            loginModal.onOpen();
+            return;
+        }
+        fetchData();
+    }, []);
 
     function handleFilter(e) {
         const value = e.target.value.toLowerCase();
-        const filteredData = data.filter(user => {
-            return user.name.toLowerCase().includes(value)
-        });
-        setRecords(filteredData);
+        fetchData(value);
     }
 
     return (

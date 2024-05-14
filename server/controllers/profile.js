@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const {ObjectId} = require("mongoose").Types;
+const aes256 = require("../utils/aes-crypto");
 
 exports.getProfile = async (req, res, next) => {
     try {
@@ -14,9 +15,22 @@ exports.getProfile = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
+        const formattedProfile = {
+            email: profile.email,
+            name: profile.name,
+            places: profile.places.map((place) => {
+                return {
+                    _id: aes256.encryptData(place._id.toString()),
+                    title: place.title,
+                    imageSrc: place.imageSrc,
+                    category: place.category,
+                };
+            }),
+            provider: profile.provider,
+        }
         res.status(200).json({
             message: "Profile fetched.",
-            profile,
+            profile: formattedProfile,
         });
     } catch (error) {
         if (!error.statusCode) {
