@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const {ObjectId} = require("mongoose").Types;
 const aes256 = require("../utils/aes-crypto");
+const bcrypt = require("bcryptjs");
 
 exports.getProfile = async (req, res, next) => {
     try {
