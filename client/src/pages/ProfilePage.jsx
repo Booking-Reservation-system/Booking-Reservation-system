@@ -54,7 +54,7 @@ const ProfilePage = () => {
             }
         };
         fetchUserData();
-    }, []);
+    }, [userData]);
 
     return (
         <>
