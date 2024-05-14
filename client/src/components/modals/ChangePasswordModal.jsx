@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {useForm} from "react-hook-form";
 import Modal from "../modals/Modal";
-import Heading from "../Heading"
-import Input from "../inputs/Input"
+import Heading from "../Heading";
+import Input from "../inputs/Input";
 import useEditProfileModal from "../../hooks/useEditProfileModal";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
@@ -15,6 +15,7 @@ import useLoginModal from "../../hooks/useLoginModal.js";
 const ChangePasswordModal = () => {
     const editProfile = useEditProfileModal();
     const {authToken} = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
     const location = useLocation();
     const {role} = storeToken();
     const navigate = useNavigate();
@@ -44,7 +45,7 @@ const ChangePasswordModal = () => {
             shouldDirty: true,
             shouldTouch: true,
         });
-    }
+    };
 
     const bodyContent = (
         <div className="flex flex-col gap-4">
@@ -53,6 +54,9 @@ const ChangePasswordModal = () => {
                 id="oldPassword"
                 label="Old password"
                 value={oldPassword}
+                showPassword={showPassword}
+                setShowPassword={() => setShowPassword(!showPassword)}
+                type={showPassword ? "text" : "password"}
                 onChange={(value) => setCustomValue("oldPassword", value)}
                 errors={errors}
                 required
@@ -61,6 +65,9 @@ const ChangePasswordModal = () => {
             <Input
                 id="newPassword"
                 label="New password"
+                showPassword={showPassword}
+                setShowPassword={() => setShowPassword(!showPassword)}
+                type={showPassword ? "text" : "password"}
                 value={newPassword}
                 onChange={(value) => setCustomValue("newPassword", value)}
                 errors={errors}
@@ -114,7 +121,7 @@ const ChangePasswordModal = () => {
             console.log(error);
             toast.error("Fail to update password");
         }
-    }
+    };
 
     return (
         <Modal

@@ -18,6 +18,7 @@ const LoginModal = () => {
     const registerModal = useRegisterModal();
     const loginModal = useLoginModal();
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const {setAuth, setRole} = useTokenStore();
 
     const {
@@ -113,7 +114,9 @@ const LoginModal = () => {
             <Input
                 id="password"
                 label="Password"
-                type="password"
+                showPassword={showPassword}
+                setShowPassword={() => setShowPassword(!showPassword)}
+                type={showPassword ? "text" : "password"}
                 disabled={isLoading}
                 register={register}
                 errors={errors}
