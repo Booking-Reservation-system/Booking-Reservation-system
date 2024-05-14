@@ -105,6 +105,7 @@ exports.updateProfile = async (req, res, next) => {
         const formattedProfile = {
             name: profile.name,
             email: profile.email,
+            provider: profile.provider,
         }
         res.status(200).json({
             message: "Profile updated.",

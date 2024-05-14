@@ -92,15 +92,6 @@ const AllUserPage = () => {
             </button>
         },
         {
-            name: 'Edit',
-            cell: row => <button
-                onClick={() => navigate(`/edit/${row._id}`)}
-                className={(row.role === "admin" || row.provider === 'google') ? classDisable : classEnable}
-            >
-                Edit
-            </button>
-        },
-        {
             name: 'Delete',
             cell: row => <button
                 onClick={() => handleDelete(row._id)}

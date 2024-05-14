@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import {useLocation, useNavigate} from "react-router-dom";
 import useLoginModal from "../hooks/useLoginModal.js";
 import useEditProfileModal from "../hooks/useEditProfileModal.js";
+import storeToken from "../hooks/storeToken.js";
 
 const ProfilePage = () => {
     const {authToken} = useAuth();
@@ -26,6 +27,7 @@ const ProfilePage = () => {
     const editProfile = useEditProfileModal();
     const provider = localStorage.getItem("provider");
     const location = useLocation();
+    const {role} = storeToken();
     useEffect(() => {
         if (!isAuthenticated) {
             navigate(ROUTES.HOME);
@@ -37,7 +39,7 @@ const ProfilePage = () => {
             try {
                 const query = new URLSearchParams(location.search);
                 let url = "http://localhost:8080/api/profile";
-                if (query.get("userId")) {
+                if (query.get("userId") && role === "admin") {
                     url += `?userId=${query.get("userId")}`;
                 }
                 const response = await axios.get(url, {
@@ -94,7 +96,7 @@ const ProfilePage = () => {
                                     <div className="font-bold text-xl mb-4">
                                         {userData?.name}'s confirmed information
                                     </div>
-                                    {provider === "google" ? (
+                                    {(provider === "google" || (role === "admin" && userData?.provider === "google")) ? (
                                         <>
                                             <div className="text-xl text-left flex flex-row justify-start mb-[10px]">
                                                 <GoCheck className="ml-2" size={30}/>
