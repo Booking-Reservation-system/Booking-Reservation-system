@@ -1,18 +1,34 @@
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import ROUTES from "../constants/routes.js";
+import toast from "react-hot-toast";
+import storeToken from "../hooks/storeToken.js";
+import useLoginModal from "../hooks/useLoginModal.js";
 // import { useAuth } from "../hooks/useAuth";
 
 
 const AllUserPage = () => {
     // const { authToken } = useAuth();
     const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const {role} = storeToken();
+    const loginModal = useLoginModal();
+
+    useEffect(() => {
+        if (!isAuthenticated && role !== "admin") {
+            navigate(ROUTES.HOME);
+            toast.error("Please login to view your trips");
+            loginModal.onOpen();
+            return;
+        }
+    }, []);
 
     const customStyles = {
         header: {
             style: {
-                fontWeight: 'bold', 
+                fontWeight: 'bold',
             },
         },
     };
@@ -34,22 +50,36 @@ const AllUserPage = () => {
             sortable: true
         },
         {
+            name: 'Provider',
+            selector: row => row.provider,
+            sortable: true
+        },
+        {
+            name: 'View',
+            cell: row => <button
+                onClick={() => navigate(`/view/${row.id}`)}
+                className="font-bold border-2 border-gray-500 px-2 py-1 mr-2"
+            >
+                View
+            </button>
+        },
+        {
             name: 'Edit',
-            cell: row =>   <button 
-            onClick={() => navigate(`/edit/${row.id}`)} 
-            className="font-bold border-2 border-gray-500 px-2 py-1 mr-2 "
-          >
-            Edit
-          </button>
+            cell: row => <button
+                onClick={() => navigate(`/edit/${row.id}`)}
+                className="font-bold border-2 border-gray-500 px-2 py-1 mr-2 "
+            >
+                Edit
+            </button>
         },
         {
             name: 'Delete',
-            cell: row => <button 
-            onClick={() => navigate(`/delete/${row.id}`)} 
-            className="font-bold border-2 border-gray-500 px-2 py-1"
-          >
-            Delete
-          </button>
+            cell: row => <button
+                onClick={() => navigate(`/delete/${row.id}`)}
+                className="font-bold border-2 border-gray-500 px-2 py-1"
+            >
+                Delete
+            </button>
         }
     ]
 
@@ -79,33 +109,34 @@ const AllUserPage = () => {
     function handleFilter(e) {
         const value = e.target.value.toLowerCase();
         const filteredData = data.filter(user => {
-            return user.name.toLowerCase().includes(value) 
+            return user.name.toLowerCase().includes(value)
         });
         setRecords(filteredData);
     }
 
     return (
         <div className="pt-[120px] px-20 bg-gray-100 min-h-screen">
-            <h1 className="text-4xl text-indigo-500 mb-8 text-center bg-indigo-200 p-4 rounded-lg shadow-lg">User Information</h1>          
+            <h1 className="text-4xl text-indigo-500 mb-8 text-center bg-indigo-200 p-4 rounded-lg shadow-lg">User
+                Information</h1>
             <div className="bg-white shadow-md rounded-lg p-8">
-                <input 
-                type="text" 
-                placeholder="Search by name" 
-                onChange={handleFilter} 
-                className="border border-gray-300 p-2 rounded-md mb-4 w-full"
+                <input
+                    type="text"
+                    placeholder="Search by name"
+                    onChange={handleFilter}
+                    className="border border-gray-300 p-2 rounded-md mb-4 w-full"
                 />
                 <DataTable
-                columns={columns}
-                data={records}
-                customStyles={customStyles}
-                selectableRows
-                fixedHeader
-                pagination
-                className="w-full"
+                    columns={columns}
+                    data={records}
+                    customStyles={customStyles}
+                    selectableRows
+                    fixedHeader
+                    pagination
+                    className="w-full"
                 />
             </div>
         </div>
-      );
+    );
 };
 
 export default AllUserPage;

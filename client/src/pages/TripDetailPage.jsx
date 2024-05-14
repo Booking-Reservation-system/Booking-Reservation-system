@@ -18,6 +18,7 @@ import Map from "../components/Map";
 import ROUTES from "../constants/routes.js";
 import toast from "react-hot-toast";
 import loginModal from "../components/modals/LoginModal.jsx";
+import useLoginModal from "../hooks/useLoginModal.js";
 
 const initialDateRange = {
     startDate: new Date(),
@@ -36,6 +37,7 @@ const TripDetailPage = () => {
     const [totalDays, setTotalDays] = useState(1);
     const {isAuthenticated} = useAuth();
     const navigate = useNavigate();
+    const loginModal = useLoginModal();
 
     useEffect(() => {
         if (!isAuthenticated) {

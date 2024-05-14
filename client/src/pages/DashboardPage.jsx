@@ -18,6 +18,12 @@ import BarChart from "../../src/components/dashboards/BarChart";
 import StatBox from "../../src/components/dashboards/StatBox";
 import ProgressCircle from "../../src/components/dashboards/ProgressCircle";
 import useAuth from "../../src/hooks/useAuth";
+import ROUTES from "../constants/routes.js";
+import toast from "react-hot-toast";
+import loginModal from "../components/modals/LoginModal.jsx";
+import {useNavigate} from "react-router-dom";
+import storeToken from "../hooks/storeToken.js";
+import useLoginModal from "../hooks/useLoginModal.js";
 
 
 const Dashboard = () => {
@@ -26,7 +32,10 @@ const Dashboard = () => {
     const [totalCustomer, setTotalCustomer] = useState("");
     const [totalReservation, setTotalReservation] = useState("");
     const [totalPayment, setTotalPayment] = useState("");
-    const {authToken} = useAuth()
+    const {authToken, isAuthenticated} = useAuth()
+    const navigate = useNavigate();
+    const {role} = storeToken();
+    const loginModal = useLoginModal();
 
     const downloadReports = () => {
         confirmAlert({
@@ -66,6 +75,12 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
+        if (!isAuthenticated && role !== "admin") {
+            navigate(ROUTES.HOME);
+            toast.error("Please login to view your trips");
+            loginModal.onOpen();
+            return;
+        }
         // Fetch data from backend API
         axios.get("http://localhost:8080/api/admin/dashboard/total-data", {
             headers: {
