@@ -76,7 +76,15 @@ exports.updateProfile = async (req, res, next) => {
             throw error;
         }
         if (name) profile.name = name;
-        if (email) profile.email = email;
+        if (email) {
+            const existingUser = await User.findOne({email: email});
+            if (existingUser && existingUser._id.toString() !== req.userId) {
+                const error = new Error("Email already exists.");
+                error.statusCode = 400;
+                throw error;
+            }
+            profile.email = email;
+        }
         await profile.save();
         const formattedProfile = {
             name: profile.name,

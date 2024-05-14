@@ -4,6 +4,8 @@ import Button from "../components/button/Button.jsx";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import useAuth from "../hooks/useAuth.js";
+import toast from "react-hot-toast";
+import useLoginModal from "../hooks/useLoginModal.js";
 
 const CheckoutSuccessPage = () => {
     const {authToken} = useAuth();
@@ -11,8 +13,16 @@ const CheckoutSuccessPage = () => {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const [invoice, setInvoice] = useState(null);
+    const {isAuthenticated} = useAuth();
+    const loginModal = useLoginModal();
 
     useEffect(() => {
+        if (!isAuthenticated && role !== "admin") {
+            navigate(ROUTES.HOME);
+            toast.error("Please login to view your trips");
+            loginModal.onOpen();
+            return;
+        }
         const checkoutSuccess = async () => {
             // console.log(query.get('paymentId'));
             if (!query.get('paymentId')) return;

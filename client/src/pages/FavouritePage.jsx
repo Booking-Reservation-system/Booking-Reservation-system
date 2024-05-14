@@ -8,6 +8,7 @@ import getFavouriteByUser from "../action/getFavouriteByUser";
 import {useEffect, useState} from "react";
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
+import ROUTES from "../constants/routes.js";
 
 const FavouritePage = () => {
     const [favouritePlaces, setFavouritePlaces] = useState([]);
