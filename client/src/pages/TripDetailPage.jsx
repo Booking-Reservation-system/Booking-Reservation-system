@@ -118,7 +118,7 @@ const TripDetailPage = () => {
                                     bathroomCount={tripData?.bathroomCount}
                                     roomCount={tripData?.roomCount}
                                     isTrip={tripData?.invoice}
-                                    guest={[tripData?.user.name, tripData?.user.email]}
+                                    guest={tripData.user && [tripData.user.name, tripData.user.email]}
                                     startDate={tripData?.startDate}
                                     endDate={tripData?.endDate}
                                 />

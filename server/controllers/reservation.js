@@ -25,6 +25,7 @@ exports.getReservations = async (req, res, next) => {
         }
         // encrypt all id
         const encryptReservation = reservations.map(reservation => {
+            if (!reservation.placeId) return null;
             return {
                 ...reservation,
                 _id: aes256.encryptData(reservation._id.toString()),
@@ -32,9 +33,11 @@ exports.getReservations = async (req, res, next) => {
             }
         });
 
+        const filteredData = encryptReservation.filter((data) => data !== null);
+
         res.status(200).json({
             message: 'Fetched reservations successfully.',
-            reservations: encryptReservation,
+            reservations: filteredData,
 
         });
     } catch (err) {
@@ -52,7 +55,8 @@ exports.getReservation = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
-        const user = await User.findById(reservation.userId);
+        let user = null;
+        if (reservation.userId) user = await User.findById(reservation.userId);
         const formatData = {
             placeId: aes256.encryptData(reservation.placeId._id.toString()),
             reservationId: aes256.encryptData(reservation._id.toString()),
@@ -70,10 +74,10 @@ exports.getReservation = async (req, res, next) => {
             bathroomCount: reservation.placeId.bathroomCount,
             guestCapacity: reservation.placeId.guestCapacity,
             amenities: reservation.placeId.amenities,
-            user: {
-                name: user.name,
-                email: user.email,
-            }
+        }
+        if (user) formatData.user = {
+            name: user.name,
+            email: user.email,
         }
         res.status(200).json({message: 'Place fetched.', reservation: formatData});
     } catch (err) {

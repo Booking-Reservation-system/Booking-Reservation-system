@@ -143,8 +143,10 @@ placeSchema.pre('deleteOne', {document: true, query: false},
             const user = await User.findById(reservation.userId);
             user.reservations.pull(reservation);
             await user.save();
+            reservation.placeId = null;
+            reservation.userId = null;
+            await reservation.save();
         }
-        await Reservation.deleteMany({placeId: this._id});
         next();
     })
 

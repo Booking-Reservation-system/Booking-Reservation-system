@@ -50,7 +50,12 @@ userSchema.pre('deleteOne', async function (next) {
     const Reservation = require('./reservation');
     const userId = this.getQuery()["_id"];
     await Place.deleteMany({userId: userId});
-    await Reservation.deleteMany({userId: userId});
+    const reservations = await Reservation.find({userId: userId});
+    for (const reservation of reservations) {
+        // delete field userId from reservation
+        reservation.userId = null;
+        await reservation.save();
+    }
     next();
 })
 

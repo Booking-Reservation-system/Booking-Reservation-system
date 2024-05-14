@@ -86,6 +86,7 @@ exports.getAllReservations = async (req, res, next) => {
             throw error;
         }
         const encodedData = reservations.map((reservation) => {
+            if (!reservation.placeId) return null;
             return {
                 ...reservation,
                 _id: aes256.encryptData(reservation._id.toString()),
@@ -93,9 +94,11 @@ exports.getAllReservations = async (req, res, next) => {
             }
         });
         // console.log(encodedData);
+
+        const filteredData = encodedData.filter((data) => data !== null);
         res.status(200).json({
             message: 'Fetched all reservations successfully.',
-            reservations: encodedData
+            reservations: filteredData
         });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;

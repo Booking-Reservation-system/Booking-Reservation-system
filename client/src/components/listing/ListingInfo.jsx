@@ -43,7 +43,7 @@ const ListingInfo = (props) => {
                         {!isTrip && <div>Hosted by {user}</div>}
                         {isTrip &&
                             <>
-                                {role === "admin" ? (
+                                {(role === "admin" && guest) ? (
                                     <div className="flex flex-col gap-3 font-normal">
                                         <div>Guest information:</div>
                                         <div>Name: <strong>{guest[0]}</strong></div>
