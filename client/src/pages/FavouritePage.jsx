@@ -2,7 +2,7 @@ import Container from "../components/Container";
 import Heading from "../components/Heading";
 import ListingCard from "../components/listing/ListingCard";
 import EmptyState from "../components/EmptyState";
-
+import useLoginModal from "../components/modals/LoginModal";
 import useAuth from "../hooks/useAuth";
 import getFavouriteByUser from "../action/getFavouriteByUser";
 import {useEffect, useState} from "react";

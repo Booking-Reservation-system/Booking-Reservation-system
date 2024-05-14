@@ -60,7 +60,6 @@ const ListingCard = (props) => {
             navigate(ROUTES.TRIPS_DETAIL.replace(":tripId", actionId), {replace: true})
         } else {
             navigate(ROUTES.LISTING_DETAIL.replace(":listingId", data._id), {replace: true})
-
         }
         // Không để magic string trong code, tạo một cái file là routes.js chứa tất cả các path
         // Rồi thay thành navigate(ROUTES.LISTING_DETAIL.replace(":listing_id", data._id))
