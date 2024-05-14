@@ -23,6 +23,7 @@ import SearchModal from "./components/modals/SearchModal.jsx";
 import SearchLocationModal from "./components/modals/SearchLocationModal.jsx";
 import SearchDateModal from "./components/modals/SearchDateModal.jsx";
 import SearchCountModal from "./components/modals/SearchCountModal.jsx";
+import EditUserModal from "./components/modals/EditUserModal.jsx";  
 import Navbar from "./components/navbar/Navbar.jsx";
 import toast from "react-hot-toast";
 import CheckoutSuccessPage from "./pages/CheckoutSuccessPage.jsx";
@@ -81,6 +82,7 @@ function App() {
                 <SearchLocationModal/>
                 <SearchDateModal/>
                 <SearchCountModal/>
+                <EditUserModal/>
                 <Navbar/>
                 <div className="content-container">
                     <Routes>
