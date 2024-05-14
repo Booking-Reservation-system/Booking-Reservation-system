@@ -64,7 +64,7 @@ exports.getProfile = async (req, res, next) => {
 exports.updateProfile = async (req, res, next) => {
     const {name, email} = req.body;
     try {
-        const profile = await User.findById(req.userId);
+        let profile = await User.findById(req.userId);
         if (!profile) {
             const error = new Error("Profile not found.");
             error.statusCode = 404;
@@ -74,6 +74,21 @@ exports.updateProfile = async (req, res, next) => {
             const error = new Error("Google profile cannot be updated.");
             error.statusCode = 400;
             throw error;
+        }
+        if (profile.role === "admin") {
+            const userId = req.query.userId;
+            if (!userId) {
+                const error = new Error("User ID is required.");
+                error.statusCode = 400;
+                throw error;
+            }
+            const decryptedUserId = aes256.decryptData(userId);
+            if (!ObjectId.isValid(decryptedUserId)) {
+                const error = new Error("Invalid user ID.");
+                error.statusCode = 400;
+                throw error;
+            }
+            profile = await User.findById(decryptedUserId);
         }
         if (name) profile.name = name;
         if (email) {
@@ -105,7 +120,7 @@ exports.updateProfile = async (req, res, next) => {
 exports.changePassword = async (req, res, next) => {
     const {oldPassword, newPassword} = req.body;
     try {
-        const profile = await User.findById(req.userId);
+        let profile = await User.findById(req.userId);
         if (!profile) {
             const error = new Error("Profile not found.");
             error.statusCode = 404;
@@ -115,6 +130,21 @@ exports.changePassword = async (req, res, next) => {
             const error = new Error("Google profile cannot change password.");
             error.statusCode = 400;
             throw error;
+        }
+        if (profile.role === "admin") {
+            const userId = req.query.userId;
+            if (!userId) {
+                const error = new Error("User ID is required.");
+                error.statusCode = 400;
+                throw error;
+            }
+            const decryptedUserId = aes256.decryptData(userId);
+            if (!ObjectId.isValid(decryptedUserId)) {
+                const error = new Error("Invalid user ID.");
+                error.statusCode = 400;
+                throw error;
+            }
+            profile = await User.findById(decryptedUserId);
         }
         if (!oldPassword || !newPassword) {
             const error = new Error("Old password and new password are required.");

@@ -24,6 +24,7 @@ const UserMenu = (props) => {
 
     const logoutHandler = async () => {
         try {
+            navigate(ROUTES.HOME);
             if (localStorage.getItem("provider") === "google") {
                 const response = await axios.delete(
                     "http://localhost:8080/auth/google/logout",
@@ -42,7 +43,6 @@ const UserMenu = (props) => {
             localStorage.removeItem("authImage");
             setRole(null);
             setAuth(false);
-            navigate(ROUTES.HOME);
 
             toast("You have been logged out", {
                 icon: "👋",
@@ -50,6 +50,7 @@ const UserMenu = (props) => {
             });
 
         } catch (error) {
+            navigate(ROUTES.HOME);
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("expiresAt");
@@ -59,7 +60,6 @@ const UserMenu = (props) => {
             localStorage.removeItem("authImage");
             setRole(null);
             setAuth(false);
-            navigate(ROUTES.HOME);
             toast("You have been logged out", {
                 icon: "👋",
                 style: {borderRadius: "10px"},
