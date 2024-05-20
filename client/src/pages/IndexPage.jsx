@@ -105,7 +105,7 @@ const IndexPage = () => {
         fetchData();
 
 
-    }, [searchUrl]);
+    }, [searchUrl, data]);
 
     return (
         <>
